@@ -14,11 +14,12 @@ public class ItemDrop extends Documentable {
 	private long timestamp;
 	private String ip;
 	private int furnitureNum;
+	private Boolean isAbnormal;
 
 	public ItemDrop() {}
 
 	public ItemDrop(int stageID, String stageType, int times, List<Drop> drops, long timestamp, String ip,
-			int furnitureNum) {
+			int furnitureNum, Boolean isAbnormal) {
 		this.stageID = stageID;
 		this.stageType = stageType;
 		this.times = times;
@@ -26,6 +27,7 @@ public class ItemDrop extends Documentable {
 		this.timestamp = timestamp;
 		this.ip = ip;
 		this.furnitureNum = furnitureNum;
+		this.isAbnormal = isAbnormal;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -39,6 +41,7 @@ public class ItemDrop extends Documentable {
 		this.timestamp = doc.getLong("timestamp");
 		this.ip = doc.getString("ip");
 		this.furnitureNum = doc.getInteger("furnitureNum");
+		this.isAbnormal = doc.getBoolean("isAbnormal");
 	}
 
 	public int getStageID() {
@@ -97,15 +100,27 @@ public class ItemDrop extends Documentable {
 		this.furnitureNum = furnitureNum;
 	}
 
+	public Boolean getIsAbnormal() {
+		return isAbnormal;
+	}
+
+	public void setIsAbnormal(Boolean isAbnormal) {
+		this.isAbnormal = isAbnormal;
+	}
+
 	@Override
 	public Document toDocument() {
 		List<Document> drops = new ArrayList<>();
 		for (Drop drop : this.drops) {
 			drops.add(drop.toDocument());
 		}
-		return new Document().append("stageID", this.stageID).append("stageType", this.stageType).append("times", times)
-				.append("drops", drops).append("ip", this.ip).append("timestamp", this.timestamp)
+		Document doc = new Document().append("stageID", this.stageID).append("stageType", this.stageType)
+				.append("times", times).append("drops", drops).append("ip", this.ip).append("timestamp", this.timestamp)
 				.append("furnitureNum", this.furnitureNum);
+		if (this.isAbnormal != null) {
+			doc.append("isAbnormal", this.isAbnormal);
+		}
+		return doc;
 	}
 
 }

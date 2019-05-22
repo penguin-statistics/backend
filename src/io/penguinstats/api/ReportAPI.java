@@ -3,6 +3,7 @@ package io.penguinstats.api;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -18,8 +19,10 @@ import org.json.JSONObject;
 
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.ItemDrop;
+import io.penguinstats.bean.Material;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.MaterialService;
 import io.penguinstats.service.StageTimesService;
 import io.penguinstats.util.APIUtil;
 
@@ -29,6 +32,7 @@ public class ReportAPI {
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
 	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
+	private static final MaterialService materialService = MaterialService.getInstance();
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
@@ -48,15 +52,20 @@ public class ReportAPI {
 				Drop drop = new Drop(dropObj.getInt("itemID"), dropObj.getInt("quantity"));
 				drops.add(drop);
 			}
-			ItemDrop itemDrop =
-					new ItemDrop(stageID, stageType, 1, drops, System.currentTimeMillis(), ip, furnitureNum);
+			Boolean isAbnormal = !checkDrops(drops);
+			if (isAbnormal)
+				logger.warn("Abnormal drop data!");
+			ItemDrop itemDrop = new ItemDrop(stageID, stageType, 1, drops, System.currentTimeMillis(), ip, furnitureNum,
+					isAbnormal);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
-			stageTimesService.addStageTimes(stageID, stageType, 1);
-			for (Drop drop : drops) {
-				dropMatrixService.addDropMatrix(stageID, stageType, drop.getItemID(), drop.getQuantity());
-			}
-			if (furnitureNum != 0) {
-				dropMatrixService.addDropMatrix(stageID, stageType, -1, furnitureNum);
+			if (!isAbnormal) {
+				stageTimesService.addStageTimes(stageID, stageType, 1);
+				for (Drop drop : drops) {
+					dropMatrixService.addDropMatrix(stageID, stageType, drop.getItemID(), drop.getQuantity());
+				}
+				if (furnitureNum != 0) {
+					dropMatrixService.addDropMatrix(stageID, stageType, -1, furnitureNum);
+				}
 			}
 			if (result)
 				return Response.ok().build();
@@ -77,6 +86,21 @@ public class ReportAPI {
 			}
 		}
 		return remoteAddr;
+	}
+
+	private boolean checkDrops(List<Drop> drops) {
+		Map<Integer, Material> map = materialService.getMaterialMap();
+		for (Drop drop : drops) {
+			int itemID = drop.getItemID();
+			if (!map.containsKey(itemID))
+				return false;
+			Material material = map.get(itemID);
+			int rarity = material.getRarity();
+			int quantity = drop.getQuantity();
+			if (rarity == 2 && quantity >= 3 || rarity == 3 && quantity >= 2)
+				return false;
+		}
+		return true;
 	}
 
 }
