@@ -1,6 +1,7 @@
 package io.penguinstats.bean;
 
 import org.bson.Document;
+import org.json.JSONObject;
 
 public class Item extends Documentable {
 
@@ -72,6 +73,11 @@ public class Item extends Documentable {
 	public Document toDocument() {
 		return new Document().append("id", this.id).append("name", this.name).append("img", this.img)
 				.append("rarity", this.rarity).append("itemType", this.itemType);
+	}
+
+	public JSONObject asJSON() {
+		return new JSONObject().put("id", this.id).put("name", this.name).put("img", this.img)
+				.put("rarity", this.rarity).put("itemType", this.itemType);
 	}
 
 }

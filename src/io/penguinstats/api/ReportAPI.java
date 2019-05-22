@@ -18,13 +18,17 @@ import org.json.JSONObject;
 
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.ItemDrop;
+import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.StageTimesService;
 import io.penguinstats.util.APIUtil;
 
 @Path("/report")
 public class ReportAPI {
 
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
+	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
+	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
@@ -47,6 +51,13 @@ public class ReportAPI {
 			ItemDrop itemDrop =
 					new ItemDrop(stageID, stageType, 1, drops, System.currentTimeMillis(), ip, furnitureNum);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
+			stageTimesService.addStageTimes(stageID, stageType, 1);
+			for (Drop drop : drops) {
+				dropMatrixService.addDropMatrix(stageID, stageType, drop.getItemID(), drop.getQuantity());
+			}
+			if (furnitureNum != 0) {
+				dropMatrixService.addDropMatrix(stageID, stageType, -1, furnitureNum);
+			}
 			if (result)
 				return Response.ok().build();
 			else

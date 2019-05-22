@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.json.JSONObject;
 
 public class Stage extends Documentable {
 
@@ -88,6 +89,11 @@ public class Stage extends Documentable {
 	public Document toDocument() {
 		return new Document().append("id", this.id).append("code", this.code).append("normalDrop", normalDrop)
 				.append("specialDrop", specialDrop).append("extraDrop", extraDrop).append("apCost", apCost);
+	}
+
+	public JSONObject asJSON() {
+		return new JSONObject().put("id", this.id).put("code", this.code).put("normalDrop", normalDrop)
+				.put("specialDrop", specialDrop).put("extraDrop", extraDrop).put("apCost", apCost);
 	}
 
 }

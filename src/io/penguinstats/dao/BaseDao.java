@@ -43,6 +43,28 @@ public abstract class BaseDao<T extends Documentable> {
 		}
 	}
 
+	public boolean batchSave(List<T> list) {
+		try {
+			List<Document> documents = new ArrayList<>();
+			list.forEach(t -> documents.add(t.toDocument()));
+			collection.insertMany(documents);
+			return true;
+		} catch (Exception e) {
+			logger.error("Error in batchSave", e);
+			return false;
+		}
+	}
+
+	public boolean batchDelete() {
+		try {
+			collection.deleteMany(new Document());
+			return true;
+		} catch (Exception e) {
+			logger.error("Error in batchSave", e);
+			return false;
+		}
+	}
+
 	public boolean updateDocument(Document doc) {
 		try {
 			collection.replaceOne(eq("_id", doc.getObjectId("_id")), doc);

@@ -37,9 +37,7 @@ public class Material extends Item {
 	}
 
 	public JSONObject asJSON() {
-		return new JSONObject().put("id", this.id).put("name", this.name).put("img", this.img)
-				.put("rarity", this.rarity).put("itemType", this.itemType)
-				.put("materialCategory", this.materialCategory);
+		return super.asJSON().put("materialCategory", this.materialCategory);
 	}
 
 }

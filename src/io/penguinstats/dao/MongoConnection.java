@@ -28,8 +28,14 @@ public class MongoConnection {
 	public MongoClient getMongo() throws RuntimeException {
 		if (mongo == null) {
 			try {
-				String path = System.getProperty("user.dir") + File.separator + "webapps" + File.separator
-						+ "PenguinStats" + File.separator + "WEB-INF" + File.separator + "mongodb.properties";
+				String path = null;
+				if (System.getProperty("user.dir").contains("PenguinStats")) {
+					path = System.getProperty("user.dir") + File.separator + "WebContent" + File.separator + "WEB-INF"
+							+ File.separator + "mongodb.properties";
+				} else {
+					path = System.getProperty("user.dir") + File.separator + "webapps" + File.separator + "PenguinStats"
+							+ File.separator + "WEB-INF" + File.separator + "mongodb.properties";
+				}
 				logger.info("Read properties: " + path);
 				Properties pps = new Properties();
 				InputStream in = new BufferedInputStream(new FileInputStream(path));
