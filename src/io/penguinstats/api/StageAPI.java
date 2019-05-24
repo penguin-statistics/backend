@@ -35,7 +35,7 @@ public class StageAPI {
 		}
 		JSONArray stagesJSONArray = new JSONArray();
 		for (Stage stage : stages) {
-			JSONObject stageJSONObj = new JSONObject().put("stageID", stage.getId()).put("code", stage.getCode());
+			JSONObject stageJSONObj = new JSONObject().put("id", stage.getId()).put("code", stage.getCode());
 			JSONArray normalDropJSONArray = new JSONArray();
 			for (Integer itemID : stage.getNormalDrop()) {
 				normalDropJSONArray.put(materialMap.get(itemID).asJSON());

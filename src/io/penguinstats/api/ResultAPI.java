@@ -10,6 +10,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,6 +30,7 @@ public class ResultAPI {
 	private static final MaterialService materialService = MaterialService.getInstance();
 	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
+	private static Logger logger = LogManager.getLogger(ResultAPI.class);
 
 	@GET
 	@Path("/stage/{stageID}/{stageType}")
@@ -36,6 +39,7 @@ public class ResultAPI {
 			@PathParam("stageType") String stageType) {
 		if (stageID == null || stageType == null)
 			return Response.status(Status.BAD_REQUEST).build();
+		logger.info("GET /stage/" + stageID + "/" + stageType);
 		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
 		Map<Tuple<Integer, String>, Integer> stageTimesMap = stageTimesService.getStageTimesMap();
@@ -70,6 +74,7 @@ public class ResultAPI {
 	public Response getResultForOneItem(@PathParam("itemID") Integer itemID) {
 		if (itemID == null)
 			return Response.status(Status.BAD_REQUEST).build();
+		logger.info("GET /item/" + itemID);
 		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
 		Map<Tuple<Integer, String>, Integer> stageTimesMap = stageTimesService.getStageTimesMap();
