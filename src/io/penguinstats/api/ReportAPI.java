@@ -97,7 +97,13 @@ public class ReportAPI {
 			Material material = map.get(itemID);
 			int rarity = material.getRarity();
 			int quantity = drop.getQuantity();
-			if (rarity == 2 && quantity >= 3 || rarity == 3 && quantity >= 2)
+			if (rarity == 0 && quantity >= 5)
+				return false;
+			if (rarity == 1 && quantity >= 4)
+				return false;
+			if (rarity == 2 && quantity >= 3)
+				return false;
+			if (rarity == 3 && quantity >= 2)
 				return false;
 		}
 		return true;
