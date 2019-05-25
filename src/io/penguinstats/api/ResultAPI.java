@@ -50,6 +50,7 @@ public class ResultAPI {
 		Map<Integer, Integer> subMap = dropMatrixMap.get(stageTuple);
 		JSONObject obj = new JSONObject();
 		obj.put("stage", stageMap.get(stageID).asJSON());
+		obj.put("stageType", stageType);
 		obj.put("times", times == null ? 0 : times);
 		JSONArray dropsArray = new JSONArray();
 		if (subMap != null) {
