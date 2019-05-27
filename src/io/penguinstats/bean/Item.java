@@ -10,15 +10,17 @@ public class Item extends Documentable {
 	protected String img;
 	protected int rarity;
 	protected String itemType;
+	protected Integer timePoint;
 
 	public Item() {}
 
-	public Item(int id, String name, String img, int rarity, String itemType) {
+	public Item(int id, String name, String img, int rarity, String itemType, Integer timePoint) {
 		this.id = id;
 		this.name = name;
 		this.img = img;
 		this.rarity = rarity;
 		this.itemType = itemType;
+		this.timePoint = timePoint;
 	}
 
 	public Item(Document doc) {
@@ -27,6 +29,7 @@ public class Item extends Documentable {
 		this.img = doc.getString("img");
 		this.rarity = doc.getInteger("rarity");
 		this.itemType = doc.getString("itemType");
+		this.timePoint = doc.getInteger("timePoint");
 	}
 
 	public int getId() {
@@ -69,15 +72,23 @@ public class Item extends Documentable {
 		this.itemType = itemType;
 	}
 
+	public Integer getTimePoint() {
+		return timePoint;
+	}
+
+	public void setTimePoint(Integer timePoint) {
+		this.timePoint = timePoint;
+	}
+
 	@Override
 	public Document toDocument() {
 		return new Document().append("id", this.id).append("name", this.name).append("img", this.img)
-				.append("rarity", this.rarity).append("itemType", this.itemType);
+				.append("rarity", this.rarity).append("itemType", this.itemType).append("timePoint", timePoint);
 	}
 
 	public JSONObject asJSON() {
 		return new JSONObject().put("id", this.id).put("name", this.name).put("img", this.img)
-				.put("rarity", this.rarity).put("itemType", this.itemType);
+				.put("rarity", this.rarity).put("itemType", this.itemType).put("timePoint", timePoint);
 	}
 
 }

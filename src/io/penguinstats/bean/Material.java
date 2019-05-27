@@ -9,8 +9,9 @@ public class Material extends Item {
 
 	public Material() {}
 
-	public Material(int id, String name, String img, int rarity, String itemType, String materialCategory) {
-		super(id, name, img, rarity, itemType);
+	public Material(int id, String name, String img, int rarity, String itemType, Integer timePoint,
+			String materialCategory) {
+		super(id, name, img, rarity, itemType, timePoint);
 		this.materialCategory = materialCategory;
 	}
 
@@ -20,6 +21,7 @@ public class Material extends Item {
 		this.img = doc.getString("img");
 		this.rarity = doc.getInteger("rarity");
 		this.itemType = doc.getString("itemType");
+		this.timePoint = doc.getInteger("timePoint");
 		this.materialCategory = doc.getString("materialCategory");
 	}
 

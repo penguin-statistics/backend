@@ -42,27 +42,23 @@ public class ResultAPI {
 		logger.info("GET /stage/" + stageID + "/" + stageType);
 		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
-		Map<Tuple<Integer, String>, Integer> stageTimesMap = stageTimesService.getStageTimesMap();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
 
 		Tuple<Integer, String> stageTuple = new Tuple<>(stageID, stageType);
-		Integer times = stageTimesMap.get(stageTuple);
+		Map<Integer, Integer> timesMap = stageTimesMap.get(stageTuple);
 		Map<Integer, Integer> subMap = dropMatrixMap.get(stageTuple);
 		JSONObject obj = new JSONObject();
 		obj.put("stage", stageMap.get(stageID).asJSON());
 		obj.put("stageType", stageType);
-		obj.put("times", times == null ? 0 : times);
 		JSONArray dropsArray = new JSONArray();
 		if (subMap != null) {
 			for (Integer itemID : subMap.keySet()) {
-				if (itemID != -1) {
-					JSONObject itemObj = materialMap.get(itemID).asJSON();
-					dropsArray.put(new JSONObject().put("item", itemObj).put("quantity", subMap.get(itemID)));
-				} else {
-					JSONObject furnitureObj = new JSONObject().put("id", itemID).put("name", "家具").put("rarity", -1)
-							.put("itemType", "furniture");
-					dropsArray.put(new JSONObject().put("item", furnitureObj).put("quantity", subMap.get(itemID)));
-				}
+				JSONObject subObj = new JSONObject().put("quantity", subMap.get(itemID));
+				Material material = materialMap.get(itemID);
+				subObj.put("item", material.asJSON());
+				subObj.put("times", timesMap.get(material.getTimePoint()));
+				dropsArray.put(subObj);
 			}
 		}
 		obj.put("drops", dropsArray);
@@ -78,17 +74,12 @@ public class ResultAPI {
 		logger.info("GET /item/" + itemID);
 		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
-		Map<Tuple<Integer, String>, Integer> stageTimesMap = stageTimesService.getStageTimesMap();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
 
 		JSONObject obj = new JSONObject();
-		if (itemID != -1) {
-			obj.put("item", materialMap.get(itemID).asJSON());
-		} else {
-			JSONObject furnitureObj =
-					new JSONObject().put("id", itemID).put("name", "家具").put("rarity", -1).put("itemType", "furniture");
-			obj.put("item", furnitureObj);
-		}
+		Material material = materialMap.get(itemID);
+		obj.put("item", material.asJSON());
 
 		JSONArray dropsArray = new JSONArray();
 		for (Tuple<Integer, String> tuple : dropMatrixMap.keySet()) {
@@ -97,7 +88,7 @@ public class ResultAPI {
 				continue;
 			JSONObject dropObj = new JSONObject();
 			dropObj.put("stage", stageMap.get(tuple.getX()).asJSON().put("stageType", tuple.getY()));
-			dropObj.put("times", stageTimesMap.get(tuple));
+			dropObj.put("times", stageTimesMap.get(tuple).get(material.getTimePoint()));
 			dropObj.put("quantity", subMap.get(itemID));
 			dropsArray.put(dropObj);
 		}

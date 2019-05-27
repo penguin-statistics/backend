@@ -14,6 +14,8 @@ public class ItemDropService {
 	private static ItemDropService instance = new ItemDropService();
 	private static ItemDropDao dao = new ItemDropDao();
 
+	public static final Long[] TIME_POINTS = new Long[] {0L, 1558948717000L};
+
 	private ItemDropService() {}
 
 	public static ItemDropService getInstance() {
@@ -28,8 +30,8 @@ public class ItemDropService {
 		return dao.findAll();
 	}
 
-	public Map<Tuple<Integer, String>, Integer> generateStageTimesMap() {
-		Map<Tuple<Integer, String>, Integer> result = new HashMap<>();
+	public Map<Tuple<Integer, String>, Map<Integer, Integer>> generateStageTimesMap() {
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> result = new HashMap<>();
 		List<ItemDrop> list = dao.findAll();
 		for (ItemDrop itemDrop : list) {
 			Boolean isAbnormal = itemDrop.getIsAbnormal();
@@ -37,7 +39,16 @@ public class ItemDropService {
 				int stageID = itemDrop.getStageID();
 				String stageType = itemDrop.getStageType();
 				Tuple<Integer, String> tuple = new Tuple<>(stageID, stageType);
-				result.put(tuple, result.getOrDefault(tuple, 0) + itemDrop.getTimes());
+				Map<Integer, Integer> subMap = result.getOrDefault(tuple, new HashMap<>());
+				for (int i = 0; i < TIME_POINTS.length; i++) {
+					if (!subMap.containsKey(i)) {
+						subMap.put(i, 0);
+					}
+					if (itemDrop.getTimestamp() >= TIME_POINTS[i]) {
+						subMap.put(i, subMap.get(i) + itemDrop.getTimes());
+					}
+				}
+				result.put(tuple, subMap);
 			}
 		}
 		return result;
@@ -66,10 +77,11 @@ public class ItemDropService {
 
 	public static void main(String[] args) {
 		ItemDropService service = ItemDropService.getInstance();
-		Map<Tuple<Integer, String>, Integer> stageTimesMap = service.generateStageTimesMap();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = service.generateStageTimesMap();
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = service.generateDropMatrixMap();
 		StageTimesService.getInstance().clearAndUpdateAll(stageTimesMap);
 		DropMatrixService.getInstance().clearAndUpdateAll(dropMatrixMap);
+		// System.out.println(stageTimesMap);
 	}
 
 }

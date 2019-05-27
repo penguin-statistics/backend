@@ -55,11 +55,11 @@ public class ReportAPI {
 			Boolean isAbnormal = !checkDrops(drops);
 			if (isAbnormal)
 				logger.warn("Abnormal drop data!");
-			ItemDrop itemDrop = new ItemDrop(stageID, stageType, 1, drops, System.currentTimeMillis(), ip, furnitureNum,
-					isAbnormal);
+			Long timestamp = System.currentTimeMillis();
+			ItemDrop itemDrop = new ItemDrop(stageID, stageType, 1, drops, timestamp, ip, furnitureNum, isAbnormal);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
 			if (!isAbnormal) {
-				stageTimesService.addStageTimes(stageID, stageType, 1);
+				stageTimesService.addStageTimes(stageID, stageType, 1, timestamp);
 				for (Drop drop : drops) {
 					dropMatrixService.addDropMatrix(stageID, stageType, drop.getItemID(), drop.getQuantity());
 				}

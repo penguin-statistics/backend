@@ -1,25 +1,29 @@
 package io.penguinstats.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 
 public class StageTimes extends Documentable {
 
 	private int stageID;
 	private String stageType;
-	private int times;
+	private List<Integer> times;
 
 	public StageTimes() {}
 
-	public StageTimes(int stageID, String stageType, int times) {
+	public StageTimes(int stageID, String stageType, List<Integer> times) {
 		this.stageID = stageID;
 		this.stageType = stageType;
 		this.times = times;
 	}
 
+	@SuppressWarnings("unchecked")
 	public StageTimes(Document doc) {
 		this.stageID = doc.getInteger("stageID");
 		this.stageType = doc.getString("stageType");
-		this.times = doc.getInteger("times");
+		this.times = (ArrayList<Integer>)doc.get("times");
 	}
 
 	public int getStageID() {
@@ -38,11 +42,11 @@ public class StageTimes extends Documentable {
 		this.stageType = stageType;
 	}
 
-	public int getTimes() {
+	public List<Integer> getTimes() {
 		return times;
 	}
 
-	public void setTimes(int times) {
+	public void setTimes(List<Integer> times) {
 		this.times = times;
 	}
 
