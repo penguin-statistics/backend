@@ -95,6 +95,8 @@ public class ReportAPI {
 			if (!map.containsKey(itemID))
 				return false;
 			Material material = map.get(itemID);
+			if (material.getItemType().equals("gold") || material.getItemType().equals("exp"))
+				continue;
 			int rarity = material.getRarity();
 			int quantity = drop.getQuantity();
 			if (rarity == 0 && quantity >= 5)
