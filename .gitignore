@@ -28,7 +28,6 @@ local.properties
 mongodb.properties
 
 # eclipse project file
-.settings/
 .classpath
 .project
 
@@ -45,3 +44,7 @@ mongodb.properties
 *.ear
 *.sar
 *.class
+
+# intellij project file
+*.iml
+.idea/
