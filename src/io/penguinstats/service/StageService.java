@@ -18,7 +18,7 @@ public class StageService {
 		return instance;
 	}
 
-	public boolean savetage(Stage stage) {
+	public boolean saveStage(Stage stage) {
 		return dao.save(stage);
 	}
 

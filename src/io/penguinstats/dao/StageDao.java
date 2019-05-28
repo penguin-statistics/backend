@@ -15,7 +15,7 @@ public class StageDao extends BaseDao<Stage> {
 	}
 
 	public Stage findByID(int id) {
-		MongoCursor<Document> iter = collection.find(eq("id", new Document().append("id", id))).iterator();
+		MongoCursor<Document> iter = collection.find(eq("id", id)).iterator();
 		if (iter.hasNext()) {
 			Document document = iter.next();
 			return new Stage(document);

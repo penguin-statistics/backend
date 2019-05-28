@@ -14,17 +14,19 @@ public class Stage extends Documentable {
 	private List<Integer> specialDrop;
 	private List<Integer> extraDrop;
 	private int apCost;
+	private String category;
 
 	public Stage() {}
 
 	public Stage(int id, String code, List<Integer> normalDrop, List<Integer> specialDrop, List<Integer> extraDrop,
-			int apCost) {
+			int apCost, String category) {
 		this.id = id;
 		this.code = code;
 		this.normalDrop = normalDrop;
 		this.specialDrop = specialDrop;
 		this.extraDrop = extraDrop;
 		this.apCost = apCost;
+		this.category = category;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -35,6 +37,7 @@ public class Stage extends Documentable {
 		this.specialDrop = (ArrayList<Integer>)doc.get("specialDrop");
 		this.extraDrop = (ArrayList<Integer>)doc.get("extraDrop");
 		this.apCost = doc.getInteger("apCost");
+		this.category = doc.getString("category");
 	}
 
 	public int getId() {
@@ -85,15 +88,25 @@ public class Stage extends Documentable {
 		this.apCost = apCost;
 	}
 
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
 	@Override
 	public Document toDocument() {
 		return new Document().append("id", this.id).append("code", this.code).append("normalDrop", normalDrop)
-				.append("specialDrop", specialDrop).append("extraDrop", extraDrop).append("apCost", apCost);
+				.append("specialDrop", specialDrop).append("extraDrop", extraDrop).append("apCost", apCost)
+				.append("category", category);
 	}
 
 	public JSONObject asJSON() {
 		return new JSONObject().put("id", this.id).put("code", this.code).put("normalDrop", normalDrop)
-				.put("specialDrop", specialDrop).put("extraDrop", extraDrop).put("apCost", apCost);
+				.put("specialDrop", specialDrop).put("extraDrop", extraDrop).put("apCost", apCost)
+				.put("category", category);
 	}
 
 }

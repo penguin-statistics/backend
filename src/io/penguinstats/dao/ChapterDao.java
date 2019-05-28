@@ -6,19 +6,19 @@ import org.bson.Document;
 
 import com.mongodb.client.MongoCursor;
 
-import io.penguinstats.bean.Material;
+import io.penguinstats.bean.Chapter;
 
-public class MaterialDao extends BaseDao<Material> {
+public class ChapterDao extends BaseDao<Chapter> {
 
-	public MaterialDao() {
-		super("material");
+	public ChapterDao() {
+		super("chapter");
 	}
 
-	public Material findByID(int id) {
+	public Chapter findByID(int id) {
 		MongoCursor<Document> iter = collection.find(eq("id", id)).iterator();
 		if (iter.hasNext()) {
 			Document document = iter.next();
-			return new Material(document);
+			return new Chapter(document);
 		}
 		return null;
 	}

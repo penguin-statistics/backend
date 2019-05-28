@@ -14,7 +14,7 @@ public class ItemDropService {
 	private static ItemDropService instance = new ItemDropService();
 	private static ItemDropDao dao = new ItemDropDao();
 
-	public static final Long[] TIME_POINTS = new Long[] {0L, 1558948717000L};
+	public static final Long[] TIME_POINTS = new Long[] {0L, 1558989300000L};
 
 	private ItemDropService() {}
 
