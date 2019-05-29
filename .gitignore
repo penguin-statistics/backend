@@ -48,3 +48,4 @@ mongodb.properties
 # intellij project file
 *.iml
 .idea/
+*.log

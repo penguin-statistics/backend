@@ -75,6 +75,14 @@
 		<version>3.2.0-0</version>
 	</dependency>
 
+	<!-- https://mvnrepository.com/artifact/net.sourceforge.tess4j/tess4j -->
+	<dependency>
+		<groupId>net.sourceforge.tess4j</groupId>
+		<artifactId>tess4j</artifactId>
+		<version>4.3.1</version>
+	</dependency>
+
+
 	  <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
 	<dependency>
 		<groupId>javax.servlet</groupId>
@@ -89,8 +97,20 @@
 		<version>6.14.2</version>
 		<scope>test</scope>
 	</dependency>
-
   </dependencies>
+
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Central Repository</name>
+			<url>https://repo.maven.apache.org/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
