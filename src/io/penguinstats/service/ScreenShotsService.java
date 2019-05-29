@@ -45,6 +45,7 @@ public class ScreenShotsService {
         tesseract.setDatapath("resources");
         tesseract.setLanguage("digits");
 
+        // load items, TODO: add more
         items = new HashMap<>();
         for (int i = -1; i < 1; i++) {
             File resources = new File("./resources/items/" + i + ".png");
