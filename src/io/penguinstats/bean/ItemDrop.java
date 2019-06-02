@@ -123,4 +123,13 @@ public class ItemDrop extends Documentable {
 		return doc;
 	}
 
+	public int getDropQuantity(int itemID) {
+		for (Drop drop : this.drops) {
+			if (drop.getItemID() == itemID) {
+				return drop.getQuantity();
+			}
+		}
+		return 0;
+	}
+
 }

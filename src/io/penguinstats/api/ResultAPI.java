@@ -1,8 +1,11 @@
 package io.penguinstats.api;
 
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -10,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,6 +24,7 @@ import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.MaterialService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.StageTimesService;
+import io.penguinstats.util.APIUtil;
 import io.penguinstats.util.Tuple;
 
 @Path("/result")
@@ -28,6 +34,7 @@ public class ResultAPI {
 	private static final MaterialService materialService = MaterialService.getInstance();
 	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
+	private static Logger logger = LogManager.getLogger(ResultAPI.class);
 
 	@GET
 	@Path("/stage/{stageID}/{stageType}")
@@ -36,11 +43,79 @@ public class ResultAPI {
 			@PathParam("stageType") String stageType) {
 		if (stageID == null || stageType == null)
 			return Response.status(Status.BAD_REQUEST).build();
-		Map<Integer, Stage> stageMap = stageService.getStageMap();
-		Map<Integer, Material> materialMap = materialService.getMaterialMap();
+
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
 
+		JSONObject obj = generateReturnObjForOneStage(stageID, stageType, stageTimesMap, dropMatrixMap);
+		return Response.ok(obj.toString()).build();
+	}
+
+	@POST
+	@Path("/stage/{stageID}/{stageType}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPersonalResultForOneStage(InputStream requestBodyStream, @PathParam("stageID") Integer stageID,
+			@PathParam("stageType") String stageType) {
+		try {
+			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
+			JSONObject obj = new JSONObject(jsonString);
+			logger.info("POST /stage/" + stageID + "/" + stageType + "\n" + obj.toString());
+
+			JSONObject stageTimesObj = obj.getJSONObject("stageTimes");
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = getStageTimesMapFromObj(stageTimesObj);
+
+			JSONObject dropMatrixObj = obj.getJSONObject("dropMatrix");
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = getDropMatrixMapFromObj(dropMatrixObj);
+
+			JSONObject returnObj = generateReturnObjForOneStage(stageID, stageType, stageTimesMap, dropMatrixMap);
+			return Response.ok(returnObj.toString()).build();
+		} catch (Exception e) {
+			logger.error("Error in saveSingleReport", e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@Path("/item/{itemID}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getResultForOneItem(@PathParam("itemID") Integer itemID) {
+		if (itemID == null)
+			return Response.status(Status.BAD_REQUEST).build();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
+
+		JSONObject obj = generateReturnObjForOneItem(itemID, stageTimesMap, dropMatrixMap);
+
+		return Response.ok(obj.toString()).build();
+	}
+
+	@POST
+	@Path("/item/{itemID}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPersonalResultForOneItem(InputStream requestBodyStream, @PathParam("itemID") Integer itemID) {
+		try {
+			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
+			JSONObject obj = new JSONObject(jsonString);
+			logger.info("POST /item/" + itemID + "\n" + obj.toString());
+			JSONObject stageTimesObj = obj.getJSONObject("stageTimes");
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = getStageTimesMapFromObj(stageTimesObj);
+
+			JSONObject dropMatrixObj = obj.getJSONObject("dropMatrix");
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = getDropMatrixMapFromObj(dropMatrixObj);
+
+			JSONObject returnObj = generateReturnObjForOneItem(itemID, stageTimesMap, dropMatrixMap);
+			return Response.ok(returnObj.toString()).build();
+		} catch (Exception e) {
+			logger.error("Error in saveSingleReport", e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	private JSONObject generateReturnObjForOneStage(int stageID, String stageType,
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap,
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap) {
+		Map<Integer, Stage> stageMap = stageService.getStageMap();
+		Map<Integer, Material> materialMap = materialService.getMaterialMap();
 		Tuple<Integer, String> stageTuple = new Tuple<>(stageID, stageType);
 		Map<Integer, Integer> timesMap = stageTimesMap.get(stageTuple);
 		Map<Integer, Integer> subMap = dropMatrixMap.get(stageTuple);
@@ -58,20 +133,14 @@ public class ResultAPI {
 			}
 		}
 		obj.put("drops", dropsArray);
-		return Response.ok(obj.toString()).build();
+		return obj;
 	}
 
-	@GET
-	@Path("/item/{itemID}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getResultForOneItem(@PathParam("itemID") Integer itemID) {
-		if (itemID == null)
-			return Response.status(Status.BAD_REQUEST).build();
+	private JSONObject generateReturnObjForOneItem(int itemID,
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap,
+			Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap) {
 		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
-		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
-		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
-
 		JSONObject obj = new JSONObject();
 		Material material = materialMap.get(itemID);
 		obj.put("item", material.asJSON());
@@ -88,7 +157,35 @@ public class ResultAPI {
 			dropsArray.put(dropObj);
 		}
 		obj.put("drops", dropsArray);
-		return Response.ok(obj.toString()).build();
+		return obj;
+	}
+
+	private Map<Tuple<Integer, String>, Map<Integer, Integer>> getStageTimesMapFromObj(JSONObject stageTimesObj) {
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = new HashMap<>();
+		for (String oneStageIDStr : stageTimesObj.keySet()) {
+			Tuple<Integer, String> tuple = new Tuple<>(Integer.valueOf(oneStageIDStr), "normal");
+			JSONArray stageTimesArray = stageTimesObj.getJSONArray(oneStageIDStr);
+			Map<Integer, Integer> subMap = new HashMap<>();
+			for (int i = 0; i < stageTimesArray.length(); i++) {
+				subMap.put(i, stageTimesArray.getInt(i));
+			}
+			stageTimesMap.put(tuple, subMap);
+		}
+		return stageTimesMap;
+	}
+
+	private Map<Tuple<Integer, String>, Map<Integer, Integer>> getDropMatrixMapFromObj(JSONObject dropMatrixObj) {
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = new HashMap<>();
+		for (String oneStageIDStr : dropMatrixObj.keySet()) {
+			Tuple<Integer, String> tuple = new Tuple<>(Integer.valueOf(oneStageIDStr), "normal");
+			JSONObject subObj = dropMatrixObj.getJSONObject(oneStageIDStr);
+			Map<Integer, Integer> subMap = new HashMap<>();
+			for (String itemIDStr : subObj.keySet()) {
+				subMap.put(Integer.valueOf(itemIDStr), subObj.getInt(itemIDStr));
+			}
+			dropMatrixMap.put(tuple, subMap);
+		}
+		return dropMatrixMap;
 	}
 
 }
