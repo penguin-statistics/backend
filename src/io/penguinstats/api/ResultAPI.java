@@ -118,6 +118,7 @@ public class ResultAPI {
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
 		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
 		Map<Integer, Material> materialMap = materialService.getMaterialMap();
+		Map<Integer, Stage> stageMap = stageService.getStageMap();
 		JSONObject obj = new JSONObject();
 		JSONArray array = new JSONArray();
 		for (Tuple<Integer, String> tuple : dropMatrixMap.keySet()) {
@@ -127,7 +128,10 @@ public class ResultAPI {
 			JSONObject subObj = new JSONObject();
 			for (Integer itemID : dropMatrix.keySet()) {
 				subObj.put("stageID", stageID).put("itemID", itemID).put("quantity", dropMatrix.get(itemID))
-						.put("times", stageTimes.get(materialMap.get(itemID).getTimePoint()));
+						.put("times", stageTimes.get(materialMap.get(itemID).getTimePoint()))
+						.put("apCost", stageMap.get(stageID).getApCost())
+						.put("stageCode", stageMap.get(stageID).getCode())
+						.put("itemName", materialMap.get(itemID).getName());
 			}
 			array.put(subObj);
 		}
