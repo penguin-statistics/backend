@@ -111,6 +111,30 @@ public class ResultAPI {
 		}
 	}
 
+	@GET
+	@Path("/matrix")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getMatrix() {
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap = stageTimesService.getStageTimesMap();
+		Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap = dropMatrixService.getDropMatrixMap();
+		Map<Integer, Material> materialMap = materialService.getMaterialMap();
+		JSONObject obj = new JSONObject();
+		JSONArray array = new JSONArray();
+		for (Tuple<Integer, String> tuple : dropMatrixMap.keySet()) {
+			int stageID = tuple.getX();
+			Map<Integer, Integer> stageTimes = stageTimesMap.get(tuple);
+			Map<Integer, Integer> dropMatrix = dropMatrixMap.get(tuple);
+			JSONObject subObj = new JSONObject();
+			for (Integer itemID : dropMatrix.keySet()) {
+				subObj.put("stageID", stageID).put("itemID", itemID).put("quantity", dropMatrix.get(itemID))
+						.put("times", stageTimes.get(materialMap.get(itemID).getTimePoint()));
+			}
+			array.put(subObj);
+		}
+		obj.put("matrix", array);
+		return Response.ok(obj.toString()).build();
+	}
+
 	private JSONObject generateReturnObjForOneStage(int stageID, String stageType,
 			Map<Tuple<Integer, String>, Map<Integer, Integer>> stageTimesMap,
 			Map<Tuple<Integer, String>, Map<Integer, Integer>> dropMatrixMap) {
