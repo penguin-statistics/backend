@@ -14,36 +14,36 @@ import javax.ws.rs.core.Response.Status;
 
 import org.json.JSONObject;
 
-import io.penguinstats.bean.Chapter;
 import io.penguinstats.bean.Stage;
-import io.penguinstats.service.ChapterService;
+import io.penguinstats.bean.Zone;
 import io.penguinstats.service.StageService;
+import io.penguinstats.service.ZoneService;
 
-@Path("/chapter")
-public class ChapterAPI {
+@Path("/zone")
+public class ZoneAPI {
 
-	private static final ChapterService chapterService = ChapterService.getInstance();
+	private static final ZoneService zoneService = ZoneService.getInstance();
 	private static final StageService stageService = StageService.getInstance();
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getChapters() {
-		List<Chapter> chapters = chapterService.getAllChapters();
-		return Response.ok(new JSONObject().put("chapters", chapters).toString()).build();
+	public Response getZones() {
+		List<Zone> zones = zoneService.getAllZones();
+		return Response.ok(new JSONObject().put("zones", zones).toString()).build();
 	}
 
 	@GET
-	@Path("/{chapterID}/stage")
+	@Path("/{zoneId}/stage")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getStages(@PathParam("chapterID") Integer chapterID) {
-		if (chapterID == null)
+	public Response getStages(@PathParam("chapterID") String zoneId) {
+		if (zoneId == null)
 			return Response.status(Status.BAD_REQUEST).build();
-		Chapter chapter = chapterService.getChapter(chapterID);
-		if (chapter == null)
+		Zone zone = zoneService.getZone(zoneId);
+		if (zone == null)
 			return Response.status(404).build();
-		Map<Integer, Stage> stageMap = stageService.getStageMap();
+		Map<String, Stage> stageMap = stageService.getStageMap();
 		List<Stage> stages = new ArrayList<>();
-		for (Integer stageID : chapter.getStages())
+		for (String stageID : zone.getStages())
 			stages.add(stageMap.get(stageID));
 		return Response.ok(new JSONObject().put("stages", stages).toString()).build();
 	}

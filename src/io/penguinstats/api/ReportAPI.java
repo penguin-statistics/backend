@@ -22,7 +22,7 @@ import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.bean.Material;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
-import io.penguinstats.service.MaterialService;
+import io.penguinstats.service.ItemService;
 import io.penguinstats.service.StageTimesService;
 import io.penguinstats.util.APIUtil;
 
@@ -32,7 +32,7 @@ public class ReportAPI {
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
 	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
-	private static final MaterialService materialService = MaterialService.getInstance();
+	private static final ItemService materialService = ItemService.getInstance();
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST

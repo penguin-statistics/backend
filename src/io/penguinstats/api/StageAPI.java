@@ -13,39 +13,38 @@ import javax.ws.rs.core.Response.Status;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import io.penguinstats.bean.Material;
+import io.penguinstats.bean.Item;
 import io.penguinstats.bean.Stage;
-import io.penguinstats.service.MaterialService;
+import io.penguinstats.service.ItemService;
 import io.penguinstats.service.StageService;
 
 @Path("/stage")
 public class StageAPI {
 
 	private static final StageService stageService = StageService.getInstance();
-	private static final MaterialService materialService = MaterialService.getInstance();
+	private static final ItemService itemService = ItemService.getInstance();
 
 	@GET
-	@Path("/{stageID}")
+	@Path("/{stageId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getDetailedStage(@PathParam("stageID") Integer stageID) {
-		if (stageID == null)
+	public Response getDetailedStage(@PathParam("stageId") String stageId) {
+		if (stageId == null)
 			return Response.status(Status.BAD_REQUEST).build();
-		Map<Integer, Stage> stageMap = stageService.getStageMap();
-		Map<Integer, Material> materialMap = materialService.getMaterialMap();
-		Stage stage = stageMap.get(stageID);
-		JSONObject stageJSONObj = new JSONObject().put("id", stage.getId()).put("code", stage.getCode())
-				.put("category", stage.getCategory()).put("apCost", stage.getApCost());
+		Map<String, Stage> stageMap = stageService.getStageMap();
+		Map<String, Item> itemMap = itemService.getItemMap();
+		Stage stage = stageMap.get(stageId);
+		JSONObject stageJSONObj = stage.asJSON();
 		JSONArray normalDropJSONArray = new JSONArray();
-		for (Integer itemID : stage.getNormalDrop()) {
-			normalDropJSONArray.put(materialMap.get(itemID).asJSON());
+		for (String itemId : stage.getNormalDrop()) {
+			normalDropJSONArray.put(itemMap.get(itemId).asJSON());
 		}
 		JSONArray specialDropJSONArray = new JSONArray();
-		for (Integer itemID : stage.getSpecialDrop()) {
-			specialDropJSONArray.put(materialMap.get(itemID).asJSON());
+		for (String itemId : stage.getSpecialDrop()) {
+			specialDropJSONArray.put(itemMap.get(itemId).asJSON());
 		}
 		JSONArray extraDropJSONArray = new JSONArray();
-		for (Integer itemID : stage.getExtraDrop()) {
-			extraDropJSONArray.put(materialMap.get(itemID).asJSON());
+		for (String itemId : stage.getExtraDrop()) {
+			extraDropJSONArray.put(itemMap.get(itemId).asJSON());
 		}
 		stageJSONObj.put("normalDrop", normalDropJSONArray).put("specialDrop", specialDropJSONArray).put("extraDrop",
 				extraDropJSONArray);

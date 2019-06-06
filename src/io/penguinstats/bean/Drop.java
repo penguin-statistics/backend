@@ -1,30 +1,31 @@
 package io.penguinstats.bean;
 
 import org.bson.Document;
+import org.json.JSONObject;
 
 public class Drop extends Documentable {
 
-	private int itemID;
+	private String itemId;
 	private int quantity;
 
 	public Drop() {}
 
-	public Drop(int itemID, int quantity) {
-		this.itemID = itemID;
+	public Drop(String itemId, int quantity) {
+		this.itemId = itemId;
 		this.quantity = quantity;
 	}
 
 	public Drop(Document doc) {
-		this.itemID = doc.getInteger("itemID");
+		this.itemId = doc.getString("itemId");
 		this.quantity = doc.getInteger("quantity");
 	}
 
-	public int getItemID() {
-		return itemID;
+	public String getItemId() {
+		return itemId;
 	}
 
-	public void setItemID(int itemID) {
-		this.itemID = itemID;
+	public void setItemId(String itemId) {
+		this.itemId = itemId;
 	}
 
 	public int getQuantity() {
@@ -37,7 +38,11 @@ public class Drop extends Documentable {
 
 	@Override
 	public Document toDocument() {
-		return new Document().append("itemID", this.itemID).append("quantity", this.quantity);
+		return new Document().append("itemId", this.itemId).append("quantity", this.quantity);
+	}
+
+	public JSONObject asJSON() {
+		return new JSONObject().put("itemId", this.itemId).put("quantity", this.quantity);
 	}
 
 }

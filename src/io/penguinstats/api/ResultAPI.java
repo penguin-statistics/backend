@@ -21,7 +21,7 @@ import org.json.JSONObject;
 import io.penguinstats.bean.Material;
 import io.penguinstats.bean.Stage;
 import io.penguinstats.service.DropMatrixService;
-import io.penguinstats.service.MaterialService;
+import io.penguinstats.service.ItemService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.StageTimesService;
 import io.penguinstats.util.APIUtil;
@@ -31,7 +31,7 @@ import io.penguinstats.util.Tuple;
 public class ResultAPI {
 
 	private static final StageService stageService = StageService.getInstance();
-	private static final MaterialService materialService = MaterialService.getInstance();
+	private static final ItemService materialService = ItemService.getInstance();
 	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
 	private static Logger logger = LogManager.getLogger(ResultAPI.class);

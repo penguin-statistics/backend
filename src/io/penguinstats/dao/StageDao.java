@@ -11,11 +11,17 @@ import io.penguinstats.bean.Stage;
 public class StageDao extends BaseDao<Stage> {
 
 	public StageDao() {
-		super("stage");
+		super("stage_v2");
 	}
 
-	public Stage findByID(int id) {
-		MongoCursor<Document> iter = collection.find(eq("id", id)).iterator();
+	/**
+	 * @Title: findByStageId
+	 * @Description: Retrieve stage using stageId
+	 * @param stageId
+	 * @return Stage
+	 */
+	public Stage findByStageId(String stageId) {
+		MongoCursor<Document> iter = collection.find(eq("stageId", stageId)).iterator();
 		if (iter.hasNext()) {
 			Document document = iter.next();
 			return new Stage(document);

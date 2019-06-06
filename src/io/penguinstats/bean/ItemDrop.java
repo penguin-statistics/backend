@@ -4,67 +4,54 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class ItemDrop extends Documentable {
 
-	private int stageID;
-	private String stageType;
-	private int times;
+	private String stageId;
+	private Integer times;
 	private List<Drop> drops;
-	private long timestamp;
+	private Long timestamp;
 	private String ip;
-	private int furnitureNum;
-	private Boolean isAbnormal;
+	private Boolean isReliable;
 
 	public ItemDrop() {}
 
-	public ItemDrop(int stageID, String stageType, int times, List<Drop> drops, long timestamp, String ip,
-			int furnitureNum, Boolean isAbnormal) {
-		this.stageID = stageID;
-		this.stageType = stageType;
+	public ItemDrop(String stageId, Integer times, List<Drop> drops, Long timestamp, String ip, Boolean isReliable) {
+		this.stageId = stageId;
 		this.times = times;
 		this.drops = drops;
 		this.timestamp = timestamp;
 		this.ip = ip;
-		this.furnitureNum = furnitureNum;
-		this.isAbnormal = isAbnormal;
+		this.isReliable = isReliable;
 	}
 
 	@SuppressWarnings("unchecked")
 	public ItemDrop(Document doc) {
-		this.stageID = doc.getInteger("stageID");
-		this.stageType = doc.getString("stageType");
+		this.stageId = doc.getString("stageId");
 		this.times = doc.getInteger("times");
 		List<Document> dropsDocList = (ArrayList<Document>)doc.get("drops");
 		this.drops = new ArrayList<>();
 		dropsDocList.forEach(dropDoc -> this.drops.add(new Drop(dropDoc)));
 		this.timestamp = doc.getLong("timestamp");
 		this.ip = doc.getString("ip");
-		this.furnitureNum = doc.getInteger("furnitureNum");
-		this.isAbnormal = doc.getBoolean("isAbnormal");
+		this.isReliable = doc.getBoolean("isReliable");
 	}
 
-	public int getStageID() {
-		return stageID;
+	public String getStageId() {
+		return stageId;
 	}
 
-	public void setStageID(int stageID) {
-		this.stageID = stageID;
+	public void setStageId(String stageId) {
+		this.stageId = stageId;
 	}
 
-	public String getStageType() {
-		return stageType;
-	}
-
-	public void setStageType(String stageType) {
-		this.stageType = stageType;
-	}
-
-	public int getTimes() {
+	public Integer getTimes() {
 		return times;
 	}
 
-	public void setTimes(int times) {
+	public void setTimes(Integer times) {
 		this.times = times;
 	}
 
@@ -76,11 +63,11 @@ public class ItemDrop extends Documentable {
 		this.drops = drops;
 	}
 
-	public long getTimestamp() {
+	public Long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
+	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
 
@@ -92,20 +79,12 @@ public class ItemDrop extends Documentable {
 		this.ip = ip;
 	}
 
-	public int getFurnitureNum() {
-		return furnitureNum;
+	public Boolean getIsReliable() {
+		return isReliable;
 	}
 
-	public void setFurnitureNum(int furnitureNum) {
-		this.furnitureNum = furnitureNum;
-	}
-
-	public Boolean getIsAbnormal() {
-		return isAbnormal;
-	}
-
-	public void setIsAbnormal(Boolean isAbnormal) {
-		this.isAbnormal = isAbnormal;
+	public void setIsReliable(Boolean isReliable) {
+		this.isReliable = isReliable;
 	}
 
 	@Override
@@ -114,18 +93,23 @@ public class ItemDrop extends Documentable {
 		for (Drop drop : this.drops) {
 			drops.add(drop.toDocument());
 		}
-		Document doc = new Document().append("stageID", this.stageID).append("stageType", this.stageType)
-				.append("times", times).append("drops", drops).append("ip", this.ip).append("timestamp", this.timestamp)
-				.append("furnitureNum", this.furnitureNum);
-		if (this.isAbnormal != null) {
-			doc.append("isAbnormal", this.isAbnormal);
-		}
+		Document doc = new Document().append("stageId", this.stageId).append("times", this.times).append("drops", drops)
+				.append("ip", this.ip).append("timestamp", this.timestamp).append("isReliable", this.isReliable);
 		return doc;
 	}
 
-	public int getDropQuantity(int itemID) {
+	public JSONObject asJSON() {
+		JSONArray dropsArray = new JSONArray();
 		for (Drop drop : this.drops) {
-			if (drop.getItemID() == itemID) {
+			dropsArray.put(drop.asJSON());
+		}
+		return new JSONObject().put("stageId", this.stageId).put("times", this.times).put("drops", dropsArray)
+				.put("ip", this.ip).put("timestamp", this.timestamp).put("isReliable", this.isReliable);
+	}
+
+	public int getDropQuantity(String itemId) {
+		for (Drop drop : this.drops) {
+			if (drop.getItemId().equals(itemId)) {
 				return drop.getQuantity();
 			}
 		}

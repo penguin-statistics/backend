@@ -8,47 +8,63 @@ import org.json.JSONObject;
 
 public class Stage extends Documentable {
 
-	private int id;
+	private String stageType;
+	private String stageId;
+	private String zoneId;
 	private String code;
-	private List<Integer> normalDrop;
-	private List<Integer> specialDrop;
-	private List<Integer> extraDrop;
-	private int apCost;
-	private String category;
-	private int chapter;
+	private Integer apCost;
+	private List<String> normalDrop;
+	private List<String> specialDrop;
+	private List<String> extraDrop;
 
 	public Stage() {}
 
-	public Stage(int id, String code, List<Integer> normalDrop, List<Integer> specialDrop, List<Integer> extraDrop,
-			int apCost, String category, int chapter) {
-		this.id = id;
+	public Stage(String stageType, String stageId, String zoneId, String code, Integer apCost, List<String> normalDrop,
+			List<String> specialDrop, List<String> extraDrop) {
+		this.stageType = stageType;
+		this.stageId = stageId;
+		this.zoneId = zoneId;
 		this.code = code;
+		this.apCost = apCost;
 		this.normalDrop = normalDrop;
 		this.specialDrop = specialDrop;
 		this.extraDrop = extraDrop;
-		this.apCost = apCost;
-		this.category = category;
-		this.chapter = chapter;
 	}
 
 	@SuppressWarnings("unchecked")
 	public Stage(Document doc) {
-		this.id = doc.getInteger("id");
+		this.stageType = doc.getString("stageType");
+		this.stageId = doc.getString("stageId");
+		this.zoneId = doc.getString("zoneId");
 		this.code = doc.getString("code");
-		this.normalDrop = (ArrayList<Integer>)doc.get("normalDrop");
-		this.specialDrop = (ArrayList<Integer>)doc.get("specialDrop");
-		this.extraDrop = (ArrayList<Integer>)doc.get("extraDrop");
 		this.apCost = doc.getInteger("apCost");
-		this.category = doc.getString("category");
-		this.chapter = doc.getInteger("chapter");
+		this.normalDrop = (ArrayList<String>)doc.get("normalDrop");
+		this.specialDrop = (ArrayList<String>)doc.get("specialDrop");
+		this.extraDrop = (ArrayList<String>)doc.get("extraDrop");
 	}
 
-	public int getId() {
-		return id;
+	public String getStageType() {
+		return stageType;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setStageType(String stageType) {
+		this.stageType = stageType;
+	}
+
+	public String getStageId() {
+		return stageId;
+	}
+
+	public void setStageId(String stageId) {
+		this.stageId = stageId;
+	}
+
+	public String getZoneId() {
+		return zoneId;
+	}
+
+	public void setZoneId(String zoneId) {
+		this.zoneId = zoneId;
 	}
 
 	public String getCode() {
@@ -59,65 +75,50 @@ public class Stage extends Documentable {
 		this.code = code;
 	}
 
-	public List<Integer> getNormalDrop() {
-		return normalDrop;
-	}
-
-	public void setNormalDrop(List<Integer> normalDrop) {
-		this.normalDrop = normalDrop;
-	}
-
-	public List<Integer> getSpecialDrop() {
-		return specialDrop;
-	}
-
-	public void setSpecialDrop(List<Integer> specialDrop) {
-		this.specialDrop = specialDrop;
-	}
-
-	public List<Integer> getExtraDrop() {
-		return extraDrop;
-	}
-
-	public void setExtraDrop(List<Integer> extraDrop) {
-		this.extraDrop = extraDrop;
-	}
-
-	public int getApCost() {
+	public Integer getApCost() {
 		return apCost;
 	}
 
-	public void setApCost(int apCost) {
+	public void setApCost(Integer apCost) {
 		this.apCost = apCost;
 	}
 
-	public String getCategory() {
-		return category;
+	public List<String> getNormalDrop() {
+		return normalDrop;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setNormalDrop(List<String> normalDrop) {
+		this.normalDrop = normalDrop;
 	}
 
-	public int getChapter() {
-		return chapter;
+	public List<String> getSpecialDrop() {
+		return specialDrop;
 	}
 
-	public void setChapter(int chapter) {
-		this.chapter = chapter;
+	public void setSpecialDrop(List<String> specialDrop) {
+		this.specialDrop = specialDrop;
+	}
+
+	public List<String> getExtraDrop() {
+		return extraDrop;
+	}
+
+	public void setExtraDrop(List<String> extraDrop) {
+		this.extraDrop = extraDrop;
 	}
 
 	@Override
 	public Document toDocument() {
-		return new Document().append("id", this.id).append("code", this.code).append("normalDrop", normalDrop)
-				.append("specialDrop", specialDrop).append("extraDrop", extraDrop).append("apCost", apCost)
-				.append("category", category).append("chapter", chapter);
+		return new Document().append("stageType", this.stageType).append("stageId", this.stageId)
+				.append("zoneId", this.zoneId).append("code", this.code).append("apCost", this.apCost)
+				.append("normalDrop", this.normalDrop).append("specialDrop", this.specialDrop)
+				.append("extraDrop", this.extraDrop);
 	}
 
 	public JSONObject asJSON() {
-		return new JSONObject().put("id", this.id).put("code", this.code).put("normalDrop", normalDrop)
-				.put("specialDrop", specialDrop).put("extraDrop", extraDrop).put("apCost", apCost)
-				.put("category", category).put("chapter", chapter);
+		return new JSONObject().put("stageType", this.stageType).put("stageId", this.stageId).put("zoneId", this.zoneId)
+				.put("code", this.code).put("apCost", this.apCost).put("normalDrop", this.normalDrop)
+				.put("specialDrop", this.specialDrop).put("extraDrop", this.extraDrop);
 	}
 
 }

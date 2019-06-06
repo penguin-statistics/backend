@@ -10,7 +10,7 @@ import io.penguinstats.dao.StageDao;
 public class StageService {
 
 	private static StageService instance = new StageService();
-	private static StageDao dao = new StageDao();
+	private static StageDao stageDao = new StageDao();
 
 	private StageService() {}
 
@@ -19,21 +19,31 @@ public class StageService {
 	}
 
 	public boolean saveStage(Stage stage) {
-		return dao.save(stage);
+		return stageDao.save(stage);
 	}
 
-	public Stage getStage(int id) {
-		return dao.findByID(id);
+	public Stage getStage(String stageId) {
+		return stageDao.findByStageId(stageId);
 	}
 
+	/**
+	 * @Title: getAllStages
+	 * @Description: Return all stages in the database as a list.
+	 * @return List<Stage>
+	 */
 	public List<Stage> getAllStages() {
-		return dao.findAll();
+		return stageDao.findAll();
 	}
 
-	public Map<Integer, Stage> getStageMap() {
+	/**
+	 * @Title: getStageMap
+	 * @Description: Return a map which has stageId as key and stage object as value.
+	 * @return Map<String,Stage>
+	 */
+	public Map<String, Stage> getStageMap() {
 		List<Stage> list = getAllStages();
-		Map<Integer, Stage> map = new HashMap<>();
-		list.forEach(stage -> map.put(stage.getId(), stage));
+		Map<String, Stage> map = new HashMap<>();
+		list.forEach(stage -> map.put(stage.getStageId(), stage));
 		return map;
 	}
 
