@@ -59,7 +59,8 @@ public class ReportAPI {
 			boolean result = itemDropService.saveItemDrop(itemDrop);
 			if (isReliable) {
 				for (Drop drop : drops)
-					dropMatrixService.addDrop(stageId, drop.getItemId(), 1, drop.getQuantity());
+					dropMatrixService.increateQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
+				dropMatrixService.increateTimesForOneStage(stageId, 1);
 			}
 			if (result)
 				return Response.ok().build();

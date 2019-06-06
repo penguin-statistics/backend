@@ -38,20 +38,30 @@ public class DropMatrixService {
 	}
 
 	/**
-	 * @Title: addDrop
-	 * @Description: One drop record comes and update quantity for one element and update times for a row.
+	 * @Title: increateQuantityForOneElement
+	 * @Description: Increace quantity for one element. If the element is not existed, a new one will be created.
 	 * @param stageId
 	 * @param itemId
-	 * @param times
 	 * @param quantity
+	 * @return void
 	 */
-	public void addDrop(String stageId, String itemId, Integer times, Integer quantity) {
+	public void increateQuantityForOneElement(String stageId, String itemId, Integer quantity) {
 		DropMatrix dropMatrix = dropMatrixDao.findElement(stageId, itemId);
 		if (dropMatrix == null) {
 			dropMatrix = new DropMatrix(stageId, itemId, 0, 0);
 			dropMatrixDao.save(dropMatrix);
 		}
 		dropMatrixDao.increateQuantityForOneElement(stageId, itemId, quantity);
+	}
+
+	/**
+	 * @Title: increateTimesForOneStage
+	 * @Description: Increase times for all records in the given stage.
+	 * @param stageId
+	 * @param times
+	 * @return void
+	 */
+	public void increateTimesForOneStage(String stageId, Integer times) {
 		dropMatrixDao.increateTimesForOneStage(stageId, times);
 	}
 
