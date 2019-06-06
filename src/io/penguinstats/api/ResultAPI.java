@@ -118,11 +118,13 @@ public class ResultAPI {
 		obj.put("stage", stageMap.get(stageId).asJSON());
 		JSONArray dropsArray = new JSONArray();
 		for (DropMatrix dropMatrix : elements) {
-			JSONObject subObj =
-					new JSONObject().put("quantity", dropMatrix.getQuantity()).put("times", dropMatrix.getTimes());
-			Item item = itemMap.get(dropMatrix.getItemId());
-			subObj.put("item", item.asJSON());
-			dropsArray.put(subObj);
+			if (dropMatrix.getStageId().equals(stageId)) {
+				JSONObject subObj =
+						new JSONObject().put("quantity", dropMatrix.getQuantity()).put("times", dropMatrix.getTimes());
+				Item item = itemMap.get(dropMatrix.getItemId());
+				subObj.put("item", item.asJSON());
+				dropsArray.put(subObj);
+			}
 		}
 		obj.put("drops", dropsArray);
 		return obj;
@@ -135,11 +137,13 @@ public class ResultAPI {
 		obj.put("item", itemMap.get(itemId).asJSON());
 		JSONArray dropsArray = new JSONArray();
 		for (DropMatrix dropMatrix : elements) {
-			JSONObject subObj =
-					new JSONObject().put("quantity", dropMatrix.getQuantity()).put("times", dropMatrix.getTimes());
-			Stage stage = stageMap.get(dropMatrix.getStageId());
-			subObj.put("stage", stage.asJSON());
-			dropsArray.put(subObj);
+			if (dropMatrix.getItemId().equals(itemId)) {
+				JSONObject subObj =
+						new JSONObject().put("quantity", dropMatrix.getQuantity()).put("times", dropMatrix.getTimes());
+				Stage stage = stageMap.get(dropMatrix.getStageId());
+				subObj.put("stage", stage.asJSON());
+				dropsArray.put(subObj);
+			}
 		}
 		obj.put("drops", dropsArray);
 		return obj;
