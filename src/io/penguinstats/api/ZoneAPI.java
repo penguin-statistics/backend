@@ -35,7 +35,7 @@ public class ZoneAPI {
 	@GET
 	@Path("/{zoneId}/stage")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getStages(@PathParam("chapterID") String zoneId) {
+	public Response getStages(@PathParam("zoneId") String zoneId) {
 		if (zoneId == null)
 			return Response.status(Status.BAD_REQUEST).build();
 		Zone zone = zoneService.getZone(zoneId);

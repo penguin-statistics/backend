@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.DropMatrix;
+import io.penguinstats.bean.Item;
 import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.dao.ItemDropDao;
 
@@ -35,6 +36,10 @@ public class ItemDropService {
 
 	public List<ItemDrop> getAllItemDrops() {
 		return itemDropDao.findAll();
+	}
+
+	public List<ItemDrop> getAllReliableItemDrops() {
+		return itemDropDao.findAllReliableItemDrops();
 	}
 
 	/**
@@ -76,19 +81,19 @@ public class ItemDropService {
 			dropMatrixMap.put(itemDrop.getStageId(), subMap);
 		}
 		// Populate 'stage played times' into DropMatrix objects with the help of stageTimesMap.
+		Map<String, Item> itemMap = itemService.getItemMap();
 		for (String stageId : dropMatrixMap.keySet()) {
 			Map<String, DropMatrix> subMap = dropMatrixMap.get(stageId);
 			List<Integer> subList = stageTimesMap.get(stageId);
 			for (String itemId : subMap.keySet()) {
 				DropMatrix dropMatrix = subMap.get(itemId);
-				Integer addTimePoint = itemService.getAddTimePoint(itemId);
-				if (addTimePoint == null) {
-					logger.error("Failed to get addTimePoint for item" + itemId);
-				} else {
-					dropMatrix.increateTimes(subList.get(addTimePoint));
-					dropMatrixList.add(dropMatrix);
-					logger.debug(dropMatrix.asJSON().toString());
-				}
+				Item item = itemMap.get(itemId);
+				Integer addTimePoint = item.getAddTimePoint();
+				if (addTimePoint == null)
+					addTimePoint = 0;
+				dropMatrix.increateTimes(subList.get(addTimePoint));
+				dropMatrixList.add(dropMatrix);
+				logger.debug(dropMatrix.asJSON().toString());
 			}
 		}
 		return dropMatrixList;

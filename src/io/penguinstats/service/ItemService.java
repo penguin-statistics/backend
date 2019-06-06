@@ -47,18 +47,4 @@ public class ItemService {
 		return map;
 	}
 
-	/**
-	 * @Title: getAddTimePoint
-	 * @Description: Return addTimePoint of an item.<br>
-	 *               If the item is not existed, return null.<br>
-	 *               If addTimePoint is null, then return 0, which means this item is added from the start of this
-	 *               project.
-	 * @param itemId
-	 * @return Integer
-	 */
-	public Integer getAddTimePoint(String itemId) {
-		Item item = getItem(itemId);
-		return item == null ? null : item.getAddTimePoint() == null ? 0 : item.getAddTimePoint();
-	}
-
 }

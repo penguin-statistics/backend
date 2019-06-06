@@ -1,5 +1,6 @@
 package io.penguinstats.api;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -23,10 +24,13 @@ public class ItemAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllItems() {
 		List<Item> items = itemService.getAllItems();
-		items.sort((a, b) -> {
-			if (a.getSortId() == null && b.getSortId() == null)
-				return a.getName().compareTo(b.getName());
-			return a.getSortId() == null ? 1 : b.getSortId() == null ? -1 : a.getSortId() - b.getSortId();
+		items.sort(new Comparator<Item>() {
+			@Override
+			public int compare(Item a, Item b) {
+				if (a.getSortId() == null && b.getSortId() == null)
+					return a.getName().compareTo(b.getName());
+				return a.getSortId() == null ? 1 : b.getSortId() == null ? -1 : a.getSortId() - b.getSortId();
+			}
 		});
 		JSONArray itemsJSONArray = new JSONArray();
 		for (Item item : items) {

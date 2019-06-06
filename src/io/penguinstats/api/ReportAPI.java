@@ -18,21 +18,19 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import io.penguinstats.bean.Drop;
+import io.penguinstats.bean.Item;
 import io.penguinstats.bean.ItemDrop;
-import io.penguinstats.bean.Material;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.ItemService;
-import io.penguinstats.service.StageTimesService;
 import io.penguinstats.util.APIUtil;
 
 @Path("/report")
 public class ReportAPI {
 
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
-	private static final StageTimesService stageTimesService = StageTimesService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
-	private static final ItemService materialService = ItemService.getInstance();
+	private static final ItemService itemService = ItemService.getInstance();
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
@@ -42,30 +40,26 @@ public class ReportAPI {
 			JSONObject obj = new JSONObject(jsonString);
 			logger.info("POST /report\n" + obj.toString(2));
 			String ip = getClientIp(request);
-			int stageID = obj.getInt("stageID");
-			String stageType = obj.getString("stageType");
+			String stageId = obj.getString("stageId");
 			int furnitureNum = obj.getInt("furnitureNum");
 			JSONArray dropsArray = obj.getJSONArray("drops");
 			List<Drop> drops = new ArrayList<>();
 			for (int i = 0; i < dropsArray.length(); i++) {
 				JSONObject dropObj = dropsArray.getJSONObject(i);
-				Drop drop = new Drop(dropObj.getInt("itemID"), dropObj.getInt("quantity"));
+				Drop drop = new Drop(dropObj.getString("itemId"), dropObj.getInt("quantity"));
 				drops.add(drop);
 			}
-			Boolean isAbnormal = !checkDrops(drops);
-			if (isAbnormal)
+			if (furnitureNum > 0)
+				drops.add(new Drop("furni", furnitureNum));
+			Boolean isReliable = checkDrops(drops) && (furnitureNum <= 1);
+			if (!isReliable)
 				logger.warn("Abnormal drop data!");
 			Long timestamp = System.currentTimeMillis();
-			ItemDrop itemDrop = new ItemDrop(stageID, stageType, 1, drops, timestamp, ip, furnitureNum, isAbnormal);
+			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
-			if (!isAbnormal) {
-				stageTimesService.addStageTimes(stageID, stageType, 1, timestamp);
-				for (Drop drop : drops) {
-					dropMatrixService.addDropMatrix(stageID, stageType, drop.getItemID(), drop.getQuantity());
-				}
-				if (furnitureNum != 0) {
-					dropMatrixService.addDropMatrix(stageID, stageType, -1, furnitureNum);
-				}
+			if (isReliable) {
+				for (Drop drop : drops)
+					dropMatrixService.addDrop(stageId, drop.getItemId(), 1, drop.getQuantity());
 			}
 			if (result)
 				return Response.ok().build();
@@ -89,15 +83,15 @@ public class ReportAPI {
 	}
 
 	private boolean checkDrops(List<Drop> drops) {
-		Map<Integer, Material> map = materialService.getMaterialMap();
+		Map<String, Item> map = itemService.getItemMap();
 		for (Drop drop : drops) {
-			int itemID = drop.getItemID();
-			if (!map.containsKey(itemID))
+			String itemId = drop.getItemId();
+			if (!map.containsKey(itemId))
 				return false;
-			Material material = map.get(itemID);
-			if (material.getItemType().equals("gold") || material.getItemType().equals("exp"))
+			Item item = map.get(itemId);
+			if (item.getItemType().equals("CARD_EXP") || item.getName().equals("赤金"))
 				continue;
-			int rarity = material.getRarity();
+			int rarity = item.getRarity();
 			int quantity = drop.getQuantity();
 			if (rarity == 0 && quantity >= 5)
 				return false;
