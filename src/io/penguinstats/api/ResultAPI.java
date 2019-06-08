@@ -102,20 +102,20 @@ public class ResultAPI {
 	@GET
 	@Path("/matrix")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getMatrix(@DefaultValue("false") @QueryParam("show_item_name") boolean showItemName,
-			@DefaultValue("false") @QueryParam("show_stage_code") boolean showStageCode) {
+	public Response getMatrix(@DefaultValue("false") @QueryParam("show_item_details") boolean showItemDetails,
+			@DefaultValue("false") @QueryParam("show_stage_details") boolean showStageDetails) {
 		logger.info("GET /matrix");
 		JSONObject obj = new JSONObject();
 		JSONArray array = new JSONArray();
 		List<DropMatrix> elements = dropMatrixService.getAllElements();
-		Map<String, Item> itemMap = !showItemName ? null : itemService.getItemMap();
-		Map<String, Stage> stageMap = !showStageCode ? null : stageService.getStageMap();
+		Map<String, Item> itemMap = !showItemDetails ? null : itemService.getItemMap();
+		Map<String, Stage> stageMap = !showStageDetails ? null : stageService.getStageMap();
 		for (DropMatrix element : elements) {
 			JSONObject subObj = element.asJSON();
-			if (showItemName)
-				subObj.put("itemName", itemMap.get(element.getItemId()).getName());
-			if (showStageCode)
-				subObj.put("stageCode", stageMap.get(element.getStageId()).getCode());
+			if (showItemDetails)
+				subObj.put("item", itemMap.get(element.getItemId()).asJSON());
+			if (showStageDetails)
+				subObj.put("stage", stageMap.get(element.getStageId()).asJSON());
 			array.put(subObj);
 		}
 		obj.put("matrix", array);
