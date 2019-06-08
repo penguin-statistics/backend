@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -100,12 +102,21 @@ public class ResultAPI {
 	@GET
 	@Path("/matrix")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getMatrix() {
+	public Response getMatrix(@DefaultValue("false") @QueryParam("show_item_name") boolean showItemName,
+			@DefaultValue("false") @QueryParam("show_stage_code") boolean showStageCode) {
+		logger.info("GET /matrix");
 		JSONObject obj = new JSONObject();
 		JSONArray array = new JSONArray();
 		List<DropMatrix> elements = dropMatrixService.getAllElements();
+		Map<String, Item> itemMap = !showItemName ? null : itemService.getItemMap();
+		Map<String, Stage> stageMap = !showStageCode ? null : stageService.getStageMap();
 		for (DropMatrix element : elements) {
-			array.put(element.asJSON());
+			JSONObject subObj = element.asJSON();
+			if (showItemName)
+				subObj.put("itemName", itemMap.get(element.getItemId()).getName());
+			if (showStageCode)
+				subObj.put("stageCode", stageMap.get(element.getStageId()).getCode());
+			array.put(subObj);
 		}
 		obj.put("matrix", array);
 		return Response.ok(obj.toString()).build();
