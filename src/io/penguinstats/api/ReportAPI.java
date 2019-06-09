@@ -90,7 +90,8 @@ public class ReportAPI {
 			if (!map.containsKey(itemId))
 				return false;
 			Item item = map.get(itemId);
-			if (item.getItemType().equals("CARD_EXP") || item.getName().equals("赤金"))
+			if (item.getItemType().equals("CARD_EXP") || item.getName().equals("赤金") || item.getName().contains("碳")
+					|| item.getName().contains("技巧概要"))
 				continue;
 			int rarity = item.getRarity();
 			int quantity = drop.getQuantity();
