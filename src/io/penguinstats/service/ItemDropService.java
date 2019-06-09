@@ -22,7 +22,7 @@ public class ItemDropService {
 	private static ItemDropService instance = new ItemDropService();
 	private static Logger logger = LogManager.getLogger(ItemDropService.class);
 
-	public static final Long[] ADD_TIME_POINTS = new Long[] {0L, 1558989300000L};
+	public static final Long[] ADD_TIME_POINTS = new Long[] {0L, 1558989300000L, 1560045456000L};
 
 	private ItemDropService() {}
 
