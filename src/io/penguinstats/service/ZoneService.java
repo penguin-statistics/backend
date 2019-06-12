@@ -1,6 +1,8 @@
 package io.penguinstats.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.penguinstats.bean.Zone;
 import io.penguinstats.dao.ZoneDao;
@@ -31,6 +33,18 @@ public class ZoneService {
 	 */
 	public List<Zone> getAllZones() {
 		return zoneDao.findAll();
+	}
+
+	/**
+	 * @Title: getZoneMap
+	 * @Description: Return a map which has zoneId as key and zone object as value.
+	 * @return Map<String,Zone>
+	 */
+	public Map<String, Zone> getZoneMap() {
+		List<Zone> list = getAllZones();
+		Map<String, Zone> map = new HashMap<>();
+		list.forEach(zone -> map.put(zone.getZoneId(), zone));
+		return map;
 	}
 
 }
