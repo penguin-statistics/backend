@@ -13,6 +13,20 @@
 	    <version>3.10.2</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/org.mongodb/mongodb-driver-core -->
+	<dependency>
+	    <groupId>org.mongodb</groupId>
+	    <artifactId>mongodb-driver-core</artifactId>
+	    <version>3.10.2</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.mongodb/bson -->
+	<dependency>
+	    <groupId>org.mongodb</groupId>
+	    <artifactId>bson</artifactId>
+	    <version>3.10.2</version>
+	</dependency>
+	
 	<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
 	<dependency>
 	    <groupId>commons-io</groupId>
