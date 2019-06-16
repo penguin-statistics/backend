@@ -25,6 +25,18 @@ public class StageAPI {
 	private static final ItemService itemService = ItemService.getInstance();
 
 	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getStages() {
+		Map<String, Stage> stageMap = stageService.getStageMap();
+		JSONArray stagesJSONArray = new JSONArray();
+		for (Stage stage : stageMap.values()) {
+			JSONObject stageJSONObj = stage.asJSON();
+			stagesJSONArray.put(stageJSONObj);
+		}
+		return Response.ok().entity(new JSONObject().put("stages", stagesJSONArray).toString()).build();
+	}
+
+	@GET
 	@Path("/{stageId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDetailedStage(@PathParam("stageId") String stageId) {

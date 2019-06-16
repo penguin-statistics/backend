@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,14 +24,17 @@ import org.json.JSONObject;
 import io.penguinstats.bean.DropMatrix;
 import io.penguinstats.bean.Item;
 import io.penguinstats.bean.Stage;
+import io.penguinstats.bean.Zone;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.service.StageService;
+import io.penguinstats.service.ZoneService;
 import io.penguinstats.util.APIUtil;
 
 @Path("/result")
 public class ResultAPI {
 
+	private static final ZoneService zoneService = ZoneService.getInstance();
 	private static final StageService stageService = StageService.getInstance();
 	private static final ItemService itemService = ItemService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
@@ -100,15 +105,41 @@ public class ResultAPI {
 	@GET
 	@Path("/matrix")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getMatrix() {
-		JSONObject obj = new JSONObject();
-		JSONArray array = new JSONArray();
-		List<DropMatrix> elements = dropMatrixService.getAllElements();
-		for (DropMatrix element : elements) {
-			array.put(element.asJSON());
+	public Response getMatrix(@DefaultValue("false") @QueryParam("show_item_details") boolean showItemDetails,
+			@DefaultValue("false") @QueryParam("show_stage_details") boolean showStageDetails,
+			@DefaultValue("false") @QueryParam("show_closed_zones") boolean showClosedZones) {
+		try {
+			logger.info("GET /matrix");
+			JSONObject obj = new JSONObject();
+			JSONArray array = new JSONArray();
+			List<DropMatrix> elements = dropMatrixService.getAllElements();
+			Map<String, Zone> zoneMap = showClosedZones ? null : zoneService.getZoneMap();
+			Map<String, Item> itemMap = !showItemDetails ? null : itemService.getItemMap();
+			Map<String, Stage> stageMap = !showStageDetails && showClosedZones ? null : stageService.getStageMap();
+
+			for (DropMatrix element : elements) {
+				JSONObject subObj = element.asJSON();
+				if (!showClosedZones) {
+					Stage stage = stageMap.get(element.getStageId());
+					Zone zone = zoneMap.get(stage.getZoneId());
+					Long currentTime = System.currentTimeMillis();
+					if (zone.getOpenTime() != null && zone.getOpenTime().compareTo(currentTime) > 0
+							|| zone.getCloseTime() != null && zone.getCloseTime().compareTo(currentTime) < 0) {
+						continue;
+					}
+				}
+				if (showItemDetails)
+					subObj.put("item", itemMap.get(element.getItemId()).asJSON());
+				if (showStageDetails)
+					subObj.put("stage", stageMap.get(element.getStageId()).asJSON());
+				array.put(subObj);
+			}
+			obj.put("matrix", array);
+			return Response.ok(obj.toString()).build();
+		} catch (Exception e) {
+			logger.error("Error in getMatrix", e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
-		obj.put("matrix", array);
-		return Response.ok(obj.toString()).build();
 	}
 
 	private JSONObject generateReturnObjForOneStage(String stageId, List<DropMatrix> elements) {
