@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  mvn_build:
+    image: maven:3.6.1-jdk-12
+    volumes:
+      - .:/PenguinStats
+    working_dir: /PenguinStats
+    command: mvn clean package
+
+  mongodb:
+    image: mongo:4.0.10-xenial
+    restart: always
+    volumes:
+      - ./WebContent/WEB-INF/localdb:/docker-entrypoint-initdb.d
+    environment:
+      MONGO_INITDB_DATABASE: penguin_stats
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+  mongo_express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    depends_on:
+      - mongodb
+
+  penguin_server:
+    image: tomcat:9.0.21-jdk11
+    ports:
+      - "8080:8080"
+    volumes: 
+      - ./target/PenguinStats-0.0.1-SNAPSHOT.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./target/PenguinStats-0.0.1-SNAPSHOT:/usr/local/tomcat/webapps/ROOT
+      - ./WebContent/WEB-INF/localdb/localdb.properties:/usr/local/tomcat/webapps/PenguinStats/WEB-INF/mongodb.properties
+    depends_on:
+      - mongodb

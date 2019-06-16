@@ -45,3 +45,4 @@ mongodb.properties
 *.ear
 *.sar
 *.class
+.factorypath
