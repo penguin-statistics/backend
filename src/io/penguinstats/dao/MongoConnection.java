@@ -72,9 +72,10 @@ public class MongoConnection {
 			try {
 				mongo.close();
 				mongo = null;
+				logger.info("Connection with MongoDB was closed.");
 			} catch (Exception e) {
+				logger.error(e);
 			}
-		} else {
 		}
 	}
 
