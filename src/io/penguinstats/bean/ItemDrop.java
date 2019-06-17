@@ -15,16 +15,21 @@ public class ItemDrop extends Documentable {
 	private Long timestamp;
 	private String ip;
 	private Boolean isReliable;
+	private String source;
+	private String version;
 
 	public ItemDrop() {}
 
-	public ItemDrop(String stageId, Integer times, List<Drop> drops, Long timestamp, String ip, Boolean isReliable) {
+	public ItemDrop(String stageId, Integer times, List<Drop> drops, Long timestamp, String ip, Boolean isReliable,
+			String source, String version) {
 		this.stageId = stageId;
 		this.times = times;
 		this.drops = drops;
 		this.timestamp = timestamp;
 		this.ip = ip;
 		this.isReliable = isReliable;
+		this.source = source;
+		this.version = version;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -37,6 +42,8 @@ public class ItemDrop extends Documentable {
 		this.timestamp = doc.getLong("timestamp");
 		this.ip = doc.getString("ip");
 		this.isReliable = doc.getBoolean("isReliable");
+		this.source = doc.getString("source");
+		this.version = doc.getString("version");
 	}
 
 	public String getStageId() {
@@ -87,6 +94,22 @@ public class ItemDrop extends Documentable {
 		this.isReliable = isReliable;
 	}
 
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 	@Override
 	public Document toDocument() {
 		List<Document> drops = new ArrayList<>();
@@ -94,7 +117,8 @@ public class ItemDrop extends Documentable {
 			drops.add(drop.toDocument());
 		}
 		Document doc = new Document().append("stageId", this.stageId).append("times", this.times).append("drops", drops)
-				.append("ip", this.ip).append("timestamp", this.timestamp).append("isReliable", this.isReliable);
+				.append("ip", this.ip).append("timestamp", this.timestamp).append("isReliable", this.isReliable)
+				.append("source", this.source).append("version", this.version);
 		return doc;
 	}
 
@@ -104,7 +128,8 @@ public class ItemDrop extends Documentable {
 			dropsArray.put(drop.asJSON());
 		}
 		return new JSONObject().put("stageId", this.stageId).put("times", this.times).put("drops", dropsArray)
-				.put("ip", this.ip).put("timestamp", this.timestamp).put("isReliable", this.isReliable);
+				.put("ip", this.ip).put("timestamp", this.timestamp).put("isReliable", this.isReliable)
+				.put("source", this.source).put("version", this.version);
 	}
 
 	public int getDropQuantity(String itemId) {
