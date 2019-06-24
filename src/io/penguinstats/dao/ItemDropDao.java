@@ -1,5 +1,6 @@
 package io.penguinstats.dao;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 import java.util.ArrayList;
@@ -25,6 +26,16 @@ public class ItemDropDao extends BaseDao<ItemDrop> {
 	public List<ItemDrop> findAllReliableItemDrops() {
 		List<ItemDrop> itemDrops = new ArrayList<>();
 		MongoCursor<Document> iter = collection.find(eq("isReliable", true)).iterator();
+		while (iter.hasNext()) {
+			Document document = iter.next();
+			itemDrops.add(new ItemDrop(document));
+		}
+		return itemDrops;
+	}
+
+	public List<ItemDrop> findAllReliableItemDropsByStageId(String stageId) {
+		List<ItemDrop> itemDrops = new ArrayList<>();
+		MongoCursor<Document> iter = collection.find(and(eq("isReliable", true), eq("stageId", stageId))).iterator();
 		while (iter.hasNext()) {
 			Document document = iter.next();
 			itemDrops.add(new ItemDrop(document));
