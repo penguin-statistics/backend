@@ -4,6 +4,11 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Updates.inc;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 
 import com.mongodb.client.MongoCursor;
@@ -11,6 +16,8 @@ import com.mongodb.client.MongoCursor;
 import io.penguinstats.bean.DropMatrix;
 
 public class DropMatrixDao extends BaseDao<DropMatrix> {
+
+	private static Logger logger = LogManager.getLogger(DropMatrixDao.class);
 
 	public DropMatrixDao() {
 		super("drop_matrix_v2");
@@ -23,6 +30,19 @@ public class DropMatrixDao extends BaseDao<DropMatrix> {
 			return new DropMatrix(document);
 		}
 		return null;
+	}
+
+	public List<DropMatrix> findElementsByStageId(String stageId) {
+		List<DropMatrix> list = new ArrayList<>();
+		MongoCursor<Document> iter = collection.find(eq("stageId", stageId)).iterator();
+		while (iter.hasNext()) {
+			try {
+				list.add(new DropMatrix(iter.next()));
+			} catch (Exception e) {
+				logger.error("Error in findElementsByStageId", e);
+			}
+		}
+		return list;
 	}
 
 	public void increateTimesForOneStage(String stageId, Integer times) {

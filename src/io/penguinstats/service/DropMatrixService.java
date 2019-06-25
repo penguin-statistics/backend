@@ -1,11 +1,17 @@
 package io.penguinstats.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.penguinstats.bean.DropMatrix;
+import io.penguinstats.bean.Stage;
 import io.penguinstats.dao.DropMatrixDao;
 
 public class DropMatrixService {
+
+	private static final StageService stageService = StageService.getInstance();
 
 	private static DropMatrixService instance = new DropMatrixService();
 	private static DropMatrixDao dropMatrixDao = new DropMatrixDao();
@@ -39,18 +45,13 @@ public class DropMatrixService {
 
 	/**
 	 * @Title: increateQuantityForOneElement
-	 * @Description: Increace quantity for one element. If the element is not existed, a new one will be created.
+	 * @Description: Increase quantity for one element.
 	 * @param stageId
 	 * @param itemId
 	 * @param quantity
 	 * @return void
 	 */
 	public void increateQuantityForOneElement(String stageId, String itemId, Integer quantity) {
-		DropMatrix dropMatrix = dropMatrixDao.findElement(stageId, itemId);
-		if (dropMatrix == null) {
-			dropMatrix = new DropMatrix(stageId, itemId, 0, 0);
-			dropMatrixDao.save(dropMatrix);
-		}
 		dropMatrixDao.increateQuantityForOneElement(stageId, itemId, quantity);
 	}
 
@@ -63,6 +64,37 @@ public class DropMatrixService {
 	 */
 	public void increateTimesForOneStage(String stageId, Integer times) {
 		dropMatrixDao.increateTimesForOneStage(stageId, times);
+	}
+
+	/**
+	 * @Title: hasElementsForOneStage
+	 * @Description: Return false if one stage has no elements at all.
+	 * @param stageId
+	 * @return boolean
+	 */
+	public boolean hasElementsForOneStage(String stageId) {
+		return !dropMatrixDao.findElementsByStageId(stageId).isEmpty();
+	}
+
+	/**
+	 * @Title: initializeElementsForOneStage
+	 * @Description: Create an element for each drop item in one stage with quantity = 0 and times = 0 in the matrix.
+	 * @param stageId
+	 * @return void
+	 */
+	public boolean initializeElementsForOneStage(String stageId) {
+		Stage stage = stageService.getStage(stageId);
+		if (stage == null)
+			return false;
+		Set<String> dropSet = new HashSet<>();
+		dropSet.addAll(stage.getNormalDrop());
+		dropSet.addAll(stage.getSpecialDrop());
+		dropSet.addAll(stage.getExtraDrop());
+		List<DropMatrix> list = new ArrayList<>();
+		for (String itemId : dropSet)
+			list.add(new DropMatrix(stageId, itemId, 0, 0));
+		dropMatrixDao.batchSave(list);
+		return true;
 	}
 
 }

@@ -65,6 +65,8 @@ public class ReportAPI {
 			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
 			if (isReliable) {
+				if (!dropMatrixService.hasElementsForOneStage(stageId))
+					dropMatrixService.initializeElementsForOneStage(stageId);
 				for (Drop drop : drops)
 					dropMatrixService.increateQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
 				dropMatrixService.increateTimesForOneStage(stageId, 1);
