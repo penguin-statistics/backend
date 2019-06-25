@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,14 +34,19 @@ public class Scripts {
 	private static final StageService stageService = StageService.getInstance();
 
 	public static void main(String[] args) {
-		printAllItemDropDistribution();
+		// printAllItemDropDistribution();
+		clearAndUpdateDropMatrix();
 	}
 
 	private static void printAllItemDropDistribution() {
 		ItemDropDao dao = new ItemDropDao();
 		List<ItemDrop> list = dao.findAllReliableItemDrops();
 		System.out.println("Find all itemDrops: size = " + list.size());
-		Map<String, List<ItemDrop>> mapByStage = new HashMap<>();
+		Map<String, List<ItemDrop>> mapByStage = new TreeMap<>(new Comparator<String>() {
+			public int compare(String s1, String s2) {
+				return s1.compareTo(s2);
+			}
+		});
 		Map<Integer, Integer> dropTypesMap = new HashMap<>();
 		for (ItemDrop itemDrop : list) {
 			String stageId = itemDrop.getStageId();
@@ -51,9 +58,10 @@ public class Scripts {
 		Map<String, Stage> stageMap = stageService.getStageMap();
 		for (String stageId : mapByStage.keySet()) {
 			List<ItemDrop> drops = mapByStage.get(stageId);
-			if (drops.size() < 200)
-				continue;
+			// if (drops.size() < 200)
+			// continue;
 			Map<String, Map<Integer, Integer>> itemDropNumMap = new HashMap<>();
+			Map<Integer, Integer> subDropTypesMap = new HashMap<>();
 			for (ItemDrop itemDrop : drops) {
 				List<Drop> ds = itemDrop.getDrops();
 				boolean containsFurniture = false;
@@ -70,6 +78,8 @@ public class Scripts {
 				int dropTypes = ds.size();
 				if (containsFurniture)
 					dropTypes = Math.max(0, dropTypes - 1);
+				subDropTypesMap.put(0, subDropTypesMap.getOrDefault(0, drops.size()) - 1);
+				subDropTypesMap.put(dropTypes, subDropTypesMap.getOrDefault(dropTypes, 0) + 1);
 				dropTypesMap.put(0, dropTypesMap.getOrDefault(0, list.size()) - 1);
 				dropTypesMap.put(dropTypes, dropTypesMap.getOrDefault(dropTypes, 0) + 1);
 			}
@@ -93,9 +103,10 @@ public class Scripts {
 			}
 			if (!dropSet.isEmpty())
 				System.out.println("\t无掉落汇报：" + dropSet.toString());
+			System.out.println("掉落种类数分布：" + subDropTypesMap.toString());
 			System.out.println("-----------------------------------------\n");
 		}
-		System.out.println("全体掉落数量分布：");
+		System.out.println("全体掉落种类数分布：");
 		System.out.println(dropTypesMap.toString());
 	}
 
