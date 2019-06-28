@@ -1,7 +1,11 @@
 package io.penguinstats.bean;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bson.Document;
 import org.json.JSONArray;
@@ -82,8 +86,84 @@ public class Limitation extends Documentable {
 		for (ItemQuantityBounds itemQuantityBounds : this.itemQuantityBounds) {
 			itemQuantityBoundsArray.put(itemQuantityBounds.asJSON());
 		}
-		return new JSONObject().put("name", this.name).put("itemTypeBounds", this.itemTypeBounds.asJSON())
-				.put("itemQuantityBounds", itemQuantityBoundsArray).put("inheritance", this.inheritance);
+		JSONObject obj = new JSONObject().put("name", this.name).put("itemTypeBounds", this.itemTypeBounds.asJSON())
+				.put("itemQuantityBounds", itemQuantityBoundsArray);
+		if (this.inheritance != null && !this.inheritance.isEmpty())
+			obj.put("inheritance", this.inheritance);
+		return obj;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.name).append("\n");
+		if (this.itemTypeBounds != null) {
+			sb.append("\tTypes: ").append(this.itemTypeBounds.toString()).append("\n");
+		}
+		if (this.itemQuantityBounds != null && !this.itemQuantityBounds.isEmpty()) {
+			sb.append("\tItems: \n");
+			for (ItemQuantityBounds itemQuantityBounds : this.itemQuantityBounds) {
+				sb.append("\t\t").append(itemQuantityBounds.toString()).append("\n");
+			}
+		}
+		if (this.inheritance != null && !this.inheritance.isEmpty()) {
+			sb.append("\tInheritance: ").append(this.inheritance.toString()).append("\n");
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * @Title: getItemQuantityBoundsMap
+	 * @Description: Return a map which has itemId as key and ItemQuantityBounds object as value.
+	 * @return Map<String,ItemQuantityBounds>
+	 */
+	public Map<String, ItemQuantityBounds> getItemQuantityBoundsMap() {
+		Map<String, ItemQuantityBounds> itemQuantityBoundsMap = new HashMap<>();
+		if (this.itemQuantityBounds != null) {
+			for (ItemQuantityBounds bounds : this.itemQuantityBounds)
+				itemQuantityBoundsMap.put(bounds.getItemId(), bounds);
+		}
+		return itemQuantityBoundsMap;
+	}
+
+	/**
+	 * @Title: merge
+	 * @Description: Merge bounds in other limitation into this one. The bounds in this limitation will NOT be covered
+	 *               by the other one. Inheritance will be ignored.
+	 * @param otherLimitation
+	 * @return void
+	 */
+	public void merge(Limitation otherLimitation) {
+		if (this.itemTypeBounds == null && otherLimitation.itemTypeBounds != null)
+			this.itemTypeBounds = otherLimitation.itemTypeBounds;
+
+		Map<String, ItemQuantityBounds> mapThis = this.getItemQuantityBoundsMap();
+		Map<String, ItemQuantityBounds> mapOther = otherLimitation.getItemQuantityBoundsMap();
+		for (String itemId : mapOther.keySet()) {
+			if (!mapThis.containsKey(itemId))
+				mapThis.put(itemId, mapOther.get(itemId));
+		}
+		List<ItemQuantityBounds> newItemQuantityBounds = new ArrayList<>();
+		for (String itemId : mapThis.keySet())
+			newItemQuantityBounds.add(mapThis.get(itemId));
+		this.itemQuantityBounds = newItemQuantityBounds;
+	}
+
+	/**
+	 * @Title: filterItemQuantityBounds
+	 * @Description: Remove all itemQuantity bounds whose itemId is not in the given itemIds.
+	 * @param itemIds
+	 * @return void
+	 */
+	public void filterItemQuantityBounds(Set<String> itemIds) {
+		if (this.itemQuantityBounds == null)
+			return;
+		Iterator<ItemQuantityBounds> iter = this.itemQuantityBounds.iterator();
+		while (iter.hasNext()) {
+			String itemId = iter.next().getItemId();
+			if (!itemIds.contains(itemId))
+				iter.remove();
+		}
 	}
 
 	public static class Bounds extends Documentable {
@@ -149,8 +229,18 @@ public class Limitation extends Documentable {
 		}
 
 		public JSONObject asJSON() {
-			return new JSONObject().put("lower", this.lower).put("upper", this.upper).put("exceptions",
-					this.exceptions);
+			JSONObject obj = new JSONObject().put("lower", this.lower).put("upper", this.upper);
+			if (this.exceptions != null && !this.exceptions.isEmpty())
+				obj.put("exceptions", this.exceptions);
+			return obj;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(this.lower == null ? "-inf" : this.lower).append("~")
+					.append(this.upper == null ? "inf" : this.upper);
+			return sb.toString();
 		}
 
 	}
@@ -195,6 +285,13 @@ public class Limitation extends Documentable {
 
 		public JSONObject asJSON() {
 			return new JSONObject().put("itemId", this.itemId).put("bounds", this.bounds.asJSON());
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(this.itemId).append(" [").append(this.bounds.toString()).append("]");
+			return sb.toString();
 		}
 
 	}

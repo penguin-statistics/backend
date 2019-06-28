@@ -1,7 +1,9 @@
 package io.penguinstats.bean;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bson.Document;
 import org.json.JSONObject;
@@ -119,6 +121,18 @@ public class Stage extends Documentable {
 		return new JSONObject().put("stageType", this.stageType).put("stageId", this.stageId).put("zoneId", this.zoneId)
 				.put("code", this.code).put("apCost", this.apCost).put("normalDrop", this.normalDrop)
 				.put("specialDrop", this.specialDrop).put("extraDrop", this.extraDrop);
+	}
+
+	public Set<String> getDropsSet() {
+		Set<String> set = new HashSet<>();
+		if (this.normalDrop != null)
+			set.addAll(this.normalDrop);
+		if (this.specialDrop != null)
+			set.addAll(this.specialDrop);
+		if (this.extraDrop != null)
+			set.addAll(this.extraDrop);
+		set.add("furni");
+		return set;
 	}
 
 }

@@ -1,7 +1,6 @@
 package io.penguinstats.service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -86,10 +85,7 @@ public class DropMatrixService {
 		Stage stage = stageService.getStage(stageId);
 		if (stage == null)
 			return false;
-		Set<String> dropSet = new HashSet<>();
-		dropSet.addAll(stage.getNormalDrop());
-		dropSet.addAll(stage.getSpecialDrop());
-		dropSet.addAll(stage.getExtraDrop());
+		Set<String> dropSet = stage.getDropsSet();
 		List<DropMatrix> list = new ArrayList<>();
 		for (String itemId : dropSet)
 			list.add(new DropMatrix(stageId, itemId, 0, 0));

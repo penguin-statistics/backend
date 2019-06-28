@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +20,12 @@ import org.json.JSONObject;
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.DropMatrix;
 import io.penguinstats.bean.ItemDrop;
+import io.penguinstats.bean.Limitation;
 import io.penguinstats.bean.Stage;
 import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.LimitationService;
 import io.penguinstats.service.StageService;
 
 public class Scripts {
@@ -32,10 +33,18 @@ public class Scripts {
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
 	private static final StageService stageService = StageService.getInstance();
+	private static final LimitationService limitationService = LimitationService.getInstance();
 
 	public static void main(String[] args) {
 		// printAllItemDropDistribution();
-		clearAndUpdateDropMatrix();
+		// clearAndUpdateDropMatrix();
+		printAllStageLimitations();
+	}
+
+	private static void printAllStageLimitations() {
+		Map<String, Limitation> map = limitationService.getRealLimitationMap();
+		for (String stageId : map.keySet())
+			System.out.println(map.get(stageId).toString());
 	}
 
 	private static void printAllItemDropDistribution() {
@@ -93,10 +102,7 @@ public class Scripts {
 				System.out.println("特殊掉落：" + stage.getSpecialDrop());
 			if (!stage.getExtraDrop().isEmpty())
 				System.out.println("额外掉落：" + stage.getExtraDrop());
-			Set<String> dropSet = new HashSet<>();
-			dropSet.addAll(stage.getNormalDrop());
-			dropSet.addAll(stage.getSpecialDrop());
-			dropSet.addAll(stage.getExtraDrop());
+			Set<String> dropSet = stage.getDropsSet();
 			for (String itemId : itemDropNumMap.keySet()) {
 				System.out.println("\t素材：" + itemId + " " + itemDropNumMap.get(itemId).toString());
 				dropSet.remove(itemId);

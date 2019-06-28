@@ -1,23 +1,24 @@
 package io.penguinstats.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.util.Map;
+import java.util.Set;
 
 import io.penguinstats.bean.Limitation;
-import io.penguinstats.bean.Limitation.Bounds;
-import io.penguinstats.bean.Limitation.ItemQuantityBounds;
+import io.penguinstats.bean.Stage;
 import io.penguinstats.dao.LimitationDao;
 
 public class LimitationService {
 
+	private static final StageService stageService = StageService.getInstance();
 	private static final LimitationDao limitationDao = new LimitationDao();
 
 	private static LimitationService instance = new LimitationService();
-	private static Logger logger = LogManager.getLogger(LimitationService.class);
 
 	public static LimitationService getInstance() {
 		return instance;
@@ -27,18 +28,63 @@ public class LimitationService {
 		return limitationDao.save(limitation);
 	}
 
+	/**
+	 * @Title: getAllLimitations
+	 * @Description: Return all limitations in the database as a list.
+	 * @return List<Limitation>
+	 */
 	public List<Limitation> getAllLimitations() {
 		return limitationDao.findAll();
 	}
 
-	public static void main(String[] args) {
-		LimitationService s = LimitationService.getInstance();
-		List<ItemQuantityBounds> itemQuantityBounds = new ArrayList<>();
-		itemQuantityBounds.add(new ItemQuantityBounds("2001", new Bounds(0, 2)));
-		itemQuantityBounds.add(new ItemQuantityBounds("30062", new Bounds(0, 1)));
-		Limitation limitation =
-				new Limitation("main_01-12", new Bounds(0, 3), itemQuantityBounds, Arrays.asList("t1_0_1"));
-		s.saveLimitation(limitation);
+	/**
+	 * @Title: getLimitationMap
+	 * @Description: Return a map which has stageId (usually will be limitation name, sometimes will be user-defined
+	 *               name) as key and limitation object as value.
+	 * @return Map<String,Limitation>
+	 */
+	public Map<String, Limitation> getLimitationMap() {
+		List<Limitation> list = getAllLimitations();
+		Map<String, Limitation> map = new HashMap<>();
+		list.forEach(limitation -> map.put(limitation.getName(), limitation));
+		return map;
+	}
+
+	/**
+	 * @Title: getRealLimitationMap
+	 * @Description: Return a map which has stageId (will never be limitation name, only can be stageId) as key and
+	 *               limitation object as value. The inheritance will be iterated using DFS and merged into limitations.
+	 * @return Map<String,Limitation>
+	 */
+	public Map<String, Limitation> getRealLimitationMap() {
+		Map<String, Limitation> limitationMap = getLimitationMap();
+		Map<String, Stage> stageMap = stageService.getStageMap();
+		Map<String, Limitation> result = new HashMap<>();
+		for (String stageId : stageMap.keySet()) {
+			Deque<String> stack = new LinkedList<>();
+			Set<String> hasIterated = new HashSet<>();
+			stack.offerFirst(stageId);
+			Limitation limitation = new Limitation(stageId, null, new ArrayList<>(), new ArrayList<>());
+			while (!stack.isEmpty()) {
+				String oneStageId = stack.pollFirst();
+				if (hasIterated.contains(oneStageId))
+					continue;
+				else
+					hasIterated.add(oneStageId);
+				Limitation oneLimitation = limitationMap.get(oneStageId);
+				if (oneLimitation == null)
+					continue;
+				limitation.merge(oneLimitation);
+				int size = oneLimitation.getInheritance().size();
+				for (int i = size - 1; i >= 0; i--) {
+					stack.offerFirst(oneLimitation.getInheritance().get(i));
+				}
+			}
+			limitation.merge(limitationMap.get("all"));
+			limitation.filterItemQuantityBounds(stageMap.get(stageId).getDropsSet());
+			result.put(stageId, limitation);
+		}
+		return result;
 	}
 
 }
