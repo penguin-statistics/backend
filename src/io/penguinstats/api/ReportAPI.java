@@ -3,7 +3,6 @@ package io.penguinstats.api;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -19,19 +18,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import io.penguinstats.bean.Drop;
-import io.penguinstats.bean.Item;
 import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
-import io.penguinstats.service.ItemService;
 import io.penguinstats.util.APIUtil;
+import io.penguinstats.util.LimitationUtil;
 
 @Path("/report")
 public class ReportAPI {
 
 	private static final ItemDropService itemDropService = ItemDropService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
-	private static final ItemService itemService = ItemService.getInstance();
+
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
@@ -58,7 +56,7 @@ public class ReportAPI {
 			}
 			if (furnitureNum > 0)
 				drops.add(new Drop("furni", furnitureNum));
-			Boolean isReliable = checkDrops(drops) && (furnitureNum <= 1);
+			Boolean isReliable = LimitationUtil.checkDrops(drops, stageId);
 			if (!isReliable)
 				logger.warn("Abnormal drop data!");
 			Long timestamp = System.currentTimeMillis();
@@ -93,30 +91,6 @@ public class ReportAPI {
 			}
 		}
 		return remoteAddr;
-	}
-
-	private boolean checkDrops(List<Drop> drops) {
-		Map<String, Item> map = itemService.getItemMap();
-		for (Drop drop : drops) {
-			String itemId = drop.getItemId();
-			if (!map.containsKey(itemId))
-				return false;
-			Item item = map.get(itemId);
-			if (item.getItemType().equals("CARD_EXP") || item.getName().equals("赤金") || item.getName().contains("碳")
-					|| item.getName().contains("技巧概要"))
-				continue;
-			int rarity = item.getRarity();
-			int quantity = drop.getQuantity();
-			if (rarity == 0 && quantity >= 5)
-				return false;
-			if (rarity == 1 && quantity >= 4)
-				return false;
-			if (rarity == 2 && quantity >= 3)
-				return false;
-			if (rarity == 3 && quantity >= 2)
-				return false;
-		}
-		return true;
 	}
 
 	private boolean isValidSingleReportRequest(String jsonString) {

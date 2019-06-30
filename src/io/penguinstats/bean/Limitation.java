@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class Limitation extends Documentable {
 
 	private String name; // 'name' can be 'all', a stageId, or any identifier.
-	private Bounds itemTypeBounds;
+	private Bounds itemTypeBounds; // EXCLUDE furniture.
 	private List<ItemQuantityBounds> itemQuantityBounds;
 	private List<String> inheritance;
 
@@ -233,6 +233,18 @@ public class Limitation extends Documentable {
 			if (this.exceptions != null && !this.exceptions.isEmpty())
 				obj.put("exceptions", this.exceptions);
 			return obj;
+		}
+
+		public boolean isValid(int num) {
+			if (this.lower != null && num < this.lower)
+				return false;
+			if (this.upper != null && num > this.upper)
+				return false;
+			for (Integer ex : this.exceptions) {
+				if (num == ex)
+					return false;
+			}
+			return true;
 		}
 
 		@Override
