@@ -1,0 +1,1954 @@
+[
+  {
+    "id": "30135",
+    "name": "D32钢",
+    "goldCost": 400,
+    "costs": [
+      {
+        "id": "30084",
+        "name": "三水锰矿",
+        "rarity": 3,
+        "count": 1
+      },
+      {
+        "id": "30094",
+        "name": "五水研磨石",
+        "rarity": 3,
+        "count": 1
+      },
+      {
+        "id": "30104",
+        "name": "RMA70-24",
+        "rarity": 3,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30014",
+        "name": "提纯源岩",
+        "rarity": 3,
+        "count": 1,
+        "weight": 84
+      },
+      {
+        "id": "30024",
+        "name": "糖聚块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30034",
+        "name": "聚酸酯块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30044",
+        "name": "异铁块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30054",
+        "name": "酮阵列",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30064",
+        "name": "改量装置",
+        "rarity": 3,
+        "count": 1,
+        "weight": 42
+      },
+      {
+        "id": "30074",
+        "name": "白马醇",
+        "rarity": 3,
+        "count": 1,
+        "weight": 72
+      },
+      {
+        "id": "30084",
+        "name": "三水锰矿",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30094",
+        "name": "五水研磨石",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30104",
+        "name": "RMA70-24",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      }
+    ],
+    "totalWeight": 618
+  },
+  {
+    "id": "30125",
+    "name": "双极纳米片",
+    "goldCost": 400,
+    "costs": [
+      {
+        "id": "30064",
+        "name": "改量装置",
+        "rarity": 3,
+        "count": 1
+      },
+      {
+        "id": "30074",
+        "name": "白马醇",
+        "rarity": 3,
+        "count": 2
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30014",
+        "name": "提纯源岩",
+        "rarity": 3,
+        "count": 1,
+        "weight": 84
+      },
+      {
+        "id": "30024",
+        "name": "糖聚块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30034",
+        "name": "聚酸酯块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30044",
+        "name": "异铁块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30054",
+        "name": "酮阵列",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30064",
+        "name": "改量装置",
+        "rarity": 3,
+        "count": 1,
+        "weight": 42
+      },
+      {
+        "id": "30074",
+        "name": "白马醇",
+        "rarity": 3,
+        "count": 1,
+        "weight": 72
+      },
+      {
+        "id": "30084",
+        "name": "三水锰矿",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30094",
+        "name": "五水研磨石",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30104",
+        "name": "RMA70-24",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      }
+    ],
+    "totalWeight": 618
+  },
+  {
+    "id": "30115",
+    "name": "聚合剂",
+    "goldCost": 400,
+    "costs": [
+      {
+        "id": "30014",
+        "name": "提纯源岩",
+        "rarity": 3,
+        "count": 1
+      },
+      {
+        "id": "30044",
+        "name": "异铁块",
+        "rarity": 3,
+        "count": 1
+      },
+      {
+        "id": "30054",
+        "name": "酮阵列",
+        "rarity": 3,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30014",
+        "name": "提纯源岩",
+        "rarity": 3,
+        "count": 1,
+        "weight": 84
+      },
+      {
+        "id": "30024",
+        "name": "糖聚块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30034",
+        "name": "聚酸酯块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30044",
+        "name": "异铁块",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30054",
+        "name": "酮阵列",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      },
+      {
+        "id": "30064",
+        "name": "改量装置",
+        "rarity": 3,
+        "count": 1,
+        "weight": 42
+      },
+      {
+        "id": "30074",
+        "name": "白马醇",
+        "rarity": 3,
+        "count": 1,
+        "weight": 72
+      },
+      {
+        "id": "30084",
+        "name": "三水锰矿",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30094",
+        "name": "五水研磨石",
+        "rarity": 3,
+        "count": 1,
+        "weight": 63
+      },
+      {
+        "id": "30104",
+        "name": "RMA70-24",
+        "rarity": 3,
+        "count": 1,
+        "weight": 56
+      }
+    ],
+    "totalWeight": 618
+  },
+  {
+    "id": "30104",
+    "name": "RMA70-24",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30094",
+    "name": "五水研磨石",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30084",
+    "name": "三水锰矿",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30074",
+    "name": "白马醇",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30062",
+    "name": "装置",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30063",
+    "name": "全新装置",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30064",
+    "name": "改量装置",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30052",
+    "name": "酮凝集",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30053",
+    "name": "酮凝集组",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30054",
+    "name": "酮阵列",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30042",
+    "name": "异铁",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30043",
+    "name": "异铁组",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30044",
+    "name": "异铁块",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30032",
+    "name": "聚酸酯",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30033",
+    "name": "聚酸酯组",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30034",
+    "name": "聚酸酯块",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30022",
+    "name": "糖",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30023",
+    "name": "糖组",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30024",
+    "name": "糖聚块",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 2
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  },
+  {
+    "id": "30012",
+    "name": "固源岩",
+    "goldCost": 100,
+    "costs": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 3
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30011",
+        "name": "源岩",
+        "rarity": 0,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30021",
+        "name": "代糖",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30031",
+        "name": "酯原料",
+        "rarity": 0,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30041",
+        "name": "异铁碎片",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30051",
+        "name": "双酮",
+        "rarity": 0,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30061",
+        "name": "破损装置",
+        "rarity": 0,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30013",
+    "name": "固源岩组",
+    "goldCost": 200,
+    "costs": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 5
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30012",
+        "name": "固源岩",
+        "rarity": 1,
+        "count": 1,
+        "weight": 15
+      },
+      {
+        "id": "30022",
+        "name": "糖",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30032",
+        "name": "聚酸酯",
+        "rarity": 1,
+        "count": 1,
+        "weight": 10
+      },
+      {
+        "id": "30042",
+        "name": "异铁",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30052",
+        "name": "酮凝集",
+        "rarity": 1,
+        "count": 1,
+        "weight": 8
+      },
+      {
+        "id": "30062",
+        "name": "装置",
+        "rarity": 1,
+        "count": 1,
+        "weight": 6
+      }
+    ],
+    "totalWeight": 57
+  },
+  {
+    "id": "30014",
+    "name": "提纯源岩",
+    "goldCost": 300,
+    "costs": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 4
+      }
+    ],
+    "extraOutcome": [
+      {
+        "id": "30013",
+        "name": "固源岩组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 60
+      },
+      {
+        "id": "30023",
+        "name": "糖组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30033",
+        "name": "聚酸酯组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 50
+      },
+      {
+        "id": "30043",
+        "name": "异铁组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30053",
+        "name": "酮凝集组",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30063",
+        "name": "全新装置",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      },
+      {
+        "id": "30073",
+        "name": "扭转醇",
+        "rarity": 2,
+        "count": 1,
+        "weight": 45
+      },
+      {
+        "id": "30083",
+        "name": "轻锰矿",
+        "rarity": 2,
+        "count": 1,
+        "weight": 40
+      },
+      {
+        "id": "30093",
+        "name": "研磨石",
+        "rarity": 2,
+        "count": 1,
+        "weight": 36
+      },
+      {
+        "id": "30103",
+        "name": "RMA70-12",
+        "rarity": 2,
+        "count": 1,
+        "weight": 30
+      }
+    ],
+    "totalWeight": 421
+  }
+]
