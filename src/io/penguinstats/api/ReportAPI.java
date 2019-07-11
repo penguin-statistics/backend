@@ -60,7 +60,11 @@ public class ReportAPI {
 			}
 			if (furnitureNum > 0)
 				drops.add(new Drop("furni", furnitureNum));
-			Boolean isReliable = LimitationUtil.checkDrops(drops, stageId);
+			Boolean isReliable = null;
+			if (source != null && source.equals("penguin-stats.io(internal)"))
+				isReliable = true;
+			else
+				isReliable = LimitationUtil.checkDrops(drops, stageId);
 			if (!isReliable)
 				logger.warn("Abnormal drop data!");
 			Long timestamp = System.currentTimeMillis();
