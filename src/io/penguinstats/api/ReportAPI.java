@@ -46,7 +46,7 @@ public class ReportAPI {
 			JSONObject obj = new JSONObject(jsonString);
 			String userID = getUserIDFromRequest(request);
 			logger.info("user " + userID + " POST /report\n" + obj.toString(2));
-			String ip = getClientIp(request);
+			String ip = APIUtil.getClientIp(request);
 			String stageId = obj.getString("stageId");
 			int furnitureNum = obj.getInt("furnitureNum");
 			JSONArray dropsArray = obj.getJSONArray("drops");
@@ -64,7 +64,7 @@ public class ReportAPI {
 			if (!isReliable)
 				logger.warn("Abnormal drop data!");
 			Long timestamp = System.currentTimeMillis();
-			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version);
+			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version, userID);
 			boolean result = itemDropService.saveItemDrop(itemDrop);
 			if (isReliable) {
 				if (!dropMatrixService.hasElementsForOneStage(stageId))
@@ -84,17 +84,6 @@ public class ReportAPI {
 			logger.error("Error in saveSingleReport", e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
-	}
-
-	private String getClientIp(HttpServletRequest request) {
-		String remoteAddr = null;
-		if (request != null) {
-			remoteAddr = request.getHeader("X-FORWARDED-FOR");
-			if (remoteAddr == null || "".equals(remoteAddr)) {
-				remoteAddr = request.getRemoteAddr();
-			}
-		}
-		return remoteAddr;
 	}
 
 	private boolean isValidSingleReportRequest(String jsonString) {

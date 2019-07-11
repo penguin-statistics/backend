@@ -17,11 +17,12 @@ public class ItemDrop extends Documentable {
 	private Boolean isReliable;
 	private String source;
 	private String version;
+	private String userID;
 
 	public ItemDrop() {}
 
 	public ItemDrop(String stageId, Integer times, List<Drop> drops, Long timestamp, String ip, Boolean isReliable,
-			String source, String version) {
+			String source, String version, String userID) {
 		this.stageId = stageId;
 		this.times = times;
 		this.drops = drops;
@@ -30,6 +31,7 @@ public class ItemDrop extends Documentable {
 		this.isReliable = isReliable;
 		this.source = source;
 		this.version = version;
+		this.userID = userID;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -44,6 +46,7 @@ public class ItemDrop extends Documentable {
 		this.isReliable = doc.getBoolean("isReliable");
 		this.source = doc.getString("source");
 		this.version = doc.getString("version");
+		this.userID = doc.getString("userID");
 	}
 
 	public String getStageId() {
@@ -110,6 +113,14 @@ public class ItemDrop extends Documentable {
 		this.version = version;
 	}
 
+	public String getUserID() {
+		return userID;
+	}
+
+	public void setUserID(String userID) {
+		this.userID = userID;
+	}
+
 	@Override
 	public Document toDocument() {
 		List<Document> drops = new ArrayList<>();
@@ -118,7 +129,7 @@ public class ItemDrop extends Documentable {
 		}
 		Document doc = new Document().append("stageId", this.stageId).append("times", this.times).append("drops", drops)
 				.append("ip", this.ip).append("timestamp", this.timestamp).append("isReliable", this.isReliable)
-				.append("source", this.source).append("version", this.version);
+				.append("source", this.source).append("version", this.version).append("userID", this.userID);
 		return doc;
 	}
 
@@ -129,7 +140,7 @@ public class ItemDrop extends Documentable {
 		}
 		return new JSONObject().put("stageId", this.stageId).put("times", this.times).put("drops", dropsArray)
 				.put("ip", this.ip).put("timestamp", this.timestamp).put("isReliable", this.isReliable)
-				.put("source", this.source).put("version", this.version);
+				.put("source", this.source).put("version", this.version).put("userID", this.userID);
 	}
 
 	public int getDropQuantity(String itemId) {
