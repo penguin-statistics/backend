@@ -13,12 +13,13 @@ public class PenguinStatsContextListener implements ServletContextListener {
 
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
-		System.out.println("PenguinStatsContextListener destroyed");
 		conn.close();
+		System.out.println("PenguinStatsContextListener destroyed");
 	}
 
 	@Override
 	public void contextInitialized(ServletContextEvent arg0) {
+		conn.init();
 		System.out.println("PenguinStatsContextListener started");
 	}
 

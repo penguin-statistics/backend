@@ -3,10 +3,10 @@
   <display-name>PenguinStats</display-name>
   <servlet>
     <servlet-name>jersey-serlvet</servlet-name>
-    <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
     <init-param>
-      <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>io.penguinstats.api</param-value>
+      <param-name>javax.ws.rs.Application</param-name>
+	  <param-value>io.penguinstats.api.APIConfig</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
@@ -14,34 +14,6 @@
     <servlet-name>jersey-serlvet</servlet-name>
     <url-pattern>/api/*</url-pattern>
   </servlet-mapping>
-  <filter>
-    <filter-name>CorsFilter</filter-name>
-    <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
-    <init-param>
-      <param-name>cors.allowed.origins</param-name>
-      <param-value>*</param-value>
-    </init-param>
-    <init-param>
-      <param-name>cors.allowed.methods</param-name>
-      <param-value>GET,POST</param-value>
-    </init-param>
-    <init-param>
-      <param-name>cors.allowed.headers</param-name>
-      <param-value>Content-Type,X-Requested-With,accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers</param-value>
-    </init-param>
-    <init-param>
-      <param-name>cors.exposed.headers</param-name>
-      <param-value>Access-Control-Allow-Origin,Access-Control-Allow-Credentials</param-value>
-    </init-param>
-    <init-param>
-      <param-name>cors.preflight.maxage</param-name>
-      <param-value>1800</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>CorsFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -17,6 +18,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.penguinstats.api.filter.UserRelated;
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.service.DropMatrixService;
@@ -33,6 +35,7 @@ public class ReportAPI {
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
+	@UserRelated
 	public Response saveSingleReport(@Context HttpServletRequest request, InputStream requestBodyStream) {
 		try {
 			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
@@ -41,7 +44,8 @@ public class ReportAPI {
 				return Response.status(Status.BAD_REQUEST).build();
 			}
 			JSONObject obj = new JSONObject(jsonString);
-			logger.info("POST /report\n" + obj.toString(2));
+			String userID = getUserIDFromRequest(request);
+			logger.info("user " + userID + " POST /report\n" + obj.toString(2));
 			String ip = getClientIp(request);
 			String stageId = obj.getString("stageId");
 			int furnitureNum = obj.getInt("furnitureNum");
@@ -108,6 +112,13 @@ public class ReportAPI {
 
 	private boolean hasValidValue(JSONObject obj, String key) {
 		return obj.has(key) && !obj.isNull(key);
+	}
+
+	private String getUserIDFromRequest(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+		if (session == null)
+			return null;
+		return (String)session.getAttribute("userID");
 	}
 
 }
