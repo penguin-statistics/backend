@@ -7,6 +7,8 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.DropMatrix;
@@ -46,8 +48,9 @@ public class ItemDropService {
 	 * @Title: generateDropMatrixMap
 	 * @Description: Use all drop record from item_drop_v2 table, generate a list of sparse matrix elements.<br>
 	 * 
-	 * @return Map<String,Map<String,DropMatrix>>
+	 * @return List<DropMatrix>
 	 */
+	@Deprecated
 	public List<DropMatrix> generateDropMatrixList() {
 		List<DropMatrix> dropMatrixList = new ArrayList<>();
 		Map<String, List<Integer>> stageTimesMap = new HashMap<>();
@@ -95,6 +98,54 @@ public class ItemDropService {
 				dropMatrixList.add(dropMatrix);
 				logger.debug(dropMatrix.asJSON().toString());
 			}
+		}
+		return dropMatrixList;
+	}
+
+	/** 
+	 * @Title: generateDropMatrixList 
+	 * @Description: Generate a list of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
+	 * @param filter
+	 * @return List<DropMatrix>
+	 */
+	public List<DropMatrix> generateDropMatrixList(Bson filter) {
+		Long startTime = System.currentTimeMillis();
+		if (filter == null)
+			filter = new Document();
+		List<DropMatrix> dropMatrixList = new ArrayList<>();
+		try {
+			Map<String, Map<String, Integer>> quantitiesMap = itemDropDao.aggregateItemDropQuantities(filter);
+			Map<String, List<Integer>> stageTimesMap = itemDropDao.aggregateStageTimes(filter);
+			Map<String, Item> itemMap = itemService.getItemMap();
+			for (String stageId : quantitiesMap.keySet()) {
+				List<Integer> allTimes = stageTimesMap.get(stageId);
+				if (allTimes == null) {
+					logger.error("cannot find allTimes for " + stageId);
+					continue;
+				}
+				Map<String, Integer> subMap = quantitiesMap.get(stageId);
+				for (String itemId : subMap.keySet()) {
+					Integer quantity = subMap.get(itemId);
+					Item item = itemMap.get(itemId);
+					if (item == null) {
+						logger.error("cannot find item " + itemId);
+						continue;
+					}
+					Integer addTimePoint = item.getAddTimePoint();
+					if (addTimePoint == null)
+						addTimePoint = 0;
+					if (addTimePoint >= allTimes.size()) {
+						logger.error("addTimePoint for " + itemId + " is too large");
+						continue;
+					}
+					Integer times = allTimes.get(addTimePoint);
+					dropMatrixList.add(new DropMatrix(stageId, itemId, quantity, times));
+				}
+			}
+			logger.debug(
+					"generateDropMatrixList " + (System.currentTimeMillis() - startTime) + "ms " + filter.toString());
+		} catch (Exception e) {
+			logger.error("Error in generateDropMatrixList", e);
 		}
 		return dropMatrixList;
 	}
