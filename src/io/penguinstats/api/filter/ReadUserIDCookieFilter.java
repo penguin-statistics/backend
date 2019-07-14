@@ -67,12 +67,8 @@ public class ReadUserIDCookieFilter implements ContainerRequestFilter {
 		}
 
 		if (userID == null) {
-			userID = userService.createNewUser();
-			if (userID == null) {
-				logger.error("Failed to create new user.");
-			}
+			userID = userService.createNewUser(APIUtil.getClientIp(request));
 			isNewUser = true;
-			logger.info("new user " + userID + " is created");
 		}
 
 		if (userID != null) {

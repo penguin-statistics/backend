@@ -1,7 +1,11 @@
 package io.penguinstats.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import io.penguinstats.bean.User;
 import io.penguinstats.dao.UserDao;
@@ -13,6 +17,8 @@ public class UserService {
 
 	private static UserService instance = new UserService();
 	private static UserDao userDao = new UserDao();
+
+	private static Logger logger = LogManager.getLogger(UserService.class);
 
 	private UserService() {}
 
@@ -31,10 +37,11 @@ public class UserService {
 	/**
 	 * @Title: createNewUser
 	 * @Description: Create a new user with random userID.
+	 * @param ip Initial IP
 	 * @return String Newly-created userID. If MAX_RETRY_TIME is exceeded, null will be returned and no new user was
 	 *         created.
 	 */
-	public String createNewUser() {
+	public String createNewUser(String ip) {
 		String userID = generateUserID();
 		int times = 0;
 		while (times < MAX_RETRY_TIME) {
@@ -45,8 +52,23 @@ public class UserService {
 		}
 		if (times == MAX_RETRY_TIME)
 			return null;
-		boolean result =
-				saveUser(new User(userID, 1.0, new ArrayList<>(), new ArrayList<>(), null, System.currentTimeMillis()));
+		return createNewUser(userID, ip);
+	}
+
+	/** 
+	 * @Title: createNewUser 
+	 * @Description: Create a new user with indicated userID.
+	 * @param userID
+	 * @param ip
+	 * @return String
+	 */
+	public String createNewUser(String userID, String ip) {
+		boolean result = saveUser(new User(userID, 1.0, new ArrayList<>(),
+				ip != null ? Arrays.asList(ip) : new ArrayList<>(), null, System.currentTimeMillis()));
+		if (result)
+			logger.info("new user " + userID + " is created");
+		else
+			logger.error("Failed to create new user " + userID);
 		return result ? userID : null;
 	}
 
@@ -61,6 +83,17 @@ public class UserService {
 		userDao.addIP(userID, ip);
 	}
 
+	/** 
+	 * @Title: addTag 
+	 * @Description: Add a tag to tags field of an existing user if IP is not in it.
+	 * @param userID
+	 * @param tag
+	 * @return void
+	 */
+	public void addTag(String userID, String tag) {
+		userDao.addTag(userID, tag);
+	}
+
 	/**
 	 * @Title: generateUserID
 	 * @Description: Generate a userID. UserID now is a string of 8-digit integer.
@@ -73,10 +106,6 @@ public class UserService {
 			sb.append(random.nextInt(10));
 		}
 		return sb.toString();
-	}
-
-	public static void main(String[] args) {
-		UserService.getInstance().addIP("15196915", "12333");
 	}
 
 }

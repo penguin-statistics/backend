@@ -28,4 +28,8 @@ public class UserDao extends BaseDao<User> {
 		collection.updateOne(eq("userID", userID), addToSet("ips", ip));
 	}
 
+	public void addTag(String userID, String tag) {
+		collection.updateOne(eq("userID", userID), addToSet("tags", tag));
+	}
+
 }
