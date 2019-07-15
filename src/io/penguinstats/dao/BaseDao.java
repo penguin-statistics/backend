@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -77,6 +78,16 @@ public abstract class BaseDao<T extends Documentable> {
 
 	public List<Document> findAllDocuments() {
 		MongoCursor<Document> iter = collection.find().iterator();
+		List<Document> list = new ArrayList<>();
+		while (iter.hasNext()) {
+			Document document = iter.next();
+			list.add(document);
+		}
+		return list;
+	}
+
+	public List<Document> findAllDocuments(Bson filter) {
+		MongoCursor<Document> iter = collection.find(filter).iterator();
 		List<Document> list = new ArrayList<>();
 		while (iter.hasNext()) {
 			Document document = iter.next();

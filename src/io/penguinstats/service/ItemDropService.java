@@ -44,6 +44,17 @@ public class ItemDropService {
 		return itemDropDao.findAllReliableItemDrops();
 	}
 
+	/** 
+	 * @Title: changeUserID 
+	 * @Description: Change all drop records for a userID to a new one
+	 * @param oldID
+	 * @param newID
+	 * @return void
+	 */
+	public void changeUserID(String oldID, String newID) {
+		itemDropDao.changeUserID(oldID, newID);
+	}
+
 	/**
 	 * @Title: generateDropMatrixMap
 	 * @Description: Use all drop record from item_drop_v2 table, generate a list of sparse matrix elements.<br>

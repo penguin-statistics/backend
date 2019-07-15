@@ -14,6 +14,7 @@ import static com.mongodb.client.model.Projections.computed;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -206,6 +207,10 @@ public class ItemDropDao extends BaseDao<ItemDrop> {
 		}
 		logger.debug("aggregateStageTimes " + (System.currentTimeMillis() - startTime) + "ms " + filter.toString());
 		return map;
+	}
+
+	public void changeUserID(String oldID, String newID) {
+		collection.updateMany(eq("userID", oldID), set("userID", newID));
 	}
 
 }
