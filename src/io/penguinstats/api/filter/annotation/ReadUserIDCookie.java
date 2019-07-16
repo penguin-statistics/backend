@@ -1,4 +1,4 @@
-package io.penguinstats.api.filter;
+package io.penguinstats.api.filter.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,4 +10,4 @@ import javax.ws.rs.NameBinding;
 @NameBinding
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface UserRelated {}
+public @interface ReadUserIDCookie {}

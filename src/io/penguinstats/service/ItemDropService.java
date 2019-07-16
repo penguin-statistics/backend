@@ -161,4 +161,21 @@ public class ItemDropService {
 		return dropMatrixList;
 	}
 
+	/** 
+	 * @Title: generateDropMatrixMap
+	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
+	 * @param filter
+	 * @return Map<String,Map<String,DropMatrix>> stageId -> itemId -> dropMatrix
+	 */
+	public Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Bson filter) {
+		Map<String, Map<String, DropMatrix>> map = new HashMap<>();
+		List<DropMatrix> list = generateDropMatrixList(filter);
+		for (DropMatrix dm : list) {
+			Map<String, DropMatrix> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
+			subMap.put(dm.getItemId(), dm);
+			map.put(dm.getStageId(), subMap);
+		}
+		return map;
+	}
+
 }

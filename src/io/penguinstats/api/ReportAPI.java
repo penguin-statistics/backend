@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -18,7 +17,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.penguinstats.api.filter.UserRelated;
+import io.penguinstats.api.filter.annotation.ReadUserIDCookieOrCreate;
+import io.penguinstats.api.filter.annotation.SetUserIDCookie;
 import io.penguinstats.bean.Drop;
 import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.service.DropMatrixService;
@@ -35,7 +35,8 @@ public class ReportAPI {
 	private static Logger logger = LogManager.getLogger(ReportAPI.class);
 
 	@POST
-	@UserRelated
+	@ReadUserIDCookieOrCreate
+	@SetUserIDCookie
 	public Response saveSingleReport(@Context HttpServletRequest request, InputStream requestBodyStream) {
 		try {
 			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
@@ -44,7 +45,7 @@ public class ReportAPI {
 				return Response.status(Status.BAD_REQUEST).build();
 			}
 			JSONObject obj = new JSONObject(jsonString);
-			String userID = getUserIDFromRequest(request);
+			String userID = APIUtil.getUserIDFromSession(request);
 			logger.info("user " + userID + " POST /report\n" + obj.toString(2));
 			String ip = APIUtil.getClientIp(request);
 			String stageId = obj.getString("stageId");
@@ -105,13 +106,6 @@ public class ReportAPI {
 
 	private boolean hasValidValue(JSONObject obj, String key) {
 		return obj.has(key) && !obj.isNull(key);
-	}
-
-	private String getUserIDFromRequest(HttpServletRequest request) {
-		HttpSession session = request.getSession(false);
-		if (session == null)
-			return null;
-		return (String)session.getAttribute("userID");
 	}
 
 }

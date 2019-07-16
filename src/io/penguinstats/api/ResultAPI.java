@@ -1,10 +1,14 @@
 package io.penguinstats.api;
 
+import static com.mongodb.client.model.Filters.eq;
+
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -12,6 +16,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,11 +26,14 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import io.penguinstats.api.filter.annotation.ReadUserIDCookie;
+import io.penguinstats.api.filter.annotation.SetUserIDCookie;
 import io.penguinstats.bean.DropMatrix;
 import io.penguinstats.bean.Item;
 import io.penguinstats.bean.Stage;
 import io.penguinstats.bean.Zone;
 import io.penguinstats.service.DropMatrixService;
+import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.ZoneService;
@@ -38,6 +46,7 @@ public class ResultAPI {
 	private static final StageService stageService = StageService.getInstance();
 	private static final ItemService itemService = ItemService.getInstance();
 	private static final DropMatrixService dropMatrixService = DropMatrixService.getInstance();
+	private static final ItemDropService itemDropService = ItemDropService.getInstance();
 	private static Logger logger = LogManager.getLogger(ResultAPI.class);
 
 	@GET
@@ -53,16 +62,20 @@ public class ResultAPI {
 	@POST
 	@Path("/stage/{stageId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPersonalResultForOneStage(InputStream requestBodyStream, @PathParam("stageId") String stageId) {
+	@ReadUserIDCookie
+	@SetUserIDCookie
+	public Response getPersonalResultForOneStage(@Context HttpServletRequest request, InputStream requestBodyStream,
+			@PathParam("stageId") String stageId) {
 		try {
 			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
 			JSONObject obj = new JSONObject(jsonString);
-			logger.info("POST /stage/" + stageId + "\n" + obj.toString());
+			String userID = APIUtil.getUserIDFromSession(request);
+			logger.info("user " + userID + " POST /stage/" + stageId + "\n" + obj.toString());
 
-			JSONObject stageTimesObj = obj.getJSONObject("stageTimes");
-			JSONObject dropMatrixObj = obj.getJSONObject("dropMatrix");
+			JSONObject stageTimesObj = obj.has("stageTimes") ? obj.getJSONObject("stageTimes") : new JSONObject();
+			JSONObject dropMatrixObj = obj.has("dropMatrix") ? obj.getJSONObject("dropMatrix") : new JSONObject();
 			List<DropMatrix> elements =
-					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj);
+					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj, userID);
 			JSONObject returnObj = generateReturnObjForOneStage(stageId, elements);
 			return Response.ok(returnObj.toString()).build();
 		} catch (Exception e) {
@@ -84,15 +97,20 @@ public class ResultAPI {
 	@POST
 	@Path("/item/{itemId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPersonalResultForOneItem(InputStream requestBodyStream, @PathParam("itemId") String itemId) {
+	@ReadUserIDCookie
+	@SetUserIDCookie
+	public Response getPersonalResultForOneItem(@Context HttpServletRequest request, InputStream requestBodyStream,
+			@PathParam("itemId") String itemId) {
 		try {
 			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
 			JSONObject obj = new JSONObject(jsonString);
-			logger.info("POST /item/" + itemId + "\n" + obj.toString());
-			JSONObject stageTimesObj = obj.getJSONObject("stageTimes");
-			JSONObject dropMatrixObj = obj.getJSONObject("dropMatrix");
+			String userID = APIUtil.getUserIDFromSession(request);
+			logger.info("user " + userID + " POST /item/" + itemId + "\n" + obj.toString());
+
+			JSONObject stageTimesObj = obj.has("stageTimes") ? obj.getJSONObject("stageTimes") : new JSONObject();
+			JSONObject dropMatrixObj = obj.has("dropMatrix") ? obj.getJSONObject("dropMatrix") : new JSONObject();
 			List<DropMatrix> elements =
-					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj);
+					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj, userID);
 
 			JSONObject returnObj = generateReturnObjForOneItem(itemId, elements);
 			return Response.ok(returnObj.toString()).build();
@@ -181,21 +199,38 @@ public class ResultAPI {
 	}
 
 	private List<DropMatrix> getDropMatrixListFromStageTimesAndDropMatrixMapObj(JSONObject stageTimesObj,
-			JSONObject dropMatrixObj) {
-		List<DropMatrix> elements = new ArrayList<>();
+			JSONObject dropMatrixObj, String userID) {
+		Map<String, Map<String, DropMatrix>> matrixMapFromDB =
+				userID != null ? itemDropService.generateDropMatrixMap(eq("userID", userID)) : new HashMap<>();
 		Map<String, Item> itemMap = itemService.getItemMap();
 		for (String stageId : dropMatrixObj.keySet()) {
 			JSONObject subObj = dropMatrixObj.getJSONObject(stageId);
 			JSONArray stageTimesArray = stageTimesObj.getJSONArray(stageId);
+			Map<String, DropMatrix> subMap = matrixMapFromDB.getOrDefault(stageId, new HashMap<>());
 			for (String itemId : subObj.keySet()) {
+				// get quantity and times from legacy obj
 				Integer quantity = subObj.getInt(itemId);
 				Item item = itemMap.get(itemId);
 				Integer addTimePoint = item.getAddTimePoint();
 				if (addTimePoint == null)
 					addTimePoint = 0;
 				Integer times = stageTimesArray.getInt(addTimePoint);
-				DropMatrix element = new DropMatrix(stageId, itemId, quantity, times);
-				elements.add(element);
+
+				// merge quantity and times from db
+				if (subMap.containsKey(itemId)) {
+					DropMatrix dm = subMap.get(itemId);
+					dm.setQuantity(dm.getQuantity() + quantity);
+					dm.setTimes(dm.getTimes() + times);
+				} else {
+					subMap.put(itemId, new DropMatrix(stageId, itemId, quantity, times));
+				}
+				matrixMapFromDB.put(stageId, subMap);
+			}
+		}
+		List<DropMatrix> elements = new ArrayList<>();
+		for (String stageId : matrixMapFromDB.keySet()) {
+			for (String itemId : matrixMapFromDB.get(stageId).keySet()) {
+				elements.add(matrixMapFromDB.get(stageId).get(itemId));
 			}
 		}
 		return elements;

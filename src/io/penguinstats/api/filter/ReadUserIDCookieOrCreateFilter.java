@@ -8,11 +8,14 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 
-import io.penguinstats.api.filter.annotation.ReadUserIDCookie;
+import io.penguinstats.api.filter.annotation.ReadUserIDCookieOrCreate;
+import io.penguinstats.service.UserService;
 import io.penguinstats.util.APIUtil;
 
-@ReadUserIDCookie
-public class ReadUserIDCookieFilter implements ContainerRequestFilter {
+@ReadUserIDCookieOrCreate
+public class ReadUserIDCookieOrCreateFilter implements ContainerRequestFilter {
+
+	private static final UserService userService = UserService.getInstance();
 
 	@Context
 	private HttpServletRequest request;
@@ -21,7 +24,11 @@ public class ReadUserIDCookieFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		APIUtil.setUserIDInSession(request, APIUtil.getUserIDFromCookies(request, headers));
+		String userID = APIUtil.getUserIDFromCookies(request, headers);
+		if (userID == null) {
+			userID = userService.createNewUser(APIUtil.getClientIp(request));
+		}
+		APIUtil.setUserIDInSession(request, userID);
 	}
 
 }

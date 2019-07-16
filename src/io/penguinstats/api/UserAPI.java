@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import io.penguinstats.api.filter.annotation.SetUserIDCookie;
 import io.penguinstats.bean.User;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.APIUtil;
@@ -30,7 +31,8 @@ public class UserAPI {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUser(@Context HttpServletRequest request, InputStream requestBodyStream) {
+	@SetUserIDCookie
+	public Response login(@Context HttpServletRequest request, InputStream requestBodyStream) {
 		try {
 			String jsonString = APIUtil.convertStreamToString(requestBodyStream);
 			JSONObject obj = new JSONObject(jsonString);
@@ -57,6 +59,7 @@ public class UserAPI {
 					return Response.status(Status.NOT_FOUND).build();
 				}
 			}
+			APIUtil.setUserIDInSession(request, userID);
 			JSONObject userObj = user.asJSON();
 			userObj.remove("weight");
 			return Response.ok(userObj.toString()).build();
