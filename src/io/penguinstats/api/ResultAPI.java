@@ -202,31 +202,66 @@ public class ResultAPI {
 			JSONObject dropMatrixObj, String userID) {
 		Map<String, Map<String, DropMatrix>> matrixMapFromDB =
 				userID != null ? itemDropService.generateDropMatrixMap(eq("userID", userID)) : new HashMap<>();
+		Map<String, List<Integer>> stageTimesMapFromDB =
+				userID != null ? itemDropService.getStageTimesMap(eq("userID", userID)) : new HashMap<>();
 		Map<String, Item> itemMap = itemService.getItemMap();
+
+		// merge quantity
 		for (String stageId : dropMatrixObj.keySet()) {
 			JSONObject subObj = dropMatrixObj.getJSONObject(stageId);
-			JSONArray stageTimesArray = stageTimesObj.getJSONArray(stageId);
 			Map<String, DropMatrix> subMap = matrixMapFromDB.getOrDefault(stageId, new HashMap<>());
 			for (String itemId : subObj.keySet()) {
-				// get quantity and times from legacy obj
 				Integer quantity = subObj.getInt(itemId);
-				Item item = itemMap.get(itemId);
-				Integer addTimePoint = item.getAddTimePoint();
-				if (addTimePoint == null)
-					addTimePoint = 0;
-				Integer times = stageTimesArray.getInt(addTimePoint);
-
-				// merge quantity and times from db
 				if (subMap.containsKey(itemId)) {
 					DropMatrix dm = subMap.get(itemId);
 					dm.setQuantity(dm.getQuantity() + quantity);
-					dm.setTimes(dm.getTimes() + times);
 				} else {
-					subMap.put(itemId, new DropMatrix(stageId, itemId, quantity, times));
+					// set times to 0 temporarily, will update later
+					subMap.put(itemId, new DropMatrix(stageId, itemId, quantity, 0));
 				}
 				matrixMapFromDB.put(stageId, subMap);
 			}
 		}
+
+		// merge stage times
+		for (String stageId : matrixMapFromDB.keySet()) {
+			List<Integer> stageTimes = stageTimesMapFromDB.get(stageId);
+			if (stageTimesObj.has(stageId)) {
+				JSONArray stageTimesArray = stageTimesObj.getJSONArray(stageId);
+				if (stageTimes == null) {
+					stageTimes = new ArrayList<>();
+					for (int i = 0; i < stageTimesArray.length(); i++) {
+						stageTimes.add(stageTimesArray.getInt(i));
+					}
+				} else {
+					if (stageTimes.size() < stageTimesArray.length()) {
+						// something is wrong with stageTimesArray, skip this stage
+						continue;
+					}
+					for (int i = 0; i < stageTimesArray.length(); i++) {
+						stageTimes.set(i, stageTimes.get(i) + stageTimesArray.getInt(i));
+					}
+				}
+			}
+			stageTimesMapFromDB.put(stageId, stageTimes);
+		}
+
+		// update merged stage times into matrixMapFromDB
+		for (String stageId : matrixMapFromDB.keySet()) {
+			Map<String, DropMatrix> subMap = matrixMapFromDB.get(stageId);
+			for (String itemId : subMap.keySet()) {
+				Item item = itemMap.get(itemId);
+				if (item == null)
+					continue;
+				Integer addTimePoint = item.getAddTimePoint();
+				if (addTimePoint == null)
+					addTimePoint = 0;
+				Integer times = stageTimesMapFromDB.get(stageId).get(addTimePoint);
+				subMap.get(itemId).setTimes(times);
+			}
+		}
+
+		// convert matrixMapFromDB into a list of matrix elements
 		List<DropMatrix> elements = new ArrayList<>();
 		for (String stageId : matrixMapFromDB.keySet()) {
 			for (String itemId : matrixMapFromDB.get(stageId).keySet()) {

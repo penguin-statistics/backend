@@ -114,6 +114,16 @@ public class ItemDropService {
 	}
 
 	/** 
+	 * @Title: getStageTimesMap 
+	 * @Description: Return stage times array for each stage.
+	 * @param filter
+	 * @return Map<String,List<Integer>>
+	 */
+	public Map<String, List<Integer>> getStageTimesMap(Bson filter) {
+		return itemDropDao.aggregateStageTimes(filter);
+	}
+
+	/** 
 	 * @Title: generateDropMatrixList 
 	 * @Description: Generate a list of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
 	 * @param filter
