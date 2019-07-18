@@ -5,15 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.penguinstats.bean.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import io.penguinstats.bean.Drop;
-import io.penguinstats.bean.DropMatrix;
-import io.penguinstats.bean.Item;
-import io.penguinstats.bean.ItemDrop;
 import io.penguinstats.dao.ItemDropDao;
 
 public class ItemDropService {
@@ -38,6 +35,16 @@ public class ItemDropService {
 
 	public List<ItemDrop> getAllItemDrops() {
 		return itemDropDao.findAll();
+	}
+
+	public List<ItemDrop> getAllDropsByUserId(String userID) {
+		return itemDropDao.findAllDropsByUserId(userID);
+	}
+
+	public List<ItemDrop> getPagedDropsByUserId(String userID, int pageIndex, int pageSize) {
+		List<ItemDrop> allDrops = getAllDropsByUserId(userID);
+		Paginator<ItemDrop> paginator = new Paginator<>(allDrops);
+		return paginator.getPage(pageIndex, pageSize);
 	}
 
 	public List<ItemDrop> getAllReliableItemDrops() {
