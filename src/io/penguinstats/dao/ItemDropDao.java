@@ -67,6 +67,22 @@ public class ItemDropDao extends BaseDao<ItemDrop> {
 		return itemDrops;
 	}
 
+	/**
+	 * @Title: findAllDropsByUserId
+	 * @Description: Return a list of all item drop records uploaded by the given userID.
+	 * @param userID
+	 * @return List<ItemDrop>
+	 */
+	public List<ItemDrop> findAllDropsByUserId(String userID) {
+		List<ItemDrop> itemDrops = new ArrayList<>();
+		MongoCursor<Document> iter = collection.find(eq("userID", userID)).iterator();
+		while (iter.hasNext()) {
+			Document document = iter.next();
+			itemDrops.add(new ItemDrop(document));
+		}
+		return itemDrops;
+	}
+
 	/** 
 	 * @Title: aggregateItemDropQuantities 
 	 * @Description: Use aggregation to get all item drop quantities under each stage.

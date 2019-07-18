@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.penguinstats.api.filter.annotation.ReadUserIDCookie;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -87,6 +91,28 @@ public class ReportAPI {
 			return Response.status(Status.BAD_REQUEST).build();
 		} catch (Exception e) {
 			logger.error("Error in saveSingleReport", e);
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	@GET
+	@Path("/history")
+	@Produces(MediaType.APPLICATION_JSON)
+	@ReadUserIDCookie
+	@SetUserIDCookie
+	public Response getPersonalReportHistory(@Context HttpServletRequest request, int pageIndex, int pageSize) {
+		try {
+			String userID = APIUtil.getUserIDFromSession(request);
+			List<ItemDrop> userItemDrops = itemDropService.getPagedDropsByUserId(userID, pageIndex, pageSize);
+			JSONArray array = new JSONArray();
+			for (ItemDrop itemDrop : userItemDrops) {
+				array.put(itemDrop.asJSON());
+			}
+
+			JSONObject obj = new JSONObject().put("userItemDrops", array);
+			return Response.ok(obj.toString()).build();
+		} catch (Exception e) {
+			logger.error("Error in getPersonalReportHistory", e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
