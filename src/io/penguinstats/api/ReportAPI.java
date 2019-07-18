@@ -5,22 +5,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import io.penguinstats.api.filter.annotation.ReadUserIDCookie;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import io.penguinstats.api.filter.annotation.ReadUserIDCookie;
 import io.penguinstats.api.filter.annotation.ReadUserIDCookieOrCreate;
 import io.penguinstats.api.filter.annotation.SetUserIDCookie;
 import io.penguinstats.bean.Drop;
@@ -100,10 +102,12 @@ public class ReportAPI {
 	@Produces(MediaType.APPLICATION_JSON)
 	@ReadUserIDCookie
 	@SetUserIDCookie
-	public Response getPersonalReportHistory(@Context HttpServletRequest request, int pageIndex, int pageSize) {
+	public Response getPersonalReportHistory(@Context HttpServletRequest request,
+			@DefaultValue("1") @QueryParam("page") Integer page,
+			@DefaultValue("50") @QueryParam("page_size") Integer pageSize) {
 		try {
 			String userID = APIUtil.getUserIDFromSession(request);
-			List<ItemDrop> userItemDrops = itemDropService.getPagedDropsByUserId(userID, pageIndex, pageSize);
+			List<ItemDrop> userItemDrops = itemDropService.getPaginatedDropsByUserId(userID, page, pageSize);
 			JSONArray array = new JSONArray();
 			for (ItemDrop itemDrop : userItemDrops) {
 				array.put(itemDrop.asJSON());

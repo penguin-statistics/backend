@@ -10,10 +10,12 @@ import static com.mongodb.client.model.Aggregates.unwind;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gt;
+import static com.mongodb.client.model.Indexes.descending;
 import static com.mongodb.client.model.Projections.computed;
 import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Sorts.orderBy;
 import static com.mongodb.client.model.Updates.set;
 
 import java.util.ArrayList;
@@ -76,6 +78,25 @@ public class ItemDropDao extends BaseDao<ItemDrop> {
 	public List<ItemDrop> findAllDropsByUserId(String userID) {
 		List<ItemDrop> itemDrops = new ArrayList<>();
 		MongoCursor<Document> iter = collection.find(eq("userID", userID)).iterator();
+		while (iter.hasNext()) {
+			Document document = iter.next();
+			itemDrops.add(new ItemDrop(document));
+		}
+		return itemDrops;
+	}
+
+	/** 
+	 * @Title: findPaginatedDropsByUserId 
+	 * @Description: Return a list of all item drop records uploaded by the given userID, skip(offset) and limit in reverse-chronological order.
+	 * @param userID
+	 * @param skip
+	 * @param limit
+	 * @return List<ItemDrop>
+	 */
+	public List<ItemDrop> findPaginatedDropsByUserId(String userID, Integer skip, Integer limit) {
+		List<ItemDrop> itemDrops = new ArrayList<>();
+		MongoCursor<Document> iter = collection.find(eq("userID", userID)).sort(orderBy(descending("timestamp")))
+				.limit(limit).skip(skip).iterator();
 		while (iter.hasNext()) {
 			Document document = iter.next();
 			itemDrops.add(new ItemDrop(document));
