@@ -1,5 +1,8 @@
 package io.penguinstats.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bson.Document;
 import org.json.JSONObject;
 
@@ -12,11 +15,12 @@ public class Item extends Documentable {
 	private String iconUrl;
 	private String itemType;
 	private Integer addTimePoint;
+	private List<Integer> spriteCoord;
 
 	public Item() {}
 
 	public Item(String itemId, String name, Integer sortId, Integer rarity, String iconUrl, String itemType,
-			Integer addTimePoint) {
+			Integer addTimePoint, List<Integer> spriteCoord) {
 		this.itemId = itemId;
 		this.name = name;
 		this.sortId = sortId;
@@ -24,8 +28,10 @@ public class Item extends Documentable {
 		this.iconUrl = iconUrl;
 		this.itemType = itemType;
 		this.addTimePoint = addTimePoint;
+		this.spriteCoord = spriteCoord;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Item(Document doc) {
 		this.itemId = doc.getString("itemId");
 		this.name = doc.getString("name");
@@ -34,6 +40,7 @@ public class Item extends Documentable {
 		this.iconUrl = doc.getString("iconUrl");
 		this.itemType = doc.getString("itemType");
 		this.addTimePoint = doc.getInteger("addTimePoint");
+		this.spriteCoord = (ArrayList<Integer>)doc.get("spriteCoord");
 	}
 
 	public String getItemId() {
@@ -92,17 +99,25 @@ public class Item extends Documentable {
 		this.addTimePoint = addTimePoint;
 	}
 
+	public List<Integer> getSpriteCoord() {
+		return spriteCoord;
+	}
+
+	public void setSpriteCoord(List<Integer> spriteCoord) {
+		this.spriteCoord = spriteCoord;
+	}
+
 	@Override
 	public Document toDocument() {
 		return new Document().append("itemId", this.itemId).append("name", this.name).append("sortId", this.sortId)
 				.append("rarity", this.rarity).append("iconUrl", this.iconUrl).append("itemType", this.itemType)
-				.append("addTime", this.addTimePoint);
+				.append("addTime", this.addTimePoint).append("spriteCoord", this.spriteCoord);
 	}
 
 	public JSONObject asJSON() {
 		return new JSONObject().put("itemId", this.itemId).put("name", this.name).put("sortId", this.sortId)
 				.put("rarity", this.rarity).put("iconUrl", this.iconUrl).put("itemType", this.itemType)
-				.put("addTime", this.addTimePoint);
+				.put("addTime", this.addTimePoint).put("spriteCoord", this.spriteCoord);
 	}
 
 }
