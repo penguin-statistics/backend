@@ -75,7 +75,7 @@ public class ItemDropDao extends BaseDao<ItemDrop> {
 	 */
 	public List<ItemDrop> findAllDropsByUserId(String userID) {
 		List<ItemDrop> itemDrops = new ArrayList<>();
-		MongoCursor<Document> iter = collection.find(eq("userID", true)).iterator();
+		MongoCursor<Document> iter = collection.find(eq("userID", userID)).iterator();
 		while (iter.hasNext()) {
 			Document document = iter.next();
 			itemDrops.add(new ItemDrop(document));
