@@ -79,7 +79,7 @@ public class ResultAPI {
 			JSONObject returnObj = generateReturnObjForOneStage(stageId, elements);
 			return Response.ok(returnObj.toString()).build();
 		} catch (Exception e) {
-			logger.error("Error in saveSingleReport", e);
+			logger.error("Error in getPersonalResultForOneStage", e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
@@ -115,7 +115,7 @@ public class ResultAPI {
 			JSONObject returnObj = generateReturnObjForOneItem(itemId, elements);
 			return Response.ok(returnObj.toString()).build();
 		} catch (Exception e) {
-			logger.error("Error in saveSingleReport", e);
+			logger.error("Error in getPersonalResultForOneItem", e);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
 		}
 	}
