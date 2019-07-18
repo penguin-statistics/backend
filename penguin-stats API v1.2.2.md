@@ -8,7 +8,7 @@ contributor：yamika
 
 ### description:
 
-物品掉落上传接口，汇报作战物品掉落
+物品掉落上传接口，汇报关卡物品掉落
 
 - 使用用户ID和用户IP，从cookie中读取userID判断用户身份
 - 根据上传来源分为内部上传和普通上传，对上传的掉落数据采取不同的判断策略
@@ -26,18 +26,18 @@ POST /PenguinStats/api/report
 
 | 参数         | 参数类型   | 是否必须 | 描述                                                         |
 | ------------ | ---------- | -------- | ------------------------------------------------------------ |
-| stageId      | String     | 是       | 作战id                                                       |
-| drops        | List(dict) | 是       | 物品掉落信息，详情见参数对象[drops](#drops)                  |
-| furnitureNum | int        | 是       | 掉落家具数量，对于单次上传，目前取值限制为0或1（其实有2的情况出现）                             |
+| stageId      | String     | 是       | 关卡id                                                       |
+| drops        | List(dict) | 是       | 物品掉落信息                                                 |
+| furnitureNum | int        | 是       | 掉落家具数量，有限制，取值为1或0                             |
 | version      | String     | 否       | API版本                                                      |
-| source       | String     | 否       | 掉落数据来源，详见source[取值示例](#source取值示例) |
+| source       | String     | 否       | 掉落数据来源，可用于区分是否来自内部上传,详见source[取值示例](#source取值示例) |
 
 **drops参数信息**
 
-| 参数     | 参数类型 | 是否必须 | 描述                                                 |
-| -------- | -------- | -------- | ---------------------------------------------------- |
-| itemId   | String   | 是       | 物品id                                               |
-| quantity | int      | 是       | 掉落物品数量，遵循[limitation接口](#Llimitation)规定 |
+| 参数     | 参数类型 | 是否必须 | 描述                                                |
+| -------- | -------- | -------- | --------------------------------------------------- |
+| itemId   | String   | 是       | 物品id                                              |
+| quantity | int      | 是       | 掉落物品数量，遵循[limitation接口](#Limitation)规定 |
 
 ### 实例
 
@@ -50,8 +50,8 @@ POST /PenguinStats/api/report
  "drops":
     [
         {
-            "itemId":"30012",
-            "quantity":1
+   		"itemId":"30012",
+        "quantity":1
         }
     ],
 "source":"penguin-stats.io(internal)",
@@ -71,7 +71,7 @@ POST /PenguinStats/api/report
 
 - 对外部开放接口（企鹅数据API）
 - 返回所有物品的掉落
-- 每条记录对应不同物品在不同作战掉落情况（掉落数/样本数）
+- 每条记录对应不同物品在不同关卡掉落情况（掉落数/样本数）
 - ~
 
 ### URI
@@ -86,7 +86,7 @@ GET /PenguinStats/api/result/matrix
 
 | 参数   | 参数类型   | 描述                                   |
 | ------ | ---------- | -------------------------------------- |
-| matrix | List(Dict) | 存储了所有物品在不同作战掉落情况的矩阵 |
+| matrix | List(Dict) | 存储了所有物品在不同关卡掉落情况的矩阵 |
 
 **matrix参数信息**
 
@@ -95,7 +95,7 @@ GET /PenguinStats/api/result/matrix
 | itemId   | String   | 是       | 掉落物品id     |
 | times    | int      | 是       | 样本总数       |
 | quantity | int      | 是       | 物品掉落的次数 |
-| stageId  | String   | 是       | 作战id         |
+| stageId  | String   | 是       | 关卡id         |
 
 ### 实例
 
@@ -154,10 +154,10 @@ GET /PenguinStats/api/result/matrix
 
 ### description:
 
-作战物品掉落结果（掉落率）查询接口，查询指定作战不同物品掉落情况
+关卡物品掉落结果（掉落率）查询接口，查询指定关卡不同物品掉落情况
 
-- 根据请求方法和参数返回全平台掉落数据和个人掉落数据
-- 目前个人掉落数据分为两部分：本地和云端。本地数据存储在浏览器LocalStorage中，1.3.0后不再更新。
+- 根据请求方法和参数返回全平台掉落数据和个人掉落数据（目前个人掉落查询维护中）
+- 目前个人掉落数据同时存储再浏览器LocalStorage中
 - ~
 
 ### URI
@@ -171,7 +171,7 @@ POST /PenguinStats/api/result/stage/{stageId}
 
 | 参数    | 类型   | 是否必须 | 描述   |
 | ------- | ------ | -------- | ------ |
-| stageId | String | 是       | 作战Id |
+| stageId | String | 是       | 关卡id |
 
 ### 请求消息
 
@@ -179,10 +179,10 @@ POST /PenguinStats/api/result/stage/{stageId}
 
 #### 请求参数
 
-| 参数       | 类型 | 是否必须 | 描述                                           |
-| ---------- | ---- | -------- | ---------------------------------------------- |
-| dropMatrix | Obj  | 是       | 掉落信息矩阵，存储了当前用户上传的所有掉落信息 |
-| stageTimes | Obj  | 是       | 作战样本数，存储了用户每个作战上传的总次数     |
+| 参数       | 类型       | 是否必须 | 描述                                           |
+| ---------- | ---------- | -------- | ---------------------------------------------- |
+| dropMatrix | List(Dict) | 是       | 掉落信息矩阵，存储了当前用户上传的所有掉落信息 |
+| stageTimes | List(Dict) | 是       | 关卡样本数，存储了用户每个关卡上传的总次数     |
 
 ### 实例
 
@@ -368,10 +368,10 @@ POST /PenguinStats/api/result/stage/{stageId}
 
 ### description:
 
-指定物品掉落查询接口，查询指定物品在不同作战掉落情况
+指定物品掉落查询接口，查询指定物品在不同关卡掉落情况
 
-- 根据请求方法和参数返回全平台掉落数据和个人掉落数据
-- 目前个人掉落数据分为两部分：本地和云端。本地数据存储在浏览器LocalStorage中，1.3.0后不再更新。
+- 根据请求方法和参数返回全平台掉落数据和个人掉落数据（目前个人掉落查询维护中）
+- 目前个人掉落数据同时存储再浏览器LocalStorage中
 - ~
 
 ### URI
@@ -385,7 +385,7 @@ POST /PenguinStats/api/result/item/{ItemId}
 
 | 参数   | 类型   | 是否必须 | 描述   |
 | ------ | ------ | -------- | ------ |
-| ItemId | String | 是       | 物品Id |
+| ItemId | String | 是       | 物品id |
 
 ### 请求消息
 
@@ -393,10 +393,10 @@ POST /PenguinStats/api/result/item/{ItemId}
 
 #### 请求参数
 
-| 参数       | 类型 | 是否必须 | 描述                                           |
-| ---------- | ---- | -------- | ---------------------------------------------- |
-| dropMatrix | Obj  | 是       | 掉落信息矩阵，存储了当前用户上传的所有掉落信息 |
-| stageTimes | Obj  | 是       | 作战样本数，存储了用户每个作战上传的总次数     |
+| 参数       | 类型       | 是否必须 | 描述                                           |
+| ---------- | ---------- | -------- | ---------------------------------------------- |
+| dropMatrix | List(Dict) | 是       | 掉落信息矩阵，存储了当前用户上传的所有掉落信息 |
+| stageTimes | List(Dict) | 是       | 关卡样本数，存储了用户每个关卡上传的总次数     |
 
 ### 实例
 
@@ -512,9 +512,9 @@ POST /PenguinStats/api/result/item/{ItemId}
 
 ### description:
 
-查询所有作战章节信息，返回所有作战章节包含的作战
+查询所有作战章节信息，返回所有作战章节包含的关卡
 
-- 返回内容只包括作战Id和章节名称
+- 返回内容只包括关卡Id和章节名称
 - ~
 
 ### URI
@@ -640,9 +640,9 @@ GET /PenguinStats/api/result/zone
 
 ### description:
 
-查询指定章节作战掉落接口
+查询指定章节关卡掉落接口
 
-- 返回该章节所有作战信息，只包含作战掉落物品种类不包含具体掉落情况
+- 返回该章节所有关卡信息，只包含关卡掉落物品种类不包含具体掉落情况
 - **推荐使用父接口**
 - ~
 
@@ -656,7 +656,7 @@ GET /PenguinStats/api/result/zone/{zoneId}/stage
 
 | 参数   | 类型   | 是否必须 | 描述   |
 | ------ | ------ | -------- | ------ |
-| zoneId | String | 是       | 章节Id |
+| zoneId | String | 是       | 章节id |
 
 ### 响应消息
 
@@ -664,7 +664,7 @@ GET /PenguinStats/api/result/zone/{zoneId}/stage
 
 | 参数   | 参数类型   | 描述                                   |
 | ------ | ---------- | -------------------------------------- |
-| stages | List(Dict) | 存储了所查询章节所有作战掉落信息的列表 |
+| stages | List(Dict) | 存储了所查询章节所有关卡掉落信息的列表 |
 
 **stages参数信息**
 
@@ -672,12 +672,13 @@ GET /PenguinStats/api/result/zone/{zoneId}/stage
 | ----------- | ------------ | -------- | --------------------------------------------- |
 | specialDrop | List(String) | 是       | 特殊掉落物id集合                              |
 | extraDrop   | List(String) | 是       | 额外掉落物id集合                              |
-| code        | String       | 是       | 作战编号（名称）                                    |
-| stageType   | String       | 是       | 作战类型，取值见[type取值说明](#type取值说明) |
+| code        | String       | 是       | 关卡编号                                      |
+| stageType   | String       | 是       | 关卡类型，取值见[type取值说明](#type取值说明) |
 | normalDrop  | List(String) | 是       | 通常掉落物id集合                              |
 | zoneId      | String       | 是       | 章节id                                        |
-| apCost      | int          | 是       | 作战理智消耗                                  |
-| stageId     | String       | 是       | 作战id                                        |
+| dropsSet    | List(String) | 是       | 掉落物id集合                                  |
+| apCost      | int          | 是       | 关卡理智消耗                                  |
+| stageId     | String       | 是       | 关卡id                                        |
 
 ### 实例
 
@@ -807,11 +808,11 @@ GET /PenguinStats/api/result/zone/{zoneId}/stage
 
 ### description:
 
-查询所有作战物品掉落种类
+查询所有关卡物品掉落种类
 
 - 对外部开放接口（企鹅数据API）
-- 不包含作战所属章节信息
-- 不包含作战掉落详情
+- 不包含关卡所属章节信息
+- 不包含关卡掉落详情
 
 ### URI
 
@@ -825,7 +826,7 @@ GET /PenguinStats/api/stage
 
 | 参数   | 参数类型   | 描述                               |
 | ------ | ---------- | ---------------------------------- |
-| stages | List(Dict) | 存储了所有章节的作战掉落信息的列表 |
+| stages | List(Dict) | 存储了所有章节的关卡掉落信息的列表 |
 
 **stages参数信息**
 
@@ -833,12 +834,13 @@ GET /PenguinStats/api/stage
 | ----------- | ------------ | -------- | --------------------------------------------- |
 | specialDrop | List(String) | 是       | 特殊掉落物id集合                              |
 | extraDrop   | List(String) | 是       | 额外掉落物id集合                              |
-| code        | String       | 是       | 作战编号（名称）                                      |
-| stageType   | String       | 是       | 作战类型，取值见[type取值说明](#type取值说明) |
+| code        | String       | 是       | 关卡编号                                      |
+| stageType   | String       | 是       | 关卡类型，取值见[type取值说明](#type取值说明) |
 | normalDrop  | List(String) | 是       | 通常掉落物id集合                              |
 | zoneId      | String       | 是       | 章节id                                        |
-| apCost      | int          | 是       | 作战理智消耗                                  |
-| stageId     | String       | 是       | 作战id         |
+| dropsSet    | List(String) | 是       | 掉落物id集合                                  |
+| apCost      | int          | 是       | 关卡理智消耗                                  |
+| stageId     | String       | 是       | 关卡id         |
 
 ### 实例
 
@@ -931,11 +933,11 @@ GET /PenguinStats/api/stage
 
 ### description:
 
-查询指定作战物品掉落种类
+查询指定关卡物品掉落种类
 
 - 对外部开放接口（企鹅数据API）
-- 不包含作战所属章节信息
-- 不包含作战掉落详情
+- 不包含关卡所属章节信息
+- 不包含关卡掉落详情
 - **推荐使用父接口**
 - ~
 
@@ -949,7 +951,7 @@ GET /PenguinStats/api/stage/{stageId}
 
 | 参数    | 类型   | 是否必须 | 描述   |
 | ------- | ------ | -------- | ------ |
-| stageId | String | 是       | 作战Id |
+| stageId | String | 是       | 关卡id |
 
 ### 响应消息
 
@@ -959,12 +961,13 @@ GET /PenguinStats/api/stage/{stageId}
 | ----------- | ------------ | --------------------------------------------- |
 | specialDrop | List(Dict)   | 特殊掉落物集合                                |
 | extraDrop   | List(Dict)   | 额外掉落物集合                                |
-| code        | String       | 作战编号（名称）                                      |
-| stageType   | String       | 作战类型，取值见[type取值说明](#type取值说明) |
+| code        | String       | 关卡编号                                      |
+| stageType   | String       | 关卡类型，取值见[type取值说明](#type取值说明) |
 | normalDrop  | List(Dict)   | 通常掉落物集合                                |
 | zoneId      | String       | 章节id                                        |
-| apCost      | int          | 作战理智消耗                                  |
-| stageId     | String       | 作战id                                        |
+| dropsSet    | List(String) | 掉落物id集合                                  |
+| apCost      | int          | 关卡理智消耗                                  |
+| stageId     | String       | 关卡id                                        |
 
 **specialDrop,extraDrop,normalDrop参数信息**
 
@@ -972,7 +975,7 @@ GET /PenguinStats/api/stage/{stageId}
 | -------- | -------- | -------- | ------------------------------------------------------- |
 | itemId   | String   | 是       | 掉落物id                                                |
 | itemType | String   | 是       | 掉落物类型，取值见[itemType取值说明](#itemType取值说明) |
-| sortId   | int      | 是       |                                                         |
+| sortId   | int      | 是       | 掉落物排序id                                            |
 | name     | String   | 是       | 掉落物名称                                              |
 | iconUrl  | url      | 是       | 掉落物icon uri                                          |
 | rarity   | int      | 是       | 掉落物稀有度                                            |
@@ -1113,7 +1116,7 @@ GET  PenguinStats/api/item
 
 | 参数  | 参数类型   | 描述                               |
 | ----- | ---------- | ---------------------------------- |
-| items | List(Dict) | 存储了所有章节的作战掉落信息的列表 |
+| items | List(Dict) | 存储了所有章节的关卡掉落信息的列表 |
 
 **items参数信息**
 
@@ -1121,7 +1124,7 @@ GET  PenguinStats/api/item
 | -------- | -------- | -------- | ------------------------------------------------------- |
 | itemId   | String   | 是       | 掉落物id                                                |
 | itemType | String   | 是       | 掉落物类型，取值见[itemType取值说明](#itemType取值说明) |
-| sortId   | int      | 是       | 内部排序id                                               |
+| sortId   | int      | 是       |                                                         |
 | name     | String   | 是       | 掉落物名称                                              |
 | iconUrl  | url      | 是       | 掉落物icon uri                                          |
 | rarity   | int      | 是       | 掉落物稀有度                                            |
@@ -1187,10 +1190,10 @@ GET  PenguinStats/api/item
 
 ### description:
 
-查询作战物品掉落数量上下限接口
+查询关卡物品掉落数量上下限接口
 
 - 目前包含掉落为0可能
-- 目前只提供查询所有作战物品掉落数量限制，不提供指定作战或物品数量限制查询
+- 目前只提供查询所有关卡物品掉落数量限制，不提供指定关卡或物品数量限制查询
 - ~
 
 ### URI
@@ -1212,8 +1215,8 @@ GET /PenguinStats/api/limitation
 | 参数               | 参数类型   | 是否必选 | 描述                         |
 | ------------------ | ---------- | -------- | ---------------------------- |
 | itemQuantityBounds | List(Dict) | 是       | 掉落物掉落数量上下限         |
-| name               | String     | 是       | 作战id                       |
-| itemTypeBounds     | List(Dict) | 是       | 作战可掉落物类型的数量上下限 |
+| name               | String     | 是       | 关卡id                       |
+| itemTypeBounds     | List(Dict) | 是       | 关卡可掉落物类型的数量上下限 |
 
 **itemQuantityBounds参数信息**
 
@@ -1226,14 +1229,14 @@ GET /PenguinStats/api/limitation
 
 | 参数   | 参数类型   | 是否必选 | 描述                         |
 | ------ | ---------- | -------- | ---------------------------- |
-| bounds | List(Dict) | 是       | 作战可掉落物类型的数量上下限 |
+| bounds | List(Dict) | 是       | 关卡可掉落物类型的数量上下限 |
 
 **bounds参数信息**
 
 | 参数  | 参数类型 | 是否必选 | 描述     |
 | ----- | -------- | -------- | -------- |
 | lower | int      | 是       | 数量下限 |
-| upper  | int      | 是       | 数量上限 |
+| uper  | int      | 是       | 数量上限 |
 
 ### 实例
 
@@ -1406,13 +1409,15 @@ GET /PenguinStats/api/limitation
 
 用户功能接口
 
-- 用户登录/创建
+- 用户登录
+- ~~普通用户注册~~
+- 内部用户注册
 - ~
 
 ### URI
 
 ```
-POST /user
+POST /PenguinStats/api/user
 ```
 
 ### 请求消息
@@ -1439,22 +1444,22 @@ POST /user
 - 请求示例
 
   ```
-  {userID:"82355744"}
+  {userID:"15748941"}
   ```
 
 - 返回实例
 
   ```
-  //普通用户
   {
-      "createTime": 1562841587821,
-      "userID": "12345678",
+      "createTime": 1563421216503,
+      "userID": "15748941",
       "ips": [
-          "11.4.5.14",
-          "19.19.8.10"
+          "0.0.0.0" //示例用ip
       ],
-      "tags": []
+      "tags": [
+      ]
   }
+  
   ```
 
 ### 返回值
@@ -1475,16 +1480,18 @@ POST /user
 
 | 取值                   | 描述          |
 | ---------------------- | ------------- |
-| MAINLINE               | 主线作战/章节 |
-| WEEKLY                 | 日常作战/章节 |
-| ACTIVITY               | 活动作战/章节 |
+| MAINLINE               | 主线关卡/章节 |
+| arknights-drop-sniffer | 日常关卡/章节 |
+| ACTIVITY               | 活动关卡/章节 |
 
 ### itemType取值说明
-
-### 
 
 | 取值     | 描述     |
 | -------- | -------- |
 | CARD_EXP | 经验录像 |
 | MATERIAL | 材料     |
 | FURN     | 家具     |
+
+
+
+**文档内部分返回实例由于篇幅原因有删减**
