@@ -1,0 +1,53 @@
+package io.penguinstats.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import io.penguinstats.dao.ZoneDao;
+import io.penguinstats.model.Zone;
+
+@Service("zoneService")
+public class ZoneServiceImpl implements ZoneService {
+
+	@Resource(name = "zoneDao")
+	private ZoneDao zoneDao;
+
+	@Override
+	public void saveZone(Zone zone) {
+		zoneDao.save(zone);
+	}
+
+	@Override
+	public Zone getZoneByZoneId(String zoneId) {
+		return zoneDao.findZoneByZoneId(zoneId);
+	}
+
+	/**
+	 * @Title: getAllZones
+	 * @Description: Return all zones in the database as a list.
+	 * @return List<Zone>
+	 */
+	@Override
+	public List<Zone> getAllZones() {
+		return zoneDao.findAll();
+	}
+
+	/**
+	 * @Title: getZoneMap
+	 * @Description: Return a map which has zoneId as key and zone object as value.
+	 * @return Map<String,Zone>
+	 */
+	@Override
+	public Map<String, Zone> getZoneMap() {
+		List<Zone> list = getAllZones();
+		Map<String, Zone> map = new HashMap<>();
+		list.forEach(zone -> map.put(zone.getZoneId(), zone));
+		return map;
+	}
+
+}
