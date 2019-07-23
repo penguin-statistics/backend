@@ -1,3 +1,5 @@
+.DS_Store
+
 !**/src/main/**
 !**/src/test/**
 
