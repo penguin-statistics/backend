@@ -4,6 +4,7 @@ import io.penguinstats.model.User;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -29,6 +30,7 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@ApiOperation("Login")
 	@PostMapping(produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
 			HttpServletResponse response) {

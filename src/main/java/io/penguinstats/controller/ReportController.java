@@ -8,6 +8,7 @@ import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.LimitationUtil;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -48,6 +49,7 @@ public class ReportController {
 	@Autowired
 	private CookieUtil cookieUtil;
 
+	@ApiOperation("Save single report")
 	@PostMapping
 	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
 			HttpServletResponse response) {

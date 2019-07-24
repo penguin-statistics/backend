@@ -2,6 +2,7 @@ package io.penguinstats.controller;
 
 import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,13 @@ public class ItemController {
 	@Autowired
 	private ItemService itemService;
 
+	@ApiOperation("Get all items")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Item>> getAllItems() {
 		return new ResponseEntity<List<Item>>(itemService.getAllItems(), HttpStatus.OK);
 	}
 
+	@ApiOperation("Get item by item ID")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);

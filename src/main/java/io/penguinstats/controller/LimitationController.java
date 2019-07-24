@@ -2,6 +2,7 @@ package io.penguinstats.controller;
 
 import io.penguinstats.model.Limitation;
 import io.penguinstats.service.LimitationService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class LimitationController {
 	@Autowired
 	private LimitationService limitationService;
 
+	@ApiOperation("Get all real limitations")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Limitation>> getAllRealLimitations() {
 		Map<String, Limitation> limitationsMap = limitationService.getRealLimitationMap();

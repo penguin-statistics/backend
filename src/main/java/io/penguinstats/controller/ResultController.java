@@ -7,6 +7,7 @@ import io.penguinstats.model.Zone;
 import io.penguinstats.service.*;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.JSONUtil;
+import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -99,6 +100,7 @@ public class ResultController {
 		}
 	}
 
+	@ApiOperation("Get matrix")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getMatrix(
 			@RequestParam(name = "show_item_details", required = false, defaultValue = "false") boolean showItemDetails,
