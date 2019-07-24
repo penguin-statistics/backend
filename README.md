@@ -13,13 +13,14 @@
 
 ### 准备工作
 1. 安装maven
-2. 安装MongoDB（可选）
-3. 如果选择本地运行MongoDB，可以联系作者获取dump得到的BSON文件，并执行以下命令添加测试用数据（可选）
+2. 安装IDE对应的[lombok](https://projectlombok.org/)插件
+3. 安装MongoDB（可选）
+4. 如果选择本地运行MongoDB，可以联系作者获取dump得到的BSON文件，并执行以下命令添加测试用数据（可选）
 ```
 mongorestore -h localhost:27017 -d penguin_stats <path of penguin_stats directory>
 ```
 
-4. 打开`src/main/resources/application.properties`，将`spring.data.mongodb.uri`中的`username`与`password`替换为相应的用户信息。若有自定义需求，也可改变本文件中的其他值
+5. 打开`src/main/resources/application.properties`，将`spring.data.mongodb.uri`中的`username`与`password`替换为相应的用户信息。若有自定义需求，也可改变本文件中的其他值
 
 ### 启动
 1. 在项目根目录下执行`mvn spring-boot:run`，或运行PenguinStatisticsApplication类中的main方法
