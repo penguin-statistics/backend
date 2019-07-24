@@ -1,5 +1,7 @@
 package io.penguinstats.model;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -13,6 +15,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * 
  * @author AlvISs_Reimu
  */
+@Getter
+@Setter
 @Document(collection = "drop_matrix_v2")
 public class DropMatrix {
 
@@ -24,52 +28,10 @@ public class DropMatrix {
 	private Integer quantity;
 	private Integer times;
 
-	public DropMatrix() {}
-
 	public DropMatrix(String stageId, String itemId, Integer quantity, Integer times) {
 		this.stageId = stageId;
 		this.itemId = itemId;
 		this.quantity = quantity;
-		this.times = times;
-	}
-
-	public ObjectId getId() {
-		return id;
-	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
-
-	public String getStageId() {
-		return stageId;
-	}
-
-	public void setStageId(String stageId) {
-		this.stageId = stageId;
-	}
-
-	public String getItemId() {
-		return itemId;
-	}
-
-	public void setItemId(String itemId) {
-		this.itemId = itemId;
-	}
-
-	public Integer getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-
-	public Integer getTimes() {
-		return times;
-	}
-
-	public void setTimes(Integer times) {
 		this.times = times;
 	}
 

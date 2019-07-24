@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -15,6 +17,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+@Getter
+@Setter
 @Document(collection = "limitation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Limitation {
@@ -28,53 +32,11 @@ public class Limitation {
 	private List<ItemQuantityBounds> itemQuantityBounds;
 	private List<String> inheritance;
 
-	public Limitation() {}
-
 	public Limitation(String name, Bounds itemTypeBounds, List<ItemQuantityBounds> itemQuantityBounds,
 			List<String> inheritance) {
 		this.name = name;
 		this.itemTypeBounds = itemTypeBounds;
 		this.itemQuantityBounds = itemQuantityBounds;
-		this.inheritance = inheritance;
-	}
-
-	public ObjectId getId() {
-		return id;
-	}
-
-	public void setId(ObjectId id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public Bounds getItemTypeBounds() {
-		return itemTypeBounds;
-	}
-
-	public void setItemTypeBounds(Bounds itemTypeBounds) {
-		this.itemTypeBounds = itemTypeBounds;
-	}
-
-	public List<ItemQuantityBounds> getItemQuantityBounds() {
-		return itemQuantityBounds;
-	}
-
-	public void setItemQuantityBounds(List<ItemQuantityBounds> itemQuantityBounds) {
-		this.itemQuantityBounds = itemQuantityBounds;
-	}
-
-	public List<String> getInheritance() {
-		return inheritance;
-	}
-
-	public void setInheritance(List<String> inheritance) {
 		this.inheritance = inheritance;
 	}
 

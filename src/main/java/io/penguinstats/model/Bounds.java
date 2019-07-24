@@ -4,7 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Bounds {
 
@@ -18,40 +24,10 @@ public class Bounds {
 		this.exceptions = new ArrayList<>();
 	}
 
-	public Bounds(Integer lower, Integer upper, List<Integer> exceptions) {
-		this.lower = lower;
-		this.upper = upper;
-		this.exceptions = exceptions;
-	}
-
 	public Bounds(Integer lower, Integer upper) {
 		this.lower = lower;
 		this.upper = upper;
 		this.exceptions = new ArrayList<>();
-	}
-
-	public Integer getLower() {
-		return lower;
-	}
-
-	public void setLower(Integer lower) {
-		this.lower = lower;
-	}
-
-	public Integer getUpper() {
-		return upper;
-	}
-
-	public void setUpper(Integer upper) {
-		this.upper = upper;
-	}
-
-	public List<Integer> getExceptions() {
-		return exceptions;
-	}
-
-	public void setExceptions(List<Integer> exceptions) {
-		this.exceptions = exceptions;
 	}
 
 	public boolean isValid(int num) {
