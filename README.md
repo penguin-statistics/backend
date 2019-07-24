@@ -1,0 +1,35 @@
+# Penguin Statistics
+
+<img src="https://penguin-stats.s3-ap-southeast-1.amazonaws.com/penguin_stats_logo.png" width="150" height="150">
+
+## 企鹅物流数据统计
+- [https://penguin-stats.io/](https://penguin-stats.io/)
+- 明日方舟素材掉落统计与分析
+- 根据人工汇报的掉落样本，生成各作战和各素材的统计结果，方便博士们对刷素材的效率进行参考
+- 更多功能敬请期待
+
+## 如何食用本repo
+此repo包含网站后端，项目基于[Spring Boot 2.1.6](https://spring.io/projects/spring-boot)，数据库使用MongoDB。
+
+### 准备工作
+1. 安装maven
+2. 安装MongoDB（可选）
+3. 如果选择本地运行MongoDB，可以联系作者获取dump得到的BSON文件，并执行以下命令添加测试用数据（可选）
+```
+mongorestore -h localhost:27017 -d penguin_stats <path of penguin_stats directory>
+```
+
+4. 打开`src/main/resources/application.properties`，将`spring.data.mongodb.uri`中的`username`与`password`替换为相应的用户信息。若有自定义需求，也可改变本文件中的其他值
+
+### 启动
+1. 在项目根目录下执行`mvn spring-boot:run`，或运行PenguinStatisticsApplication类中的main方法
+2. 提示PenguinStats is running后，即完成启动
+
+### Build
+ 执行`mvn clean package`后，将`target/PenguinStats.war`部署至服务器上即可。
+ 
+ ## API文档
+ 项目已整合Swagger，启动后请访问http://localhost:8081/PenguinStats/swagger/swagger-ui.html
+
+## 意见和建议
+各种想法欢迎提Issue，也可以通过[网站介绍页面](https://penguin-stats.io/ "网站介绍页面")下方的联系方式找到我和Penguin Stats的其他团队成员。
