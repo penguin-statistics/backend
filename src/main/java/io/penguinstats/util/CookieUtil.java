@@ -1,18 +1,21 @@
 package io.penguinstats.util;
 
-import io.penguinstats.service.UserService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import io.penguinstats.model.User;
+import io.penguinstats.service.UserService;
 
 @Component("cookieUtil")
 public class CookieUtil {
@@ -59,13 +62,14 @@ public class CookieUtil {
 						}
 					}
 					if (userID != null) {
-						if (userService.getUserByUserID(userID) == null) {
+						User user = userService.getUserByUserID(userID);
+						if (user == null) {
 							logger.warn("userID " + userID + " is not existed.");
 							userID = null;
 						} else {
 							// old user
 							String ip = IpUtil.getIpAddr(request);
-							if (ip != null) {
+							if (ip != null && !user.containsIp(ip)) {
 								logger.info("Add ip " + ip + " to user " + userID);
 								userService.addIP(userID, ip);
 							}

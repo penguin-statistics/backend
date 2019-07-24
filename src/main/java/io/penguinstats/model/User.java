@@ -2,8 +2,6 @@ package io.penguinstats.model;
 
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -11,6 +9,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -36,6 +37,12 @@ public class User {
 		this.ips = ips;
 		this.comment = comment;
 		this.createTime = createTime;
+	}
+
+	public boolean containsIp(String ip) {
+		if (this.ips == null)
+			return false;
+		return ips.contains(ip);
 	}
 
 }
