@@ -11,6 +11,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.LimitationDao;
@@ -20,10 +21,10 @@ import io.penguinstats.model.Stage;
 @Service("limitationService")
 public class LimitationServiceImpl implements LimitationService {
 
-	@Resource(name = "stageService")
+	@Autowired
 	private StageService stageService;
 
-	@Resource(name = "limitationDao")
+	@Autowired
 	private LimitationDao limitationDao;
 
 	public void saveLimitation(Limitation limitation) {

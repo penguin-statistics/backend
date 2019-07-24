@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.penguinstats.model.Drop;
@@ -18,7 +19,7 @@ import io.penguinstats.service.LimitationService;
 @Component("limitationUtil")
 public class LimitationUtil {
 
-	@Resource(name = "limitationService")
+	@Autowired
 	private LimitationService limitationService;
 	private static LimitationUtil limitationUtil;
 

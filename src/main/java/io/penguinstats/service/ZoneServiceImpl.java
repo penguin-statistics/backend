@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.ZoneDao;
@@ -14,7 +15,7 @@ import io.penguinstats.model.Zone;
 @Service("zoneService")
 public class ZoneServiceImpl implements ZoneService {
 
-	@Resource(name = "zoneDao")
+	@Autowired
 	private ZoneDao zoneDao;
 
 	@Override

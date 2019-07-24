@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.StageDao;
@@ -14,7 +15,7 @@ import io.penguinstats.model.Stage;
 @Service("stageService")
 public class StageServiceImpl implements StageService {
 
-	@Resource(name = "stageDao")
+	@Autowired
 	private StageDao stageDao;
 
 	@Override

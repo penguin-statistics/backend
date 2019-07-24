@@ -1,12 +1,13 @@
 package io.penguinstats.controller;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import io.penguinstats.model.User;
+import io.penguinstats.service.UserService;
+import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.IpUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.model.User;
-import io.penguinstats.service.UserService;
-import io.penguinstats.util.CookieUtil;
-import io.penguinstats.util.IpUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequestMapping("/api/users")
@@ -27,7 +26,7 @@ public class UserController {
 
 	private static Logger logger = LogManager.getLogger(UserController.class);
 
-	@Resource(name = "userService")
+	@Autowired
 	private UserService userService;
 
 	@PostMapping(produces = "text/plain;charset=UTF-8")

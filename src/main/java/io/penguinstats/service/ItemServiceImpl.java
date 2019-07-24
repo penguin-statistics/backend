@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.ItemDao;
@@ -14,7 +15,7 @@ import io.penguinstats.model.Item;
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
 
-	@Resource(name = "itemDao")
+	@Autowired
 	private ItemDao itemDao;
 
 	public void saveItem(Item item) {

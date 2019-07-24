@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +26,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	private static Logger logger = LogManager.getLogger(ItemDropServiceImpl.class);
 
-	@Resource(name = "itemService")
+	@Autowired
 	private ItemService itemService;
 
-	@Resource(name = "itemDropDao")
+	@Autowired
 	private ItemDropDao itemDropDao;
 
 	public void saveItemDrop(ItemDrop itemDrop) {
