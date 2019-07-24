@@ -1,25 +1,5 @@
 package io.penguinstats.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
 import io.penguinstats.service.DropMatrixService;
@@ -28,6 +8,24 @@ import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.LimitationUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/report")
@@ -35,18 +33,22 @@ public class ReportController {
 
 	private static Logger logger = LogManager.getLogger(ReportController.class);
 
-	@Resource(name = "itemDropService")
+	@Autowired
 	private ItemDropService itemDropService;
-	@Resource(name = "dropMatrixService")
+
+	@Autowired
 	private DropMatrixService dropMatrixService;
-	@Resource(name = "userService")
+
+	@Autowired
 	private UserService userService;
-	@Resource(name = "limitationUtil")
+
+	@Autowired
 	private LimitationUtil limitationUtil;
-	@Resource(name = "cookieUtil")
+
+	@Autowired
 	private CookieUtil cookieUtil;
 
-	@PostMapping()
+	@PostMapping
 	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
 			HttpServletResponse response) {
 		try {

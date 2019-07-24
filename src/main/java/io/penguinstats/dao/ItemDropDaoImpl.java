@@ -9,6 +9,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -27,7 +28,7 @@ import io.penguinstats.util.Constant;
 @Repository(value = "itemDropDao")
 public class ItemDropDaoImpl implements ItemDropDao {
 
-	@Resource
+	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	@Override

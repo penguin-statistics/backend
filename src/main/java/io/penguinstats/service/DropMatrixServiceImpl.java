@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.DropMatrixDao;
@@ -15,9 +16,10 @@ import io.penguinstats.model.Stage;
 @Service("dropMatrixService")
 public class DropMatrixServiceImpl implements DropMatrixService {
 
-	@Resource(name = "stageService")
+	@Autowired
 	private StageService stageService;
-	@Resource(name = "dropMatrixDao")
+
+	@Autowired
 	private DropMatrixDao dropMatrixDao;
 
 	public List<DropMatrix> getAllElements() {

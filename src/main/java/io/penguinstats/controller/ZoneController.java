@@ -1,9 +1,8 @@
 package io.penguinstats.controller;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import io.penguinstats.model.Zone;
+import io.penguinstats.service.ZoneService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +10,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.model.Zone;
-import io.penguinstats.service.ZoneService;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/zones")
 public class ZoneController {
 
-	@Resource(name = "zoneService")
+	@Autowired
 	private ZoneService zoneService;
 
 	@GetMapping(produces = "application/json;charset=UTF-8")

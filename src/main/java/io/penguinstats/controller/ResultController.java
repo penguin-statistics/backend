@@ -1,39 +1,27 @@
 package io.penguinstats.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.model.DropMatrix;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
-import io.penguinstats.service.DropMatrixService;
-import io.penguinstats.service.ItemDropService;
-import io.penguinstats.service.ItemService;
-import io.penguinstats.service.StageService;
-import io.penguinstats.service.ZoneService;
+import io.penguinstats.service.*;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.JSONUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/result")
@@ -41,17 +29,17 @@ public class ResultController {
 
 	private static Logger logger = LogManager.getLogger(ResultController.class);
 
-	@Resource(name = "zoneService")
+	@Autowired
 	private ZoneService zoneService;
-	@Resource(name = "stageService")
+	@Autowired
 	private StageService stageService;
-	@Resource(name = "itemService")
+	@Autowired
 	private ItemService itemService;
-	@Resource(name = "dropMatrixService")
+	@Autowired
 	private DropMatrixService dropMatrixService;
-	@Resource(name = "itemDropService")
+	@Autowired
 	private ItemDropService itemDropService;
-	@Resource(name = "cookieUtil")
+	@Autowired
 	private CookieUtil cookieUtil;
 
 	@GetMapping(path = "/stage/{stageId}", produces = "application/json;charset=UTF-8")

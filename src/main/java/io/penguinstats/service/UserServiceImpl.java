@@ -8,6 +8,7 @@ import javax.annotation.Resource;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.UserDao;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
 
 	private static Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
-	@Resource(name = "userDao")
+	@Autowired
 	private UserDao userDao;
 
 	@Override

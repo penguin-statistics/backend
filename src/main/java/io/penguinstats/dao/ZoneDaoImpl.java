@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -15,7 +16,7 @@ import io.penguinstats.model.Zone;
 @Repository(value = "zoneDao")
 public class ZoneDaoImpl implements ZoneDao {
 
-	@Resource
+	@Autowired
 	private MongoTemplate mongoTemplate;
 
 	@Override

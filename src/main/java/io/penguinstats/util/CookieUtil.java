@@ -1,20 +1,18 @@
 package io.penguinstats.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import io.penguinstats.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-
-import io.penguinstats.service.UserService;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 
 @Component("cookieUtil")
 public class CookieUtil {
@@ -22,7 +20,7 @@ public class CookieUtil {
 	private static Logger logger = LogManager.getLogger(CookieUtil.class);
 	private static CookieUtil cookieUtil;
 
-	@Resource(name = "userService")
+	@Autowired
 	private UserService userService;
 
 	@PostConstruct
