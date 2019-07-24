@@ -30,7 +30,8 @@ mongorestore -h localhost:27017 -d penguin_stats <path of penguin_stats director
  执行`mvn clean package`后，将`target/PenguinStats.war`部署至服务器上即可。
  
  ## API文档
- 项目已整合Swagger，启动后请访问http://localhost:8081/PenguinStats/swagger/swagger-ui.html
+ 1. 已上线版本的API文档请见[这里](https://penguin-stats.io/PenguinStats/swagger/swagger-ui.html)
+ 2. 本地调试版本可以访问`/PenguinStats/swagger/swagger-ui.html`
 
 ## 意见和建议
 各种想法欢迎提Issue，也可以通过[网站介绍页面](https://penguin-stats.io/ "网站介绍页面")下方的联系方式找到我和Penguin Stats的其他团队成员。
