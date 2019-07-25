@@ -1,12 +1,11 @@
 package io.penguinstats.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * DropMatrix is used to present a sparse matrix for drop records.<br>
@@ -35,11 +34,11 @@ public class DropMatrix {
 		this.times = times;
 	}
 
-	public void increateTimes(int num) {
+	public void increaseTimes(int num) {
 		this.times += num;
 	}
 
-	public void increateQuantity(int num) {
+	public void increaseQuantity(int num) {
 		this.quantity += num;
 	}
 

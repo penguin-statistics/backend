@@ -1,14 +1,13 @@
 package io.penguinstats.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import io.penguinstats.dao.ZoneDao;
+import io.penguinstats.model.Zone;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.penguinstats.dao.ZoneDao;
-import io.penguinstats.model.Zone;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service("zoneService")
 public class ZoneServiceImpl implements ZoneService {
@@ -23,7 +22,7 @@ public class ZoneServiceImpl implements ZoneService {
 
 	@Override
 	public Zone getZoneByZoneId(String zoneId) {
-		return zoneDao.findZoneByZoneId(zoneId);
+		return zoneDao.findById(zoneId).orElse(null);
 	}
 
 	/**

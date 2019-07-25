@@ -1,8 +1,8 @@
 package io.penguinstats.service;
 
-import java.util.List;
-
 import io.penguinstats.model.DropMatrix;
+
+import java.util.List;
 
 public interface DropMatrixService {
 
@@ -12,9 +12,9 @@ public interface DropMatrixService {
 
 	void clearAndUpdateAll(List<DropMatrix> elements);
 
-	void increateQuantityForOneElement(String stageId, String itemId, Integer quantity);
+	void increaseQuantityForOneElement(String stageId, String itemId, Integer quantity);
 
-	void increateTimesForOneStage(String stageId, Integer times);
+	void increaseTimesForOneStage(String stageId, Integer times);
 
 	boolean hasElementsForOneStage(String stageId);
 

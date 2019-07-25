@@ -97,8 +97,8 @@ public class ReportController {
 				if (!dropMatrixService.hasElementsForOneStage(stageId))
 					dropMatrixService.initializeElementsForOneStage(stageId);
 				for (Drop drop : drops)
-					dropMatrixService.increateQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
-				dropMatrixService.increateTimesForOneStage(stageId, 1);
+					dropMatrixService.increaseQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
+				dropMatrixService.increaseTimesForOneStage(stageId, 1);
 			}
 			return new ResponseEntity<String>(HttpStatus.OK);
 		} catch (JSONException jsonException) {

@@ -1,16 +1,16 @@
 package io.penguinstats.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
-
+import io.penguinstats.dao.UserDao;
+import io.penguinstats.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import io.penguinstats.dao.UserDao;
-import io.penguinstats.model.User;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Random;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByUserID(String userID) {
-		return userDao.findUserByUserID(userID);
+		return userDao.findById(userID).orElse(null);
 	}
 
 	/**
@@ -79,7 +79,11 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void addIP(String userID, String ip) {
-		userDao.addIP(userID, ip);
+		Optional<User> user = userDao.findById(userID);
+		user.ifPresent(u -> {
+			u.getIps().add(ip);
+			userDao.save(u);
+		});
 	}
 
 	/** 
@@ -91,7 +95,12 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void addTag(String userID, String tag) {
-		userDao.addTag(userID, tag);
+		Optional<User> user = userDao.findById(userID);
+		user.ifPresent(u -> {
+			u.getTags().add(tag);
+			userDao.save(u);
+		});
+
 	}
 
 	/**

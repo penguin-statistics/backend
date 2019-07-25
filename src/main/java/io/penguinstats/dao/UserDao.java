@@ -1,17 +1,10 @@
 package io.penguinstats.dao;
 
 import io.penguinstats.model.User;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserDao extends BaseDao<User> {
-
-	void removeUser(String userID);
-
-	void updateUser(User user);
-
-	void addIP(String userID, String ip);
-
-	public void addTag(String userID, String tag);
-
-	User findUserByUserID(String userID);
+@Repository
+public interface UserDao extends MongoRepository<User, String> {
 
 }

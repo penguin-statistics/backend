@@ -1,25 +1,22 @@
 package io.penguinstats.dao;
 
+import io.penguinstats.model.DropMatrix;
+import org.springframework.data.mongodb.repository.DeleteQuery;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-import io.penguinstats.model.DropMatrix;
+@Repository
+public interface DropMatrixDao extends MongoRepository<DropMatrix, String> {
 
-public interface DropMatrixDao extends BaseDao<DropMatrix> {
-
-	void batchSave(List<DropMatrix> list);
-
-	void removeAll();
-
+	@DeleteQuery("{'$and' : [{'stageId' : ?0}, {'itemId' : ?1}]}")
 	void removeDropMatrix(String stageId, String itemId);
 
-	void updateDropMatrix(DropMatrix dropMatrix);
-
+	@Query("{'$and' : [{'stageId' : ?0}, {'itemId' : ?1}]}")
 	DropMatrix findDropMatrixByStageIdAndItemId(String stageId, String itemId);
 
 	List<DropMatrix> findDropMatrixByStageId(String stageId);
-
-	void increateTimesForOneStage(String stageId, Integer times);
-
-	void increateQuantityForOneElement(String stageId, String itemId, Integer quantity);
 
 }

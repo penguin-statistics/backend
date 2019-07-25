@@ -1,18 +1,13 @@
 package io.penguinstats.dao;
 
+import io.penguinstats.model.ItemDrop;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-import org.bson.Document;
-import org.springframework.data.mongodb.core.query.Criteria;
-
-import io.penguinstats.model.ItemDrop;
-
-public interface ItemDropDao extends BaseDao<ItemDrop> {
+@Repository
+public interface ItemDropDao extends MongoRepository<ItemDrop, String>, ItemDropDaoCustom {
 
 	List<ItemDrop> findByIsReliable(Boolean isReliable);
-
-	List<Document> aggregateItemDropQuantities(Criteria criteria);
-
-	List<Document> aggregateStageTimes(Criteria criteria);
-
 }

@@ -1,12 +1,11 @@
 package io.penguinstats.dao;
 
 import io.penguinstats.model.Item;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ItemDao extends BaseDao<Item> {
-
-	void removeItem(String itemId);
-
-	void updateItem(Item item);
+@Repository
+public interface ItemDao extends MongoRepository<Item, String> {
 
 	Item findItemByItemId(String itemId);
 

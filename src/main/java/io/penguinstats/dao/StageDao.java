@@ -1,14 +1,13 @@
 package io.penguinstats.dao;
 
+import io.penguinstats.model.Stage;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 
-import io.penguinstats.model.Stage;
-
-public interface StageDao extends BaseDao<Stage> {
-
-	void removeStage(String stageId);
-
-	void updateStage(Stage stage);
+@Repository
+public interface StageDao extends MongoRepository<Stage, String> {
 
 	Stage findStageByStageId(String stageId);
 
