@@ -15,12 +15,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -107,6 +108,49 @@ public class ReportController {
 		} catch (Exception e) {
 			logger.error("Error in saveSingleReport", e);
 			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@ApiOperation("Get personal report history")
+	@GetMapping(path = "/history", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<List<ItemDrop>> getPersonalReportHistory(HttpServletRequest request,
+																   @RequestParam(name = "page", defaultValue = "0") Integer page,
+																   @RequestParam(name = "page_size", defaultValue = "50") Integer pageSize,
+																   @RequestParam(name = "sort_by", defaultValue = "timestamp") String sortBy,
+																   @RequestParam(name = "direction", defaultValue = "ASC") String direction) {
+		try {
+			String userID = cookieUtil.readUserIDFromCookie(request);
+			if (userID == null) {
+				logger.error("Error in getPersonalReportHistory: Cannot read user ID");
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+			logger.info("user " + userID + " GET /report/history\n");
+			Pageable pageable = PageRequest.of(page, pageSize, new Sort(Sort.Direction.fromString(direction), sortBy));
+			Page<ItemDrop> userItemDrops = itemDropService.getVisibleItemDropsByUserID(userID, pageable);
+			return new ResponseEntity<>(userItemDrops.getContent(), HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("Error in getPersonalReportHistory", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@ApiOperation("Delete personal report history (set isDeleted to true)")
+	@PostMapping(path = "/history")
+	public ResponseEntity<String> deletePersonalReportHistory(HttpServletRequest request,
+															  @RequestParam("item_drop_id") String itemDropId) {
+		try {
+			String userID = cookieUtil.readUserIDFromCookie(request);
+			if (userID == null) {
+				logger.error("Error in deletePersonalReportHistory: Cannot read user ID");
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+
+			logger.info("user " + userID + " POST /report/history\n");
+			itemDropService.deleteItemDrop(userID, itemDropId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("Error in deletePersonalReportHistory", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

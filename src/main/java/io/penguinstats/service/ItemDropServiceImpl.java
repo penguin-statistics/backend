@@ -1,23 +1,19 @@
 package io.penguinstats.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.bson.Document;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.stereotype.Service;
-
 import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.model.DropMatrix;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.Document;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
@@ -34,12 +30,30 @@ public class ItemDropServiceImpl implements ItemDropService {
 		itemDropDao.save(itemDrop);
 	}
 
+	public void deleteItemDrop(String userID, String itemDropId) throws Exception {
+		ItemDrop itemDrop = itemDropDao.findById(itemDropId).orElse(null);
+		if (itemDrop == null || !itemDrop.getUserID().equals(userID)) {
+			throw new Exception("ItemDrop[" + itemDropId + "] not found for user with ID[" + userID + "]");
+		}
+
+		itemDrop.setIsDeleted(true);
+		itemDropDao.save(itemDrop);
+	}
+
 	public List<ItemDrop> getAllItemDrops() {
 		return itemDropDao.findAll();
 	}
 
 	public List<ItemDrop> getAllReliableItemDrops() {
 		return itemDropDao.findByIsReliable(true);
+	}
+
+	public List<ItemDrop> getItemDropsByUserID(String userID) {
+		return itemDropDao.findByUserID(userID);
+	}
+
+	public Page<ItemDrop> getVisibleItemDropsByUserID(String userID, Pageable pageable) {
+		return itemDropDao.findByIsDeletedAndUserID(false, userID, pageable);
 	}
 
 	/** 

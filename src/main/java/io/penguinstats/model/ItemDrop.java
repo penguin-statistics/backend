@@ -1,7 +1,6 @@
 package io.penguinstats.model;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.types.ObjectId;
@@ -9,7 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +27,8 @@ public class ItemDrop {
 	private String ip;
 	@Indexed
 	private Boolean isReliable;
+	@Indexed
+	private Boolean isDeleted = false;
 	@Indexed
 	private String source;
 	private String version;
