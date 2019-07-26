@@ -5,11 +5,14 @@ import io.penguinstats.model.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.Random;
 
 @Service("userService")
@@ -22,6 +25,10 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
+
 
 	@Override
 	public void saveUser(User user) {
@@ -79,11 +86,10 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void addIP(String userID, String ip) {
-		Optional<User> user = userDao.findById(userID);
-		user.ifPresent(u -> {
-			u.getIps().add(ip);
-			userDao.save(u);
-		});
+		Query query = new Query(Criteria.where("userID").is(userID));
+		Update update = new Update();
+		update.addToSet("ips", ip);
+		mongoTemplate.updateFirst(query, update, User.class);
 	}
 
 	/** 
@@ -95,12 +101,10 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void addTag(String userID, String tag) {
-		Optional<User> user = userDao.findById(userID);
-		user.ifPresent(u -> {
-			u.getTags().add(tag);
-			userDao.save(u);
-		});
-
+		Query query = new Query(Criteria.where("userID").is(userID));
+		Update update = new Update();
+		update.addToSet("tags", tag);
+		mongoTemplate.updateFirst(query, update, User.class);
 	}
 
 	/**

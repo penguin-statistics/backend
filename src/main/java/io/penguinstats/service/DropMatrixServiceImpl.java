@@ -4,6 +4,10 @@ import io.penguinstats.dao.DropMatrixDao;
 import io.penguinstats.model.DropMatrix;
 import io.penguinstats.model.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +22,9 @@ public class DropMatrixServiceImpl implements DropMatrixService {
 
 	@Autowired
 	private DropMatrixDao dropMatrixDao;
+
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	public List<DropMatrix> getAllElements() {
 		return dropMatrixDao.findAll();
@@ -47,9 +54,10 @@ public class DropMatrixServiceImpl implements DropMatrixService {
 	 * @return void
 	 */
 	public void increaseQuantityForOneElement(String stageId, String itemId, Integer quantity) {
-		DropMatrix dropMatrix = dropMatrixDao.findDropMatrixByStageIdAndItemId(stageId, itemId);
-		dropMatrix.increaseQuantity(quantity);
-		dropMatrixDao.save(dropMatrix);
+		Query query = new Query(
+				new Criteria().andOperator(Criteria.where("stageId").is(stageId), Criteria.where("itemId").is(itemId)));
+		Update update = new Update().inc("quantity", quantity);
+		mongoTemplate.updateFirst(query, update, DropMatrix.class);
 	}
 
 	/**
@@ -60,9 +68,9 @@ public class DropMatrixServiceImpl implements DropMatrixService {
 	 * @return void
 	 */
 	public void increaseTimesForOneStage(String stageId, Integer times) {
-		List<DropMatrix> dropMatrixList = dropMatrixDao.findDropMatrixByStageId(stageId);
-		dropMatrixList.forEach(e -> e.increaseTimes(times));
-		dropMatrixDao.saveAll(dropMatrixList);
+		Query query = new Query(Criteria.where("stageId").is(stageId));
+		Update update = new Update().inc("times", times);
+		mongoTemplate.updateMulti(query, update, DropMatrix.class);
 	}
 
 	/**

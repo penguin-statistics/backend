@@ -134,7 +134,6 @@ public class ReportController {
 		}
 	}
 
-	@ApiOperation("Delete personal report history (set isDeleted to true)")
 	@PostMapping(path = "/history")
 	public ResponseEntity<String> deletePersonalReportHistory(HttpServletRequest request,
 															  @RequestParam("item_drop_id") String itemDropId) {
