@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -13,6 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -45,6 +46,7 @@ public class Stage {
 		this.extraDrop = extraDrop;
 	}
 
+	@JsonIgnore
 	public Set<String> getDropsSet() {
 		Set<String> set = new HashSet<>();
 		if (this.normalDrop != null)

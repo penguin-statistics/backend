@@ -1,14 +1,16 @@
 package io.penguinstats.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -16,7 +18,6 @@ import java.util.List;
 public class ItemDrop {
 
 	@Id
-	@JsonIgnore
 	private ObjectId id;
 	@Indexed
 	private String stageId;
@@ -48,6 +49,7 @@ public class ItemDrop {
 		this.userID = userID;
 	}
 
+	@JsonIgnore
 	public int getDropQuantity(String itemId) {
 		for (Drop drop : this.drops) {
 			if (drop.getItemId().equals(itemId)) {

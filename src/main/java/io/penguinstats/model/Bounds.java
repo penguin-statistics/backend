@@ -3,7 +3,9 @@ package io.penguinstats.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,6 +32,7 @@ public class Bounds {
 		this.exceptions = new ArrayList<>();
 	}
 
+	@JsonIgnore
 	public boolean isValid(int num) {
 		if (this.lower != null && num < this.lower)
 			return false;
