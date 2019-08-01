@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,6 +14,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -45,6 +46,7 @@ public class Limitation {
 	 * @Description: Return a map which has itemId as key and ItemQuantityBounds object as value.
 	 * @return Map<String,ItemQuantityBounds>
 	 */
+	@JsonIgnore
 	public Map<String, ItemQuantityBounds> getItemQuantityBoundsMap() {
 		Map<String, ItemQuantityBounds> itemQuantityBoundsMap = new HashMap<>();
 		if (this.itemQuantityBounds != null) {
