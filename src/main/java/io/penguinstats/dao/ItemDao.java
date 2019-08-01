@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ItemDao extends MongoRepository<Item, String> {
 
-	Item findItemByItemId(String itemId);
+	Item findByItemId(String itemId);
 
 }

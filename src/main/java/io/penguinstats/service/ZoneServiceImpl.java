@@ -22,7 +22,7 @@ public class ZoneServiceImpl implements ZoneService {
 
 	@Override
 	public Zone getZoneByZoneId(String zoneId) {
-		return zoneDao.findById(zoneId).orElse(null);
+		return zoneDao.findByZoneId(zoneId);
 	}
 
 	/**

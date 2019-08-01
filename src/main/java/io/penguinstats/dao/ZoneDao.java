@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ZoneDao extends MongoRepository<Zone, String> {
 
+    Zone findByZoneId(String zoneId);
+
 }

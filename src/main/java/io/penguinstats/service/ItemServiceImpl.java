@@ -21,7 +21,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	public Item getItemByItemId(String itemId) {
-		return itemDao.findItemByItemId(itemId);
+		return itemDao.findByItemId(itemId);
 	}
 
 	/**

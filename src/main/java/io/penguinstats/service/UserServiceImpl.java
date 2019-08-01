@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User getUserByUserID(String userID) {
-		return userDao.findById(userID).orElse(null);
+		return userDao.findByUserID(userID);
 	}
 
 	/**

@@ -23,7 +23,7 @@ public class StageServiceImpl implements StageService {
 
 	@Override
 	public Stage getStageByStageId(String stageId) {
-		return stageDao.findStageByStageId(stageId);
+		return stageDao.findByStageId(stageId);
 	}
 
 	/** 

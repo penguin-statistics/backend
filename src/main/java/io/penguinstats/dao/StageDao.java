@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface StageDao extends MongoRepository<Stage, String> {
 
-	Stage findStageByStageId(String stageId);
+	Stage findByStageId(String stageId);
 
 	List<Stage> findStagesByZoneId(String zoneId);
 
