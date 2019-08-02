@@ -1,14 +1,12 @@
 package io.penguinstats.controller;
 
-import io.penguinstats.model.Drop;
-import io.penguinstats.model.ItemDrop;
-import io.penguinstats.service.DropMatrixService;
-import io.penguinstats.service.ItemDropService;
-import io.penguinstats.service.UserService;
-import io.penguinstats.util.CookieUtil;
-import io.penguinstats.util.IpUtil;
-import io.penguinstats.util.LimitationUtil;
-import io.swagger.annotations.ApiOperation;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -21,13 +19,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import io.penguinstats.model.Drop;
+import io.penguinstats.model.ItemDrop;
+import io.penguinstats.service.DropMatrixService;
+import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.UserService;
+import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.IpUtil;
+import io.penguinstats.util.LimitationUtil;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/report")
@@ -95,6 +102,7 @@ public class ReportController {
 			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version, userID);
 			itemDropService.saveItemDrop(itemDrop);
 			if (isReliable) {
+				// FIXME: For old stages, if a new kind of item drops, it has no corresponding matrix element in the database.
 				if (!dropMatrixService.hasElementsForOneStage(stageId))
 					dropMatrixService.initializeElementsForOneStage(stageId);
 				for (Drop drop : drops)
@@ -114,10 +122,10 @@ public class ReportController {
 	@ApiOperation("Get personal report history")
 	@GetMapping(path = "/history", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<ItemDrop>> getPersonalReportHistory(HttpServletRequest request,
-																   @RequestParam(name = "page", defaultValue = "0") Integer page,
-																   @RequestParam(name = "page_size", defaultValue = "50") Integer pageSize,
-																   @RequestParam(name = "sort_by", defaultValue = "timestamp") String sortBy,
-																   @RequestParam(name = "direction", defaultValue = "ASC") String direction) {
+			@RequestParam(name = "page", defaultValue = "0") Integer page,
+			@RequestParam(name = "page_size", defaultValue = "50") Integer pageSize,
+			@RequestParam(name = "sort_by", defaultValue = "timestamp") String sortBy,
+			@RequestParam(name = "direction", defaultValue = "ASC") String direction) {
 		try {
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
@@ -136,7 +144,7 @@ public class ReportController {
 
 	@PostMapping(path = "/history")
 	public ResponseEntity<String> deletePersonalReportHistory(HttpServletRequest request,
-															  @RequestParam("item_drop_id") String itemDropId) {
+			@RequestParam("item_drop_id") String itemDropId) {
 		try {
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
