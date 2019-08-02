@@ -1,9 +1,13 @@
 package io.penguinstats.service;
 
-import io.penguinstats.dao.ItemDropDao;
-import io.penguinstats.model.DropMatrix;
-import io.penguinstats.model.Item;
-import io.penguinstats.model.ItemDrop;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -13,7 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import io.penguinstats.dao.ItemDropDao;
+import io.penguinstats.model.DropMatrix;
+import io.penguinstats.model.Item;
+import io.penguinstats.model.ItemDrop;
 
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
@@ -28,6 +35,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	public void saveItemDrop(ItemDrop itemDrop) {
 		itemDropDao.save(itemDrop);
+	}
+
+	public void batchSaveItemDrops(Collection<ItemDrop> itemDrops) {
+		itemDropDao.saveAll(itemDrops);
 	}
 
 	public void deleteItemDrop(String userID, String itemDropId) throws Exception {

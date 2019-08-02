@@ -1,17 +1,21 @@
 package io.penguinstats.service;
 
-import io.penguinstats.model.DropMatrix;
-import io.penguinstats.model.ItemDrop;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import java.util.List;
-import java.util.Map;
+import io.penguinstats.model.DropMatrix;
+import io.penguinstats.model.ItemDrop;
 
 public interface ItemDropService {
 
 	void saveItemDrop(ItemDrop itemDrop);
+
+	void batchSaveItemDrops(Collection<ItemDrop> itemDrops);
 
 	void deleteItemDrop(String userId, String itemDropId) throws Exception;
 
