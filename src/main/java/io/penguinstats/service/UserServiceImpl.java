@@ -1,7 +1,11 @@
 package io.penguinstats.service;
 
-import io.penguinstats.dao.UserDao;
-import io.penguinstats.model.User;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +15,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import io.penguinstats.dao.UserDao;
+import io.penguinstats.model.User;
 
 @Service("userService")
 public class UserServiceImpl implements UserService {
@@ -28,7 +31,6 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
-
 
 	@Override
 	public void saveUser(User user) {
@@ -105,6 +107,32 @@ public class UserServiceImpl implements UserService {
 		Update update = new Update();
 		update.addToSet("tags", tag);
 		mongoTemplate.updateFirst(query, update, User.class);
+	}
+
+	/** 
+	 * @Title: updateUploadFromMap 
+	 * @Description: Update upload count for all users from a map.
+	 * @param map userID -> count
+	 * @param type Can only be "total" or "reliable"
+	 * @return void
+	 */
+	@Override
+	public void updateUploadFromMap(Map<String, Integer> map, String type) {
+		List<User> usersToUpdate = new ArrayList<>();
+		List<User> allUsers = userDao.findAll();
+		for (User user : allUsers) {
+			Integer count = map.get(user.getUserID());
+			if (count == null)
+				count = 0;
+			if ("total".equals(type)) {
+				user.setTotalUpload(count);
+				usersToUpdate.add(user);
+			} else if ("reliable".equals(type)) {
+				user.setReliableUpload(count);
+				usersToUpdate.add(user);
+			}
+		}
+		userDao.saveAll(usersToUpdate);
 	}
 
 	/**

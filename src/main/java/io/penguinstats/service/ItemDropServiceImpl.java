@@ -185,4 +185,21 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return map;
 	}
 
+	/** 
+	 * @Title: generateUploadCountMap
+	 * @Description: Generate a map of user's upload count under given criteria
+	 * @param criteria
+	 * @return Map<String, Integer> userID -> count
+	 */
+	public Map<String, Integer> generateUploadCountMap(Criteria criteria) {
+		Map<String, Integer> map = new HashMap<>();
+		List<Document> docs = itemDropDao.aggregateUploadCount(criteria);
+		for (Document doc : docs) {
+			String userID = doc.getString("_id");
+			if (userID != null)
+				map.put(userID, doc.getInteger("count"));
+		}
+		return map;
+	}
+
 }

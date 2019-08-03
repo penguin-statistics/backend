@@ -35,4 +35,6 @@ public interface ItemDropService {
 
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);
 
+	Map<String, Integer> generateUploadCountMap(Criteria criteria);
+
 }
