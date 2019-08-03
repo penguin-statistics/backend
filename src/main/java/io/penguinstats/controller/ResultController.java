@@ -1,13 +1,12 @@
 package io.penguinstats.controller;
 
-import io.penguinstats.model.DropMatrix;
-import io.penguinstats.model.Item;
-import io.penguinstats.model.Stage;
-import io.penguinstats.model.Zone;
-import io.penguinstats.service.*;
-import io.penguinstats.util.CookieUtil;
-import io.penguinstats.util.JSONUtil;
-import io.swagger.annotations.ApiOperation;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -16,13 +15,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.penguinstats.model.DropMatrix;
+import io.penguinstats.model.Item;
+import io.penguinstats.model.Stage;
+import io.penguinstats.model.Zone;
+import io.penguinstats.service.DropMatrixService;
+import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.ItemService;
+import io.penguinstats.service.StageService;
+import io.penguinstats.service.ZoneService;
+import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.JSONUtil;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/result")
@@ -185,8 +197,8 @@ public class ResultController {
 		Criteria criteria = userID == null ? null : Criteria.where("userID").is(userID);
 		Map<String, Map<String, DropMatrix>> matrixMapFromDB =
 				userID != null ? itemDropService.generateDropMatrixMap(criteria) : new HashMap<>();
-		Map<String, List<Integer>> stageTimesMapFromDB =
-				userID != null ? itemDropService.getStageTimesMap(criteria) : new HashMap<>();
+		Map<String, List<Double>> stageTimesMapFromDB =
+				userID != null ? itemDropService.getStageTimesMap(criteria, false) : new HashMap<>();
 		Map<String, Item> itemMap = itemService.getItemMap();
 
 		// merge quantity
@@ -208,13 +220,13 @@ public class ResultController {
 
 		// merge stage times
 		for (String stageId : matrixMapFromDB.keySet()) {
-			List<Integer> stageTimes = stageTimesMapFromDB.get(stageId);
+			List<Double> stageTimes = stageTimesMapFromDB.get(stageId);
 			if (stageTimesObj.has(stageId)) {
 				JSONArray stageTimesArray = stageTimesObj.getJSONArray(stageId);
 				if (stageTimes == null) {
 					stageTimes = new ArrayList<>();
 					for (int i = 0; i < stageTimesArray.length(); i++) {
-						stageTimes.add(stageTimesArray.getInt(i));
+						stageTimes.add(new Double(stageTimesArray.getInt(i)));
 					}
 				} else {
 					if (stageTimes.size() < stageTimesArray.length()) {
@@ -239,8 +251,8 @@ public class ResultController {
 				Integer addTimePoint = item.getAddTimePoint();
 				if (addTimePoint == null)
 					addTimePoint = 0;
-				Integer times = stageTimesMapFromDB.get(stageId).get(addTimePoint);
-				subMap.get(itemId).setTimes(times);
+				Double times = stageTimesMapFromDB.get(stageId).get(addTimePoint);
+				subMap.get(itemId).setTimes(times.intValue());
 			}
 		}
 

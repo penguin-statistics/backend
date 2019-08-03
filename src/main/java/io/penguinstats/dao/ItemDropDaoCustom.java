@@ -13,4 +13,8 @@ public interface ItemDropDaoCustom {
 
 	List<Document> aggregateUploadCount(Criteria criteria);
 
+	List<Document> aggregateWeightedItemDropQuantities(Criteria criteria);
+
+	List<Document> aggregateWeightedStageTimes(Criteria criteria);
+
 }
