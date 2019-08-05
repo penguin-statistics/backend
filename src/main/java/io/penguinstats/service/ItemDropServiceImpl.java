@@ -100,7 +100,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				Document subDoc = allTimesDocs.get(i);
 				Integer timePoint = subDoc.getLong("timePoint").intValue();
 				allTimesArray[timePoint] =
-						isWeighted ? subDoc.getDouble("times") : new Double(subDoc.getInteger("times"));
+						isWeighted ? subDoc.getDouble("times") : Double.valueOf(subDoc.getInteger("times"));
 			}
 			map.put(stageId, Arrays.asList(allTimesArray));
 		}

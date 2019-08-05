@@ -58,9 +58,9 @@ public class ResultController {
 	@GetMapping(path = "/stage/{stageId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getResultForOneStage(@PathVariable("stageId") String stageId) {
 		if (stageId == null)
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		JSONObject obj = generateReturnObjForOneStage(stageId, dropMatrixService.getAllElements());
-		return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+		return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/stage/{stageId}", produces = "application/json;charset=UTF-8")
@@ -76,19 +76,19 @@ public class ResultController {
 			List<DropMatrix> elements =
 					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj, userID);
 			JSONObject returnObj = generateReturnObjForOneStage(stageId, elements);
-			return new ResponseEntity<String>(returnObj.toString(), HttpStatus.OK);
+			return new ResponseEntity<>(returnObj.toString(), HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getPersonalResultForOneStage", e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@GetMapping(path = "/item/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getResultForOneItem(@PathVariable("itemId") String itemId) {
 		if (itemId == null)
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		JSONObject obj = generateReturnObjForOneItem(itemId, dropMatrixService.getAllElements());
-		return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+		return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/item/{itemId}", produces = "application/json;charset=UTF-8")
@@ -105,10 +105,10 @@ public class ResultController {
 					getDropMatrixListFromStageTimesAndDropMatrixMapObj(stageTimesObj, dropMatrixObj, userID);
 
 			JSONObject returnObj = generateReturnObjForOneItem(itemId, elements);
-			return new ResponseEntity<String>(returnObj.toString(), HttpStatus.OK);
+			return new ResponseEntity<>(returnObj.toString(), HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getPersonalResultForOneItem", e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -147,10 +147,10 @@ public class ResultController {
 				array.put(subObj);
 			}
 			obj.put("matrix", array);
-			return new ResponseEntity<String>(obj.toString(), HttpStatus.OK);
+			return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -226,7 +226,7 @@ public class ResultController {
 				if (stageTimes == null) {
 					stageTimes = new ArrayList<>();
 					for (int i = 0; i < stageTimesArray.length(); i++) {
-						stageTimes.add(new Double(stageTimesArray.getInt(i)));
+						stageTimes.add((double) stageTimesArray.getInt(i));
 					}
 				} else {
 					if (stageTimes.size() < stageTimesArray.length()) {

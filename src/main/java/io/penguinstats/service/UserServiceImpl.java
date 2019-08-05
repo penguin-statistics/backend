@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import io.penguinstats.enums.UploadCountType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,26 +114,44 @@ public class UserServiceImpl implements UserService {
 	 * @Title: updateUploadFromMap 
 	 * @Description: Update upload count for all users from a map.
 	 * @param map userID -> count
-	 * @param type Can only be "total" or "reliable"
+	 * @param type enum UploadCountType
 	 * @return void
 	 */
 	@Override
-	public void updateUploadFromMap(Map<String, Integer> map, String type) {
+	public void updateUploadFromMap(Map<String, Integer> map, UploadCountType type) {
 		List<User> usersToUpdate = new ArrayList<>();
 		List<User> allUsers = userDao.findAll();
 		for (User user : allUsers) {
 			Integer count = map.get(user.getUserID());
 			if (count == null)
 				count = 0;
-			if ("total".equals(type)) {
+			if (UploadCountType.TOTAL_UPLOAD.equals(type)) {
 				user.setTotalUpload(count);
 				usersToUpdate.add(user);
-			} else if ("reliable".equals(type)) {
+			} else if (UploadCountType.RELIABLE_UPLOAD.equals(type)) {
 				user.setReliableUpload(count);
 				usersToUpdate.add(user);
 			}
 		}
 		userDao.saveAll(usersToUpdate);
+	}
+
+	/**
+	 * @Title: updateWeightByUploadRange
+	 * @Description: Update the weight of users with total/reliable upload count range between the lower and upper bound.
+	 * @param lower
+	 * @param upper
+	 * @param type enum UploadCountType
+	 * @param weight
+	 * @return void
+	 */
+	@Override
+	public void updateWeightByUploadRange(Integer lower, Integer upper, UploadCountType type, Double weight) {
+		String uploadType = type.getName();
+		Query query = (upper != null) ? new Query(Criteria.where(uploadType).gt(lower).lt(upper)) : new Query(Criteria.where(uploadType).gt(lower));
+		Update update = new Update();
+		update.set("weight", weight);
+		mongoTemplate.updateMulti(query, update, User.class);
 	}
 
 	/**

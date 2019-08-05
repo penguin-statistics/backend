@@ -4,8 +4,10 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import io.penguinstats.enums.UploadCountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import io.penguinstats.service.ItemDropService;
@@ -33,13 +35,14 @@ public class UserUtil {
 	 * @Description: Update totalUpload and reliableUpload for all users from ItemDrop table.
 	 * @return void
 	 */
+	@Scheduled(fixedRate = 3600000)
 	public void updateTwoUploadCountsForAllUsers() {
 		Map<String, Integer> totalUploadMap =
 				itemDropService.generateUploadCountMap(Criteria.where("isDeleted").is(false));
 		Map<String, Integer> reliableUploadMap = itemDropService.generateUploadCountMap(new Criteria()
 				.andOperator(Criteria.where("isReliable").is(true), Criteria.where("isDeleted").is(false)));
-		userService.updateUploadFromMap(totalUploadMap, "total");
-		userService.updateUploadFromMap(reliableUploadMap, "reliable");
+		userService.updateUploadFromMap(totalUploadMap, UploadCountType.TOTAL_UPLOAD);
+		userService.updateUploadFromMap(reliableUploadMap, UploadCountType.RELIABLE_UPLOAD);
 	}
 
 }
