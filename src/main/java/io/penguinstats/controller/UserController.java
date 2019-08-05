@@ -21,8 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/users")
@@ -81,9 +84,9 @@ public class UserController {
 												   @RequestParam(value = "weight") Double weight) {
 		try {
 			logger.info("PUT /weight");
-			if ("total".equals(uploadCountType)) {
+			if (UploadCountType.TOTAL_UPLOAD.getType().equals(uploadCountType)) {
 				userService.updateWeightByUploadRange(uploadLowerCount, uploadUpperCount, UploadCountType.TOTAL_UPLOAD, weight);
-			} else if ("reliable".equals(uploadCountType)) {
+			} else if (UploadCountType.RELIABLE_UPLOAD.getType().equals(uploadCountType)) {
 				userService.updateWeightByUploadRange(uploadLowerCount, uploadUpperCount, UploadCountType.RELIABLE_UPLOAD, weight);
 			} else {
 				logger.error("Invalid uploadCountType: " + uploadCountType);

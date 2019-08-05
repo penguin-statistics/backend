@@ -6,13 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UploadCountType {
-    TOTAL_UPLOAD("totalUpload"),
-    RELIABLE_UPLOAD("reliableUpload");
+    TOTAL_UPLOAD("total","totalUpload"),
+    RELIABLE_UPLOAD("reliable", "reliableUpload");
 
+    private String type;
     private String name;
-
-    @Override
-    public String toString() {
-        return name;
-    }
 }
