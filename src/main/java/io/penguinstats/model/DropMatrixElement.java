@@ -16,10 +16,10 @@ public class DropMatrixElement {
 
 	private String stageId;
 	private String itemId;
-	private Double quantity;
-	private Double times;
+	private Integer quantity;
+	private Integer times;
 
-	public DropMatrixElement(String stageId, String itemId, Double quantity, Double times) {
+	public DropMatrixElement(String stageId, String itemId, Integer quantity, Integer times) {
 		this.stageId = stageId;
 		this.itemId = itemId;
 		this.quantity = quantity;

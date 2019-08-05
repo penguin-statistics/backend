@@ -1,0 +1,84 @@
+package io.penguinstats.constants;
+
+import java.util.Arrays;
+
+import org.bson.Document;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
+import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
+import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
+import org.springframework.data.mongodb.core.aggregation.LiteralOperators;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Component;
+
+import com.mongodb.BasicDBObject;
+
+import io.penguinstats.util.Constant;
+
+@Component("aggregationOperationConstants")
+public class AggregationOperationConstants {
+
+	// shared
+	public final AggregationOperation MATCH_QUANTITY_NOT_ZERO = Aggregation.match(Criteria.where("quantity").ne(0));
+	public final AggregationOperation LOOKUP_USER = Aggregation.lookup("user", "_id", "userID", "user");
+	public final AggregationOperation PROJECT_WEIGHT = Aggregation.project("itemDrops")
+			.and(ArrayOperators.ArrayElemAt.arrayOf("user.weight").elementAt(0)).as("weight");
+	public final AggregationOperation UNWIND_ITEMDROPS = Aggregation.unwind("itemDrops", false);
+	public final AggregationOperation UNWIND_ADD_TIME = Aggregation.unwind("addTime", "point", true);
+	public final AggregationOperation GROUP_BY_STAGEID = Aggregation.group("stageId")
+			.push(new BasicDBObject("times", "$times").append("timePoint", "$_id.point")).as("allTimes");
+
+	// aggregateItemDropQuantities
+	public final AggregationOperation UNWIND_DROPS = Aggregation.unwind("drops", false);
+	public final AggregationOperation GROUP_BY_STAGEID_AND_ITEMID =
+			Aggregation.group("stageId", "drops.itemId").sum("drops.quantity").as("quantity");
+
+	// aggregateStageTimes
+	public final AggregationOperation PROJECT_ADD_TIME = Aggregation.project("stageId", "times", "timestamp")
+			.and(LiteralOperators.Literal.asLiteral(Arrays.asList(Constant.ADD_TIME_POINTS))).as("addTime");
+	public final AggregationOperation MATCH_TIMESTAMP = new AggregationOperation() {
+		@Override
+		public Document toDocument(AggregationOperationContext aoc) {
+			return new Document("$match",
+					new Document("$expr", new Document("$gt", Arrays.asList("$timestamp", "$addTime"))));
+		}
+	};
+	public final AggregationOperation GROUP_BY_STAGEID_AND_POINT =
+			Aggregation.group("stageId", "point").sum("times").as("times");
+
+	// aggregateWeightedItemDropQuantities
+	public final AggregationOperation GROUP_BY_USERID_FOR_WEIGHTED_QUANTITIES = Aggregation.group("userID")
+			.push(new BasicDBObject("drops", "$$ROOT.drops").append("stageId", "$$ROOT.stageId")).as("itemDrops");
+
+	public final AggregationOperation UNWIND_ITEMDROPS_DROPS = Aggregation.unwind("itemDrops.drops", false);
+	public final AggregationOperation PROJECT_ITEMDROPS =
+			Aggregation.project("weight").and("itemDrops.stageId").as("stageId").and("itemDrops.drops").as("drops");
+	public final AggregationOperation GROUP_BY_STAGEID_AND_ITEMID_SUM_WEIGHTED_QUANTITY =
+			Aggregation.group("stageId", "drops.itemId")
+					.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("drops.quantity")).as("quantity");
+
+	// aggregateWeightedStageTimes
+	public final AggregationOperation GROUP_BY_USERID_FOR_WEIGHTED_STAGE_TIMES =
+			Aggregation.group("userID").push(new BasicDBObject("times", "$$ROOT.times")
+					.append("stageId", "$$ROOT.stageId").append("timestamp", "$$ROOT.timestamp")).as("itemDrops");
+	public final AggregationOperation PROJECT_ADD_TIME_FOR_WEIGHTED_STAGE_TIMES =
+			Aggregation.project("itemDrops", "weight")
+					.and(LiteralOperators.Literal.asLiteral(Arrays.asList(Constant.ADD_TIME_POINTS))).as("addTime");
+	public final AggregationOperation MATCH_TIMESTAMP_FOR_WEIGHTED_STAGE_TIMES = new AggregationOperation() {
+		@Override
+		public Document toDocument(AggregationOperationContext aoc) {
+			return new Document("$match",
+					new Document("$expr", new Document("$gt", Arrays.asList("$itemDrops.timestamp", "$addTime"))));
+		}
+	};
+	public final AggregationOperation PROJECT_ITEMDROPS_FOR_WEIGHTED_STAGE_TIMES = Aggregation
+			.project("weight", "point").and("itemDrops.stageId").as("stageId").and("itemDrops.times").as("times");
+	public final AggregationOperation GROUP_BY_STAGEID_AND_POINT_SUM_WEIGHTED_TIMES =
+			Aggregation.group("stageId", "point")
+					.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("times")).as("times");
+
+	// aggregateUploadCount
+	public final AggregationOperation GROUP_BY_USERID_SUM_TIMES = Aggregation.group("userID").sum("times").as("count");
+
+}

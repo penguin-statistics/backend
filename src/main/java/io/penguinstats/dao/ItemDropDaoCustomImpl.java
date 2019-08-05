@@ -3,7 +3,6 @@ package io.penguinstats.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregationOptions;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,22 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperationContext;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
-import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
-import org.springframework.data.mongodb.core.aggregation.ArrayOperators;
-import org.springframework.data.mongodb.core.aggregation.LiteralOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import com.mongodb.BasicDBObject;
-
+import io.penguinstats.constants.AggregationOperationConstants;
 import io.penguinstats.model.ItemDrop;
-import io.penguinstats.util.Constant;
 
 public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 	@Autowired
 	MongoTemplate mongoTemplate;
+	@Autowired
+	AggregationOperationConstants aggregationOperationConstants;
 
 	/**
 	 * @Title: aggregateItemDropQuantities
@@ -39,8 +34,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		[  
 		  {  
 		    $match:{  
-		      isReliable:true,
-		
+		      isReliable:true
 		    }
 		  },
 		  {  
@@ -72,20 +66,16 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	public List<Document> aggregateItemDropQuantities(Criteria criteria) {
-		AggregationOperation unwindDrops = Aggregation.unwind("drops", false);
-		AggregationOperation groupByStageIdAndItemId =
-				Aggregation.group("stageId", "drops.itemId").sum("drops.quantity").as("quantity");
-
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(unwindDrops);
-		operations.add(groupByStageIdAndItemId);
+		operations.add(aggregationOperationConstants.UNWIND_DROPS);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_ITEMID);
+		operations.add(aggregationOperationConstants.MATCH_QUANTITY_NOT_ZERO);
 		if (criteria != null) {
 			AggregationOperation matchGivenCriteria = Aggregation.match(criteria);
 			operations.add(0, matchGivenCriteria);
 		}
 
 		Aggregation aggregation = newAggregation(operations);
-
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 		return results.getMappedResults();
 	}
@@ -155,32 +145,18 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	public List<Document> aggregateStageTimes(Criteria criteria) {
-		AggregationOperation projectAddTime = Aggregation.project("stageId", "times", "timestamp")
-				.and(LiteralOperators.Literal.asLiteral(Arrays.asList(Constant.ADD_TIME_POINTS))).as("addTime");
-		AggregationOperation unwindAddTime = Aggregation.unwind("addTime", "point", true);
-		AggregationOperation matchTimestamp = new AggregationOperation() {
-			@Override
-			public Document toDocument(AggregationOperationContext aoc) {
-				return new Document("$match",
-						new Document("$expr", new Document("$gt", Arrays.asList("$timestamp", "$addTime"))));
-			}
-		};
-		AggregationOperation groupByStageIdAndPoint = Aggregation.group("stageId", "point").sum("times").as("times");
-		AggregationOperation groupByStageId = Aggregation.group("stageId")
-				.push(new BasicDBObject("times", "$times").append("timePoint", "$_id.point")).as("allTimes");
-
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(projectAddTime);
-		operations.add(unwindAddTime);
-		operations.add(matchTimestamp);
-		operations.add(groupByStageIdAndPoint);
-		operations.add(groupByStageId);
+		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME);
+		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
+		operations.add(aggregationOperationConstants.MATCH_TIMESTAMP);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_POINT);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID);
 		if (criteria != null) {
 			AggregationOperation matchGivenCriteria = Aggregation.match(criteria);
 			operations.add(0, matchGivenCriteria);
 		}
-		Aggregation aggregation = newAggregation(operations);
 
+		Aggregation aggregation = newAggregation(operations);
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 		return results.getMappedResults();
 	}
@@ -193,15 +169,14 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	public List<Document> aggregateUploadCount(Criteria criteria) {
-		AggregationOperation groupByUserID = Aggregation.group("userID").sum("times").as("count");
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(groupByUserID);
+		operations.add(aggregationOperationConstants.GROUP_BY_USERID_SUM_TIMES);
 		if (criteria != null) {
 			AggregationOperation matchGivenCriteria = Aggregation.match(criteria);
 			operations.add(0, matchGivenCriteria);
 		}
-		Aggregation aggregation = newAggregation(operations);
 
+		Aggregation aggregation = newAggregation(operations);
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 		return results.getMappedResults();
 	}
@@ -278,26 +253,15 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	public List<Document> aggregateWeightedItemDropQuantities(Criteria criteria) {
-		AggregationOperation groupByUserID = Aggregation.group("userID")
-				.push(new BasicDBObject("drops", "$$ROOT.drops").append("stageId", "$$ROOT.stageId")).as("itemDrops");
-		AggregationOperation lookUpUser = Aggregation.lookup("user", "_id", "userID", "user");
-		AggregationOperation projectWeight = Aggregation.project("itemDrops")
-				.and(ArrayOperators.ArrayElemAt.arrayOf("user.weight").elementAt(0)).as("weight");
-		AggregationOperation unwindItemDrops = Aggregation.unwind("itemDrops", false);
-		AggregationOperation unwindDrops = Aggregation.unwind("itemDrops.drops", false);
-		AggregationOperation projectItemDrops =
-				Aggregation.project("weight").and("itemDrops.stageId").as("stageId").and("itemDrops.drops").as("drops");
-		AggregationOperation groupByStageIdAndItemId = Aggregation.group("stageId", "drops.itemId")
-				.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("drops.quantity")).as("quantity");
-
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(groupByUserID);
-		operations.add(lookUpUser);
-		operations.add(projectWeight);
-		operations.add(unwindItemDrops);
-		operations.add(unwindDrops);
-		operations.add(projectItemDrops);
-		operations.add(groupByStageIdAndItemId);
+		operations.add(aggregationOperationConstants.GROUP_BY_USERID_FOR_WEIGHTED_QUANTITIES);
+		operations.add(aggregationOperationConstants.LOOKUP_USER);
+		operations.add(aggregationOperationConstants.PROJECT_WEIGHT);
+		operations.add(aggregationOperationConstants.UNWIND_ITEMDROPS);
+		operations.add(aggregationOperationConstants.UNWIND_ITEMDROPS_DROPS);
+		operations.add(aggregationOperationConstants.PROJECT_ITEMDROPS);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_ITEMID_SUM_WEIGHTED_QUANTITY);
+		operations.add(aggregationOperationConstants.MATCH_QUANTITY_NOT_ZERO);
 		if (criteria != null) {
 			AggregationOperation matchGivenCriteria = Aggregation.match(criteria);
 			operations.add(0, matchGivenCriteria);
@@ -305,7 +269,6 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		Aggregation aggregation =
 				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
-
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 		return results.getMappedResults();
 	}
@@ -397,43 +360,17 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	public List<Document> aggregateWeightedStageTimes(Criteria criteria) {
-		AggregationOperation groupByUserID =
-				Aggregation
-						.group("userID").push(new BasicDBObject("times", "$$ROOT.times")
-								.append("stageId", "$$ROOT.stageId").append("timestamp", "$$ROOT.timestamp"))
-						.as("itemDrops");
-		AggregationOperation lookUpUser = Aggregation.lookup("user", "_id", "userID", "user");
-		AggregationOperation projectWeight = Aggregation.project("itemDrops")
-				.and(ArrayOperators.ArrayElemAt.arrayOf("user.weight").elementAt(0)).as("weight");
-		AggregationOperation unwindItemDrops = Aggregation.unwind("itemDrops", false);
-		AggregationOperation projectAddTime = Aggregation.project("itemDrops", "weight")
-				.and(LiteralOperators.Literal.asLiteral(Arrays.asList(Constant.ADD_TIME_POINTS))).as("addTime");
-		AggregationOperation unwindAddTime = Aggregation.unwind("addTime", "point", true);
-		AggregationOperation matchTimestamp = new AggregationOperation() {
-			@Override
-			public Document toDocument(AggregationOperationContext aoc) {
-				return new Document("$match",
-						new Document("$expr", new Document("$gt", Arrays.asList("$itemDrops.timestamp", "$addTime"))));
-			}
-		};
-		AggregationOperation projectItemDrops = Aggregation.project("weight", "point").and("itemDrops.stageId")
-				.as("stageId").and("itemDrops.times").as("times");
-		AggregationOperation groupByStageIdAndPoint = Aggregation.group("stageId", "point")
-				.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("times")).as("weightedTimes");
-		AggregationOperation groupByStageId = Aggregation.group("stageId")
-				.push(new BasicDBObject("times", "$weightedTimes").append("timePoint", "$_id.point")).as("allTimes");
-
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(groupByUserID);
-		operations.add(lookUpUser);
-		operations.add(projectWeight);
-		operations.add(unwindItemDrops);
-		operations.add(projectAddTime);
-		operations.add(unwindAddTime);
-		operations.add(matchTimestamp);
-		operations.add(projectItemDrops);
-		operations.add(groupByStageIdAndPoint);
-		operations.add(groupByStageId);
+		operations.add(aggregationOperationConstants.GROUP_BY_USERID_FOR_WEIGHTED_STAGE_TIMES);
+		operations.add(aggregationOperationConstants.LOOKUP_USER);
+		operations.add(aggregationOperationConstants.PROJECT_WEIGHT);
+		operations.add(aggregationOperationConstants.UNWIND_ITEMDROPS);
+		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME_FOR_WEIGHTED_STAGE_TIMES);
+		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
+		operations.add(aggregationOperationConstants.MATCH_TIMESTAMP_FOR_WEIGHTED_STAGE_TIMES);
+		operations.add(aggregationOperationConstants.PROJECT_ITEMDROPS_FOR_WEIGHTED_STAGE_TIMES);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_POINT_SUM_WEIGHTED_TIMES);
+		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID);
 		if (criteria != null) {
 			AggregationOperation matchGivenCriteria = Aggregation.match(criteria);
 			operations.add(0, matchGivenCriteria);

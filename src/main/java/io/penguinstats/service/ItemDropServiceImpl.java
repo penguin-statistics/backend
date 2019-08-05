@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,6 +23,7 @@ import io.penguinstats.model.DropMatrix;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.Stage;
 
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
@@ -30,6 +32,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Autowired
 	private ItemService itemService;
+
+	@Autowired
+	private StageService stageService;
 
 	@Autowired
 	private ItemDropDao itemDropDao;
@@ -100,7 +105,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				Document subDoc = allTimesDocs.get(i);
 				Integer timePoint = subDoc.getLong("timePoint").intValue();
 				allTimesArray[timePoint] =
-						isWeighted ? subDoc.getDouble("times") : Double.valueOf(subDoc.getInteger("times"));
+						isWeighted ? subDoc.getDouble("times") : new Double(subDoc.getInteger("times"));
 			}
 			map.put(stageId, Arrays.asList(allTimesArray));
 		}
@@ -199,15 +204,22 @@ public class ItemDropServiceImpl implements ItemDropService {
 			Map<String, Map<String, Double>> quantitiesMap = getQuantitiesMap(filter, isWeighted);
 			Map<String, List<Double>> stageTimesMap = getStageTimesMap(filter, isWeighted);
 			Map<String, Item> itemMap = itemService.getItemMap();
+			Map<String, Stage> stageMap = stageService.getStageMap();
 			for (String stageId : quantitiesMap.keySet()) {
+				Stage stage = stageMap.get(stageId);
+				if (stage == null) {
+					logger.error("cannot find stage " + stageId);
+					continue;
+				}
 				List<Double> allTimes = stageTimesMap.get(stageId);
 				if (allTimes == null) {
 					logger.error("cannot find allTimes for " + stageId);
 					continue;
 				}
 				Map<String, Double> subMap = quantitiesMap.get(stageId);
-				for (String itemId : subMap.keySet()) {
-					Double quantity = subMap.get(itemId);
+				Set<String> dropsSet = stage.getDropsSet();
+				for (String itemId : dropsSet) {
+					Integer quantity = new Long(Math.round(subMap.getOrDefault(itemId, 0D))).intValue();
 					Item item = itemMap.get(itemId);
 					if (item == null) {
 						logger.error("cannot find item " + itemId);
@@ -220,8 +232,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 						logger.error("addTimePoint for " + itemId + " is too large");
 						continue;
 					}
-					Double times = allTimes.get(addTimePoint);
-					dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times));
+					Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
+					if (!times.equals(0))
+						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times));
 				}
 			}
 			logger.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms "
