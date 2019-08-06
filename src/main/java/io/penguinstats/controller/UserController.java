@@ -75,7 +75,6 @@ public class UserController {
 		}
 	}
 
-	@ApiOperation("")
 	@PutMapping(path = "/weight", produces = "text/plain;charset=UTF-8")
 	public ResponseEntity<String> updateUserWeight(
 			@RequestParam(value = "upload_lower_count", defaultValue = "0", required = false) Integer uploadLowerCount,
