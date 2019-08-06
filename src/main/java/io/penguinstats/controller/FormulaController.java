@@ -36,10 +36,10 @@ public class FormulaController {
 				currentLine = reader.readLine();
 			}
 			reader.close();
-			return new ResponseEntity<String>(builder.toString(), HttpStatus.OK);
+			return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
 		} catch (IOException e) {
 			logger.error("Error in getFormula: ", e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

@@ -1,4 +1,4 @@
-package io.penguinstats.util;
+package io.penguinstats.constant;
 
 public class Constant {
 

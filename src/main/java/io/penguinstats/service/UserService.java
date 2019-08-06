@@ -1,5 +1,8 @@
 package io.penguinstats.service;
 
+import java.util.Map;
+
+import io.penguinstats.enums.UploadCountType;
 import io.penguinstats.model.User;
 
 public interface UserService {
@@ -15,5 +18,9 @@ public interface UserService {
 	void addIP(String userID, String ip);
 
 	void addTag(String userID, String tag);
+
+	void updateUploadFromMap(Map<String, Integer> map, UploadCountType type);
+
+	void updateWeightByUploadRange(Integer lower, Integer upper, UploadCountType type, Double weight);
 
 }

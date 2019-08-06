@@ -64,7 +64,7 @@ public class ReportController {
 		try {
 			if (!isValidSingleReportRequest(requestBody)) {
 				logger.warn("POST /report " + requestBody);
-				return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 			JSONObject obj = new JSONObject(requestBody);
 			String userID = cookieUtil.readUserIDFromCookie(request);
@@ -109,13 +109,13 @@ public class ReportController {
 					dropMatrixService.increaseQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
 				dropMatrixService.increaseTimesForOneStage(stageId, 1);
 			}
-			return new ResponseEntity<String>(HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (JSONException jsonException) {
 			logger.error("Error in saveSingleReport", jsonException);
-			return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} catch (Exception e) {
 			logger.error("Error in saveSingleReport", e);
-			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

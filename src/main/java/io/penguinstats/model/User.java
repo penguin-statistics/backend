@@ -29,6 +29,8 @@ public class User {
 	private List<String> ips;
 	private String comment;
 	private Long createTime;
+	private Integer totalUpload = 0;
+	private Integer reliableUpload = 0;
 
 	public User(String userID, Double weight, List<String> tags, List<String> ips, String comment, Long createTime) {
 		this.userID = userID;
