@@ -1,4 +1,4 @@
-package io.penguinstats.constants;
+package io.penguinstats.constant;
 
 import java.util.Arrays;
 
@@ -13,8 +13,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Component;
 
 import com.mongodb.BasicDBObject;
-
-import io.penguinstats.util.Constant;
 
 @Component("aggregationOperationConstants")
 public class AggregationOperationConstants {

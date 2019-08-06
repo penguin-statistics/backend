@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import io.penguinstats.constants.AggregationOperationConstants;
+import io.penguinstats.constant.AggregationOperationConstants;
 import io.penguinstats.model.ItemDrop;
 
 public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {

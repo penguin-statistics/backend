@@ -147,8 +147,8 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void updateWeightByUploadRange(Integer lower, Integer upper, UploadCountType type, Double weight) {
-		String uploadType = type.getName();
-		Query query = (upper != null) ? new Query(Criteria.where(uploadType).gt(lower).lt(upper)) : new Query(Criteria.where(uploadType).gt(lower));
+		String typeName = type.getName();
+		Query query = (upper != null) ? new Query(Criteria.where(typeName).gt(lower).lt(upper)) : new Query(Criteria.where(typeName).gt(lower));
 		Update update = new Update();
 		update.set("weight", weight);
 		mongoTemplate.updateMulti(query, update, User.class);
