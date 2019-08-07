@@ -55,14 +55,14 @@ public class LimitationServiceImpl implements LimitationService {
 	}
 
 	/**
-	 * @Title: getRealLimitation
+	 * @Title: getExtendedLimitation
 	 * @Description: Return the limitation of given stage. The inheritance will be iterated using DFS and merged into
 	 *               limitations.
 	 * @param stageId
 	 * @return Limitation
 	 */
 	@Override
-	public Limitation getRealLimitation(String stageId) {
+	public Limitation getExtendedLimitation(String stageId) {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
 		if (!stageMap.containsKey(stageId))
@@ -71,13 +71,13 @@ public class LimitationServiceImpl implements LimitationService {
 	}
 
 	/**
-	 * @Title: getRealLimitationMap
+	 * @Title: getExtendedLimitationMap
 	 * @Description: Return a map which has stageId (will never be limitation name, only can be stageId) as key and
 	 *               limitation object as value. The inheritance will be iterated and merged into limitations.
 	 * @return Map<String,Limitation>
 	 */
 	@Override
-	public Map<String, Limitation> getRealLimitationMap() {
+	public Map<String, Limitation> getExtendedLimitationMap() {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
 		Map<String, Limitation> result = new HashMap<>();

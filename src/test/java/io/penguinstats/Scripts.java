@@ -214,7 +214,7 @@ public class Scripts {
 	}
 
 	private void printAllStageLimitations() {
-		Map<String, Limitation> map = limitationService.getRealLimitationMap();
+		Map<String, Limitation> map = limitationService.getExtendedLimitationMap();
 		for (String stageId : map.keySet())
 			System.out.println(map.get(stageId).toString());
 	}

@@ -36,7 +36,7 @@ public class LimitationUtil {
 	 * @return boolean
 	 */
 	public boolean checkDrops(List<Drop> drops, String stageId) {
-		Limitation limitation = limitationService.getRealLimitation(stageId);
+		Limitation limitation = limitationService.getExtendedLimitation(stageId);
 		if (limitation == null)
 			return true;
 		boolean hasFurniture = false;

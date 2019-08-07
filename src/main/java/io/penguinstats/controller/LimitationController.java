@@ -25,15 +25,15 @@ public class LimitationController {
 
 	@ApiOperation("Get all real limitations")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Limitation>> getAllRealLimitations() {
-		Map<String, Limitation> limitationsMap = limitationService.getRealLimitationMap();
+	public ResponseEntity<List<Limitation>> getAllExtendedLimitations() {
+		Map<String, Limitation> limitationsMap = limitationService.getExtendedLimitationMap();
 		return new ResponseEntity<List<Limitation>>(new ArrayList<>(limitationsMap.values()), HttpStatus.OK);
 	}
 
 	@ApiOperation("Get limitation by stageId")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Limitation> getRealLimitation(@PathVariable("stageId") String stageId) {
-		Limitation limitation = limitationService.getRealLimitation(stageId);
+	public ResponseEntity<Limitation> getExtendedLimitation(@PathVariable("stageId") String stageId) {
+		Limitation limitation = limitationService.getExtendedLimitation(stageId);
 		return new ResponseEntity<Limitation>(limitation, limitation != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 
