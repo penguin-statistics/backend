@@ -18,7 +18,9 @@ public interface ItemDropService {
 
 	void batchSaveItemDrops(Collection<ItemDrop> itemDrops);
 
-	void deleteItemDrop(String userId, String itemDropId) throws Exception;
+	void deleteItemDrop(String userID, String itemDropId) throws Exception;
+
+	void recallItemDrop(String userID, String itemDropHashId) throws Exception;
 
 	List<ItemDrop> getAllItemDrops();
 

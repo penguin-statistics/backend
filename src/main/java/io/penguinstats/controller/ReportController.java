@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.penguinstats.util.HashUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -101,6 +102,7 @@ public class ReportController {
 			Long timestamp = System.currentTimeMillis();
 			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version, userID);
 			itemDropService.saveItemDrop(itemDrop);
+			String itemDropHashId = HashUtil.getHash(itemDrop.getId().toString());
 			if (isReliable) {
 				// FIXME: For old stages, if a new kind of item drops, it has no corresponding matrix element in the database.
 				if (!dropMatrixService.hasElementsForOneStage(stageId))
@@ -109,7 +111,7 @@ public class ReportController {
 					dropMatrixService.increaseQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
 				dropMatrixService.increaseTimesForOneStage(stageId, 1);
 			}
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(itemDropHashId, HttpStatus.CREATED);
 		} catch (JSONException jsonException) {
 			logger.error("Error in saveSingleReport", jsonException);
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -157,6 +159,26 @@ public class ReportController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in deletePersonalReportHistory", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@ApiOperation("Recall the last report")
+	@PostMapping(path = "/recall")
+	public ResponseEntity<String> recallPersonalReport(HttpServletRequest request,
+													   @RequestParam("item_drop_hash_id") String itemDropHashId) {
+		try {
+			String userID = cookieUtil.readUserIDFromCookie(request);
+			if (userID == null) {
+				logger.error("Error in recallPersonalReport: Cannot read user ID");
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+
+			logger.info("user " + userID + " POST /report/recall\n");
+			itemDropService.recallItemDrop(userID, itemDropHashId);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("Error in recallPersonalReport", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

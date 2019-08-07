@@ -9,12 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import io.penguinstats.util.HashUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +61,24 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 		itemDrop.setIsDeleted(true);
 		itemDropDao.save(itemDrop);
+	}
+
+	@Override
+	public void recallItemDrop(String userID, String itemDropHashId) throws Exception{
+		Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
+		List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
+		if (itemDropList.size() == 0) {
+			throw new Exception("Visible ItemDrop not found for user with ID[" + userID + "]");
+		}
+
+		ItemDrop lastItemDrop = itemDropList.get(0);
+		String lastItemDropHashId = HashUtil.getHash(lastItemDrop.getId().toString());
+		if (!lastItemDropHashId.equals(itemDropHashId)) {
+			throw new Exception("ItemDropHashId doesn't match!");
+		}
+
+		lastItemDrop.setIsDeleted(true);
+		itemDropDao.save(lastItemDrop);
 	}
 
 	@Override
