@@ -25,6 +25,7 @@ public class LimitationServiceImpl implements LimitationService {
 	@Autowired
 	private LimitationDao limitationDao;
 
+	@Override
 	public void saveLimitation(Limitation limitation) {
 		limitationDao.save(limitation);
 	}
@@ -34,6 +35,7 @@ public class LimitationServiceImpl implements LimitationService {
 	 * @Description: Return all limitations in the database as a list.
 	 * @return List<Limitation>
 	 */
+	@Override
 	public List<Limitation> getAllLimitations() {
 		return limitationDao.findAll();
 	}
@@ -44,6 +46,7 @@ public class LimitationServiceImpl implements LimitationService {
 	 *               name) as key and limitation object as value.
 	 * @return Map<String,Limitation>
 	 */
+	@Override
 	public Map<String, Limitation> getLimitationMap() {
 		List<Limitation> list = getAllLimitations();
 		Map<String, Limitation> map = new HashMap<>();
@@ -58,6 +61,7 @@ public class LimitationServiceImpl implements LimitationService {
 	 * @param stageId
 	 * @return Limitation
 	 */
+	@Override
 	public Limitation getRealLimitation(String stageId) {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
@@ -72,6 +76,7 @@ public class LimitationServiceImpl implements LimitationService {
 	 *               limitation object as value. The inheritance will be iterated and merged into limitations.
 	 * @return Map<String,Limitation>
 	 */
+	@Override
 	public Map<String, Limitation> getRealLimitationMap() {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
