@@ -1,5 +1,7 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ItemQuantityBounds {
+public class ItemQuantityBounds implements Serializable {
 
 	private String itemId;
 	private Bounds bounds;

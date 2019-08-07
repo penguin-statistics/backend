@@ -1,9 +1,8 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,11 +11,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
 @Document(collection = "zone")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Zone {
+public class Zone implements Serializable {
 
 	@Id
 	@JsonIgnore

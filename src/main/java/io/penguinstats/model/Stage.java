@@ -1,5 +1,6 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Setter
 @Document(collection = "stage_v2")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Stage {
+public class Stage implements Serializable {
 
 	@Id
 	@JsonIgnore

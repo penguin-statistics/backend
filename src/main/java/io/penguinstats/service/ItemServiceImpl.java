@@ -16,10 +16,12 @@ public class ItemServiceImpl implements ItemService {
 	@Autowired
 	private ItemDao itemDao;
 
+	@Override
 	public void saveItem(Item item) {
 		itemDao.save(item);
 	}
 
+	@Override
 	public Item getItemByItemId(String itemId) {
 		return itemDao.findByItemId(itemId);
 	}
@@ -29,6 +31,7 @@ public class ItemServiceImpl implements ItemService {
 	 * @Description: Return all items in the database as a list.
 	 * @return List<Item>
 	 */
+	@Override
 	public List<Item> getAllItems() {
 		return itemDao.findAll();
 	}
@@ -38,6 +41,7 @@ public class ItemServiceImpl implements ItemService {
 	 * @Description: Return a map which has itemId as key and item object as value.
 	 * @return Map<String,Item>
 	 */
+	@Override
 	public Map<String, Item> getItemMap() {
 		List<Item> list = getAllItems();
 		Map<String, Item> map = new HashMap<>();

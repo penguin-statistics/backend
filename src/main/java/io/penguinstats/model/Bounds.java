@@ -1,5 +1,6 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Bounds {
+public class Bounds implements Serializable {
 
 	private Integer lower;
 	private Integer upper;
