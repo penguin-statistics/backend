@@ -1,5 +1,6 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,7 +23,7 @@ import lombok.Setter;
 @Setter
 @Document(collection = "limitation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Limitation {
+public class Limitation implements Serializable {
 
 	@Id
 	@JsonIgnore

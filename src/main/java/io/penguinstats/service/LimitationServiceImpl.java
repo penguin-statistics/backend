@@ -61,6 +61,8 @@ public class LimitationServiceImpl implements LimitationService {
 	public Limitation getRealLimitation(String stageId) {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
+		if (!stageMap.containsKey(stageId))
+			return limitationMap.get("all");
 		return iterateInheritance(stageId, limitationMap, stageMap);
 	}
 
