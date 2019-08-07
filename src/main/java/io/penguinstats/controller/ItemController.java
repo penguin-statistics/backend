@@ -1,9 +1,9 @@
 package io.penguinstats.controller;
 
-import io.penguinstats.model.Item;
-import io.penguinstats.service.ItemService;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +11,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import io.penguinstats.model.Item;
+import io.penguinstats.service.ItemService;
+import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/items")
@@ -23,7 +26,10 @@ public class ItemController {
 	@ApiOperation("Get all items")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Item>> getAllItems() {
-		return new ResponseEntity<List<Item>>(itemService.getAllItems(), HttpStatus.OK);
+		List<Item> items = itemService.getAllItems();
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
+		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation("Get item by item ID")

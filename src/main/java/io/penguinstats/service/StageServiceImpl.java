@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.StageDao;
 import io.penguinstats.model.Stage;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("stageService")
 public class StageServiceImpl implements StageService {
@@ -44,7 +45,9 @@ public class StageServiceImpl implements StageService {
 	 */
 	@Override
 	public List<Stage> getAllStages() {
-		return stageDao.findAll();
+		List<Stage> stages = stageDao.findAll();
+		LastUpdateTimeUtil.setCurrentTimestamp("stageList");
+		return stages;
 	}
 
 	/**

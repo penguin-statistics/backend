@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.ItemDao;
 import io.penguinstats.model.Item;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
@@ -33,7 +34,9 @@ public class ItemServiceImpl implements ItemService {
 	 */
 	@Override
 	public List<Item> getAllItems() {
-		return itemDao.findAll();
+		List<Item> items = itemDao.findAll();
+		LastUpdateTimeUtil.setCurrentTimestamp("itemList");
+		return items;
 	}
 
 	/**

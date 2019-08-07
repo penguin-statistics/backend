@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import io.penguinstats.dao.LimitationDao;
 import io.penguinstats.model.Limitation;
 import io.penguinstats.model.Stage;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("limitationService")
 public class LimitationServiceImpl implements LimitationService {
@@ -85,6 +86,7 @@ public class LimitationServiceImpl implements LimitationService {
 			Limitation limitation = iterateInheritance(stageId, limitationMap, stageMap);
 			result.put(stageId, limitation);
 		}
+		LastUpdateTimeUtil.setCurrentTimestamp("extendedLimitationMap");
 		return result;
 	}
 

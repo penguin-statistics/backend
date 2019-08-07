@@ -1,14 +1,21 @@
 package io.penguinstats.controller;
 
-import io.penguinstats.model.Stage;
-import io.penguinstats.service.StageService;
-import io.swagger.annotations.ApiOperation;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import io.penguinstats.model.Stage;
+import io.penguinstats.service.StageService;
+import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/api/stages")
@@ -20,8 +27,15 @@ public class StageController {
 	@ApiOperation("Get all stages")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Stage>> getAllStages(@RequestParam(value = "zoneId", required = false) String zoneId) {
-		return new ResponseEntity<List<Stage>>(
-				zoneId == null ? stageService.getAllStages() : stageService.getStagesByZoneId(zoneId), HttpStatus.OK);
+		List<Stage> stages = zoneId == null ? stageService.getAllStages() : stageService.getStagesByZoneId(zoneId);
+		if (zoneId == null) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("stageList").toString());
+			return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
+		} else {
+			return new ResponseEntity<List<Stage>>(stages, HttpStatus.OK);
+		}
+
 	}
 
 	@ApiOperation("Get stage by stage ID")

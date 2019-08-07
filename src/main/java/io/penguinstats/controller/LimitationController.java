@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.model.Limitation;
 import io.penguinstats.service.LimitationService;
+import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -27,7 +29,9 @@ public class LimitationController {
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Limitation>> getAllExtendedLimitations() {
 		Map<String, Limitation> limitationsMap = limitationService.getExtendedLimitationMap();
-		return new ResponseEntity<List<Limitation>>(new ArrayList<>(limitationsMap.values()), HttpStatus.OK);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("extendedLimitationMap").toString());
+		return new ResponseEntity<List<Limitation>>(new ArrayList<>(limitationsMap.values()), headers, HttpStatus.OK);
 	}
 
 	@ApiOperation("Get limitation by stageId")

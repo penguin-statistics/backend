@@ -1,13 +1,15 @@
 package io.penguinstats.service;
 
-import io.penguinstats.dao.ZoneDao;
-import io.penguinstats.model.Zone;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import io.penguinstats.dao.ZoneDao;
+import io.penguinstats.model.Zone;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("zoneService")
 public class ZoneServiceImpl implements ZoneService {
@@ -32,7 +34,9 @@ public class ZoneServiceImpl implements ZoneService {
 	 */
 	@Override
 	public List<Zone> getAllZones() {
-		return zoneDao.findAll();
+		List<Zone> zones = zoneDao.findAll();
+		LastUpdateTimeUtil.setCurrentTimestamp("zoneList");
+		return zones;
 	}
 
 	/**
