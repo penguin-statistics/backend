@@ -1,5 +1,7 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class DropMatrixElement {
+public class DropMatrixElement implements Serializable {
 
 	private String stageId;
 	private String itemId;

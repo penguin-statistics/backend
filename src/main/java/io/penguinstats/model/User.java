@@ -1,5 +1,6 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.bson.types.ObjectId;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Setter
 @Document(collection = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User {
+public class User implements Serializable {
 
 	@Id
 	@JsonIgnore
