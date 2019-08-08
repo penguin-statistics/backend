@@ -87,68 +87,62 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 * @returnList<Document> In each document, _id is stageId, and allTimes contain several embedded documents describing stage times.
 	 */
 	/** pipeline:
-		[  
-		  {  
-		    $match:{  
-		      isReliable:true
+		[{
+		    $match: {
+		        isReliable: true
 		    }
-		  },
-		  {  
-		    $addFields:{  
-		      addTime:[  
-		        0,
-		        1558989300000,
-		        1560045456000
-		      ]
+		}, {
+		    $addFields: {
+		        addTime: [0, 1558989300000, 1560045456000]
 		    }
-		  },
-		  {  
-		    $unwind:{  
-		      path:"$addTime",
-		      includeArrayIndex:"point",
-		      preserveNullAndEmptyArrays:true
+		}, {
+		    $unwind: {
+		        path: "$addTime",
+		        includeArrayIndex: "point",
+		        preserveNullAndEmptyArrays: true
 		    }
-		  },
-		  {  
-		    $match:{  
-		      $expr:{  
-		        $gt:[  
-		          "$timestamp",
-		          "$addTime"
-		        ]
-		      }
-		    }
-		  },
-		  {  
-		    $group:{  
-		      _id:{  
-		        stageId:"$stageId",
-		        point:"$point"
-		      },
-		      times:{  
-		        $sum:"$times"
-		      }
-		    }
-		  },
-		  {  
-		    $group:{  
-		      _id:"$_id.stageId",
-		      allTimes:{  
-		        $push:{  
-		          timePoint:"$_id.point",
-		          times:"$times"
+		}, {
+		    $project: {
+		        stageId: 1,
+		        point: 1,
+		        times: {
+		            $cond: {
+		                if: {
+		                    $gt: ["$timestamp", "$addTime"]
+		                },
+		                then: 1,
+		                else: 0
+		            }
 		        }
-		      }
 		    }
-		  }
-		]
+		}, {
+		    $group: {
+		        _id: {
+		            stageId: "$stageId",
+		            point: "$point"
+		        },
+		        times: {
+		            $sum: "$times"
+		        }
+		    }
+		}, {
+		    $group: {
+		        _id: "$_id.stageId",
+		        allTimes: {
+		            $push: {
+		                timePoint: "$_id.point",
+		                times: "$times"
+		            }
+		        }
+		    }
+		}]
 	 */
 	@Override
 	public List<Document> aggregateStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME);
 		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
-		operations.add(aggregationOperationConstants.MATCH_TIMESTAMP);
+		operations.add(aggregationOperationConstants.PROJECT_TIMESTAMP_GT_ADD_TIME);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_POINT);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID);
 		if (criteria != null) {
@@ -233,7 +227,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		            stageId: '$itemDrops.stageId',
 		            itemId: '$itemDrops.drops.itemId'
 		        },
-		        weightedQuantity: {
+		        quantity: {
 		            $sum: {
 		                $multiply: [
 		                    "$weight",
@@ -246,7 +240,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		    $project: {
 		        stageId: '$_id.stageId',
 		        itemId: '$_id.itemId',
-		        weightedQuantity: 1,
+		        quantity: 1,
 		        _id: 0
 		    }
 		}]
@@ -326,21 +320,30 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		        preserveNullAndEmptyArrays: true
 		    }
 		}, {
-		    $match: {
-		        $expr: {
-		            $gt: ["$itemDrops.timestamp", "$addTime"]
+		    $project: {
+		        stageId: "$itemDrops.stageId",
+		        point: 1,
+		        weight: 1,
+		        times: {
+		            $cond: {
+		                if: {
+		                    $gt: ["$itemDrops.timestamp", "$addTime"]
+		                },
+		                then: 1,
+		                else: 0
+		            }
 		        }
 		    }
 		}, {
 		    $group: {
 		        _id: {
-		            stageId: "$itemDrops.stageId",
+		            stageId: "$stageId",
 		            point: "$point"
 		        },
-		        weightedTimes: {
+		        times: {
 		            $sum: {
 		                $multiply: [
-		                    "$itemDrops.times",
+		                    "$times",
 		                    "$weight"
 		                ]
 		            }
@@ -367,8 +370,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		operations.add(aggregationOperationConstants.UNWIND_ITEMDROPS);
 		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME_FOR_WEIGHTED_STAGE_TIMES);
 		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
-		operations.add(aggregationOperationConstants.MATCH_TIMESTAMP_FOR_WEIGHTED_STAGE_TIMES);
-		operations.add(aggregationOperationConstants.PROJECT_ITEMDROPS_FOR_WEIGHTED_STAGE_TIMES);
+		operations.add(aggregationOperationConstants.PROJECT_TIMESTAMP_GT_ADD_TIME_FOR_WEIGHTED_STAGE_TIMES);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_POINT_SUM_WEIGHTED_TIMES);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID);
 		if (criteria != null) {
