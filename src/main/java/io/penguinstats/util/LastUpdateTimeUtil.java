@@ -12,6 +12,8 @@ public class LastUpdateTimeUtil {
 		lastUpdateTimeMap.put("zoneList", null);
 		lastUpdateTimeMap.put("stageList", null);
 		lastUpdateTimeMap.put("extendedLimitationMap", null);
+		lastUpdateTimeMap.put("weightedDropMatrixElements", null);
+		lastUpdateTimeMap.put("notWeightedDropMatrixElements", null);
 	}
 
 	public static void setCurrentTimestamp(String key) {
@@ -21,7 +23,8 @@ public class LastUpdateTimeUtil {
 	}
 
 	public static Long getLastUpdateTime(String key) {
-		return lastUpdateTimeMap.get(key);
+		Long result = lastUpdateTimeMap.get(key);
+		return result == null ? -1L : lastUpdateTimeMap.get(key);
 	}
 
 }

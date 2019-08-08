@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.model.DropMatrix;
+import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
@@ -34,6 +36,7 @@ import io.penguinstats.service.StageService;
 import io.penguinstats.service.ZoneService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.JSONUtil;
+import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
@@ -55,6 +58,7 @@ public class ResultController {
 	@Autowired
 	private CookieUtil cookieUtil;
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	@GetMapping(path = "/stage/{stageId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getResultForOneStage(@PathVariable("stageId") String stageId) {
 		if (stageId == null)
@@ -63,6 +67,7 @@ public class ResultController {
 		return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	@PostMapping(path = "/stage/{stageId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getPersonalResultForOneStage(HttpServletRequest request,
 			@RequestBody String requestBody, @PathVariable("stageId") String stageId) {
@@ -83,6 +88,7 @@ public class ResultController {
 		}
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	@GetMapping(path = "/item/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getResultForOneItem(@PathVariable("itemId") String itemId) {
 		if (itemId == null)
@@ -91,6 +97,7 @@ public class ResultController {
 		return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	@PostMapping(path = "/item/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getPersonalResultForOneItem(HttpServletRequest request,
 			@RequestBody String requestBody, @PathVariable("itemId") String itemId) {
@@ -114,22 +121,27 @@ public class ResultController {
 
 	@ApiOperation("Get matrix")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<String> getMatrix(
+	public ResponseEntity<String> getMatrix(HttpServletRequest request,
+			@RequestParam(name = "is_personal", required = false, defaultValue = "false") boolean isPersonal,
+			@RequestParam(name = "is_weighted", required = false, defaultValue = "false") boolean isWeighted,
 			@RequestParam(name = "show_item_details", required = false, defaultValue = "false") boolean showItemDetails,
 			@RequestParam(name = "show_stage_details", required = false,
 					defaultValue = "false") boolean showStageDetails,
 			@RequestParam(name = "show_closed_zones", required = false,
 					defaultValue = "false") boolean showClosedZones) {
+		logger.info("GET /matrix");
 		try {
-			logger.info("GET /matrix");
+			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+			Criteria criteria = isPersonal && userID != null ? Criteria.where("userID").is(userID) : null;
+			List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(criteria, isWeighted);
+
 			JSONObject obj = new JSONObject();
 			JSONArray array = new JSONArray();
-			List<DropMatrix> elements = dropMatrixService.getAllElements();
 			Map<String, Zone> zoneMap = showClosedZones ? null : zoneService.getZoneMap();
 			Map<String, Item> itemMap = !showItemDetails ? null : itemService.getItemMap();
 			Map<String, Stage> stageMap = !showStageDetails && showClosedZones ? null : stageService.getStageMap();
 
-			for (DropMatrix element : elements) {
+			for (DropMatrixElement element : elements) {
 				JSONObject subObj = JSONUtil.convertObjectToJSONObject(element);
 				if (!showClosedZones) {
 					Stage stage = stageMap.get(element.getStageId());
@@ -147,13 +159,20 @@ public class ResultController {
 				array.put(subObj);
 			}
 			obj.put("matrix", array);
-			return new ResponseEntity<>(obj.toString(), HttpStatus.OK);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("LAST-UPDATE-TIME",
+					LastUpdateTimeUtil
+							.getLastUpdateTime(
+									isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
+							.toString());
+			return new ResponseEntity<>(obj.toString(), headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	private JSONObject generateReturnObjForOneStage(String stageId, List<DropMatrix> elements) {
 		Map<String, Item> itemMap = itemService.getItemMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
@@ -173,6 +192,7 @@ public class ResultController {
 		return obj;
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	private JSONObject generateReturnObjForOneItem(String itemId, List<DropMatrix> elements) {
 		Map<String, Item> itemMap = itemService.getItemMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
@@ -192,6 +212,7 @@ public class ResultController {
 		return obj;
 	}
 
+	//TODO: This method will be deprecated after the release of frontend-v2.
 	private List<DropMatrix> getDropMatrixListFromStageTimesAndDropMatrixMapObj(JSONObject stageTimesObj,
 			JSONObject dropMatrixObj, String userID) {
 		Criteria criteria = userID == null ? null : Criteria.where("userID").is(userID);
@@ -226,7 +247,7 @@ public class ResultController {
 				if (stageTimes == null) {
 					stageTimes = new ArrayList<>();
 					for (int i = 0; i < stageTimesArray.length(); i++) {
-						stageTimes.add((double) stageTimesArray.getInt(i));
+						stageTimes.add((double)stageTimesArray.getInt(i));
 					}
 				} else {
 					if (stageTimes.size() < stageTimesArray.length()) {

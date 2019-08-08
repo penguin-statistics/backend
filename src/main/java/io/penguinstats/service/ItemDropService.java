@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,6 +37,7 @@ public interface ItemDropService {
 
 	List<DropMatrix> generateDropMatrixList(Criteria filter);
 
+	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);

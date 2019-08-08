@@ -19,7 +19,7 @@ public interface LimitationService {
 
 	Map<String, Limitation> getLimitationMap();
 
-	@Cacheable(value = "limitation", key = "#stageId")
+	@Cacheable(value = "limitation", key = "#stageId", unless = "#result == null")
 	Limitation getExtendedLimitation(String stageId);
 
 	@Cacheable(value = "maps", key = "'extendedLimitationMap'")

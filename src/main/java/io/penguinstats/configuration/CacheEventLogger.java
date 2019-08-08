@@ -19,15 +19,7 @@ public class CacheEventLogger implements CacheEventListener<Object, Object> {
 		logger.info("Caching event {} {}", cacheEvent.getType(), cacheEvent.getKey());
 		if (EventType.CREATED.equals(cacheEvent.getType()) && cacheEvent.getKey() != null) {
 			String key = cacheEvent.getKey().toString();
-			if ("itemList".equals(key)) {
-				LastUpdateTimeUtil.setCurrentTimestamp("itemList");
-			} else if ("zoneList".equals(key)) {
-				LastUpdateTimeUtil.setCurrentTimestamp("zoneList");
-			} else if ("stageList".equals(key)) {
-				LastUpdateTimeUtil.setCurrentTimestamp("stageList");
-			} else if ("limitationMap".equals(key)) {
-				LastUpdateTimeUtil.setCurrentTimestamp("limitationMap");
-			}
+			LastUpdateTimeUtil.setCurrentTimestamp(key);
 		}
 	}
 

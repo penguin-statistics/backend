@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import io.penguinstats.util.HashUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -27,6 +26,8 @@ import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
 import io.penguinstats.model.Stage;
+import io.penguinstats.util.HashUtil;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
@@ -64,7 +65,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	@Override
-	public void recallItemDrop(String userID, String itemDropHashId) throws Exception{
+	public void recallItemDrop(String userID, String itemDropHashId) throws Exception {
 		Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
 		List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
 		if (itemDropList.size() == 0) {
@@ -203,8 +204,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 					dropMatrixList.add(new DropMatrix(stageId, itemId, quantity.intValue(), times.intValue()));
 				}
 			}
-			logger.debug(
-					"generateDropMatrixList " + (System.currentTimeMillis() - startTime) + "ms " + filter.toString());
+			logger.debug("generateDropMatrixList " + (System.currentTimeMillis() - startTime) + "ms");
 		} catch (Exception e) {
 			logger.error("Error in generateDropMatrixList", e);
 		}
@@ -258,11 +258,12 @@ public class ItemDropServiceImpl implements ItemDropService {
 						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times));
 				}
 			}
-			logger.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms "
-					+ filter.toString());
+			logger.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms");
 		} catch (Exception e) {
 			logger.error("Error in generateDropMatrixElements", e);
 		}
+		LastUpdateTimeUtil
+				.setCurrentTimestamp(isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements");
 		return dropMatrixList;
 	}
 
