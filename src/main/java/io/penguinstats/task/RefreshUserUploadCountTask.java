@@ -16,7 +16,7 @@ public class RefreshUserUploadCountTask implements Task {
 	@Autowired
 	private UserUtil userUtil;
 
-	@Scheduled(fixedRate = 3600000)
+	@Scheduled(fixedRate = 3600000, initialDelay = 3600000)
 	@Override
 	public void execute() {
 		logger.info("execute RefreshUserUploadCountTask");
