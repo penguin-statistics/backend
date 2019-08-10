@@ -11,10 +11,15 @@ public interface ItemDropDaoCustom {
 
 	List<Document> aggregateStageTimes(Criteria criteria);
 
-	List<Document> aggregateUploadCount(Criteria criteria);
-
 	List<Document> aggregateWeightedItemDropQuantities(Criteria criteria);
 
 	List<Document> aggregateWeightedStageTimes(Criteria criteria);
+
+	List<Document> aggregateSegmentedWeightedItemDropQuantities(Criteria criteria, String stageId, long startTime,
+			long interval, String itemId);
+
+	List<Document> aggregateUploadCount(Criteria criteria);
+
+	Long findMinTimestamp(Boolean isReliable, Boolean isDeleted, String stageId);
 
 }

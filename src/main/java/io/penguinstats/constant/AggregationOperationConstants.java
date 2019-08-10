@@ -25,6 +25,7 @@ public class AggregationOperationConstants {
 	public final AggregationOperation UNWIND_ADD_TIME = Aggregation.unwind("addTime", "point", true);
 	public final AggregationOperation GROUP_BY_STAGEID = Aggregation.group("stageId")
 			.push(new BasicDBObject("times", "$times").append("timePoint", "$_id.point")).as("allTimes");
+	public final AggregationOperation UNWIND_ITEMDROPS_DROPS = Aggregation.unwind("itemDrops.drops", false);
 
 	// aggregateItemDropQuantities
 	public final AggregationOperation UNWIND_DROPS = Aggregation.unwind("drops", false);
@@ -45,8 +46,6 @@ public class AggregationOperationConstants {
 	// aggregateWeightedItemDropQuantities
 	public final AggregationOperation GROUP_BY_USERID_FOR_WEIGHTED_QUANTITIES = Aggregation.group("userID")
 			.push(new BasicDBObject("drops", "$$ROOT.drops").append("stageId", "$$ROOT.stageId")).as("itemDrops");
-
-	public final AggregationOperation UNWIND_ITEMDROPS_DROPS = Aggregation.unwind("itemDrops.drops", false);
 	public final AggregationOperation PROJECT_ITEMDROPS =
 			Aggregation.project("weight").and("itemDrops.stageId").as("stageId").and("itemDrops.drops").as("drops");
 	public final AggregationOperation GROUP_BY_STAGEID_AND_ITEMID_SUM_WEIGHTED_QUANTITY =
@@ -69,6 +68,26 @@ public class AggregationOperationConstants {
 	public final AggregationOperation GROUP_BY_STAGEID_AND_POINT_SUM_WEIGHTED_TIMES =
 			Aggregation.group("stageId", "point")
 					.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("times")).as("times");
+
+	// aggregateSegmentedWeightedItemDropQuantities
+	public final AggregationOperation GROUP_BY_SECTION =
+			Aggregation.group("section").push(new BasicDBObject("itemDrop", "$$ROOT")).as("itemDrops");
+	public final AggregationOperation PROJECT_SECTION = Aggregation.project("section").and("itemDrops.itemDrop.drops")
+			.as("drops").and("itemDrops.itemDrop.userID").as("userID");
+	public final AggregationOperation GROUP_BY_USERID_FOR_SEGMENTED_WEIGHTED_QUANTITIES = Aggregation.group("userID")
+			.push(new BasicDBObject("drops", "$$ROOT.drops").append("section", "$$ROOT._id")).as("itemDrops");
+	public final AggregationOperation PROJECT_ITEMDROPS_FOR_SEGMENTED_WEIGHTED_QUANTITIES =
+			Aggregation.project("weight").and("itemDrops.section").as("section").and("itemDrops.drops").as("drops");
+	public final AggregationOperation GROUP_BY_SECTION_AND_ITEMID_SUM_WEIGHTED_QUANTITY =
+			Aggregation.group("section", "drops.itemId")
+					.sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("drops.quantity")).as("quantity");
+	public final AggregationOperation PROJECT_ITEMDROPS_FOR_SEGMENTED_WEIGHTED_QUANTITIES_WITH_ITEMID =
+			Aggregation.project("weight").and("itemDrops.section").as("section").and("itemDrops.drops.quantity")
+					.as("quantity").and("itemDrops.drops.itemId").as("itemId");
+	public final AggregationOperation GROUP_BY_SECTION_AND_ITEMID_SUM_WEIGHTED_QUANTITY_WITH_ITEMID = Aggregation
+			.group("section").sum(ArithmeticOperators.Multiply.valueOf("weight").multiplyBy("quantity")).as("quantity");
+	public final AggregationOperation PROJECT_SECTION_FOR_SEGMENTED_WEIGHTED_QUANTITIES_WITH_ITEMID =
+			Aggregation.project("quantity").and("_id").as("section");
 
 	// aggregateUploadCount
 	public final AggregationOperation GROUP_BY_USERID_SUM_TIMES = Aggregation.group("userID").sum("times").as("count");

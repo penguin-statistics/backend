@@ -1,13 +1,14 @@
 package io.penguinstats.dao;
 
-import io.penguinstats.model.ItemDrop;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import io.penguinstats.model.ItemDrop;
 
 @Repository
 public interface ItemDropDao extends MongoRepository<ItemDrop, String>, ItemDropDaoCustom {
@@ -18,4 +19,5 @@ public interface ItemDropDao extends MongoRepository<ItemDrop, String>, ItemDrop
 	Page<ItemDrop> findByIsDeletedAndUserID(Boolean isDeleted, String userID, Pageable pageable);
 
 	List<ItemDrop> findByUserID(String userID);
+
 }

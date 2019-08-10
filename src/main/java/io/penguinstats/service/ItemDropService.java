@@ -46,4 +46,6 @@ public interface ItemDropService {
 
 	Map<String, Integer> generateUploadCountMap(Criteria criteria);
 
+	Long getMinTimestamp(String stageId);
+
 }

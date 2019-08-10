@@ -322,4 +322,15 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return map;
 	}
 
+	/** 
+	 * @Title: getMinTimestamp 
+	 * @Description: Get the earliest upload time of one stage
+	 * @param stageId
+	 * @return Long
+	 */
+	@Override
+	public Long getMinTimestamp(String stageId) {
+		return itemDropDao.findMinTimestamp(true, false, stageId);
+	}
+
 }
