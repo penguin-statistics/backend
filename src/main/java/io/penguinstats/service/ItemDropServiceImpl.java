@@ -316,33 +316,47 @@ public class ItemDropServiceImpl implements ItemDropService {
 			stageTimesList.set(section, Arrays.asList(allTimesArray));
 		}
 
+		List<Map<String, Double>> itemQuantitiesList = new ArrayList<>();
+		for (int i = 0; i < sectionNum; i++)
+			itemQuantitiesList.add(new HashMap<>());
 		for (Document doc : quantityDocs) {
 			int section = doc.getDouble("section").intValue();
 			String currentItemId = itemId == null ? doc.getString("itemId") : itemId;
-			Item item = itemMap.get(currentItemId);
-			if (item == null) {
-				logger.error("cannot find item " + currentItemId);
-				continue;
+			Double quantity = doc.getDouble("quantity");
+			Map<String, Double> quantityMap = itemQuantitiesList.get(section);
+			quantityMap.put(currentItemId, quantity);
+		}
+
+		Stage stage = stageMap.get(stageId);
+		Set<String> dropSet = stage.getDropsSet();
+		for (int i = 0; i < sectionNum; i++) {
+			List<Double> allTimes = stageTimesList.get(i);
+			Map<String, Double> quantityMap = itemQuantitiesList.get(i);
+			for (String currentItemId : dropSet) {
+				Integer quantity = new Long(Math.round(quantityMap.getOrDefault(currentItemId, 0D))).intValue();
+				Item item = itemMap.get(currentItemId);
+				if (item == null) {
+					logger.error("cannot find item " + currentItemId);
+					continue;
+				}
+				Integer addTimePoint = item.getAddTimePoint();
+				if (addTimePoint == null)
+					addTimePoint = 0;
+				if (addTimePoint >= allTimes.size()) {
+					logger.error("addTimePoint for " + currentItemId + " is too large");
+					continue;
+				}
+				Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
+				if (!times.equals(0)) {
+					List<DropMatrixElement> elements = segmentedDropMap.getOrDefault(currentItemId, new ArrayList<>());
+					if (elements.isEmpty()) {
+						for (int j = 0; j < sectionNum; j++)
+							elements.add(null);
+					}
+					elements.set(i, new DropMatrixElement(stageId, currentItemId, quantity, times));
+					segmentedDropMap.put(currentItemId, elements);
+				}
 			}
-			Integer addTimePoint = item.getAddTimePoint();
-			if (addTimePoint == null)
-				addTimePoint = 0;
-			List<Double> allTimes = stageTimesList.get(section);
-			if (addTimePoint >= allTimes.size()) {
-				logger.error("addTimePoint for " + currentItemId + " is too large");
-				continue;
-			}
-			int times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
-			if (times == 0)
-				continue;
-			int quantity = new Long(Math.round(doc.getDouble("quantity"))).intValue();
-			List<DropMatrixElement> elements = segmentedDropMap.getOrDefault(currentItemId, new ArrayList<>());
-			if (elements.isEmpty()) {
-				for (int i = 0; i < sectionNum; i++)
-					elements.add(null);
-			}
-			elements.set(section, new DropMatrixElement(stageId, currentItemId, quantity, times));
-			segmentedDropMap.put(currentItemId, elements);
 		}
 		LastUpdateTimeUtil
 				.setCurrentTimestamp("segmentedDropMatrixElements_" + stageId + (itemId == null ? "" : "_" + itemId));
