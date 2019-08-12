@@ -17,6 +17,8 @@ import com.mongodb.BasicDBObject;
 public class AggregationOperationConstants {
 
 	// shared
+	public final AggregationOperation MATCH_RELIEABLE_NOT_DELETED = Aggregation.match(
+			new Criteria().andOperator(Criteria.where("isReliable").is(true), Criteria.where("isDeleted").is(false)));
 	public final AggregationOperation MATCH_QUANTITY_NOT_ZERO = Aggregation.match(Criteria.where("quantity").ne(0));
 	public final AggregationOperation LOOKUP_USER = Aggregation.lookup("user", "_id", "userID", "user");
 	public final AggregationOperation PROJECT_WEIGHT = Aggregation.project("itemDrops")

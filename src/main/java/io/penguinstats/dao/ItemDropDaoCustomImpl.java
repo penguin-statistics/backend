@@ -70,6 +70,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(aggregationOperationConstants.UNWIND_DROPS);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_ITEMID);
 		operations.add(aggregationOperationConstants.MATCH_QUANTITY_NOT_ZERO);
@@ -143,6 +144,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME);
 		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
 		operations.add(aggregationOperationConstants.PROJECT_TIMESTAMP_GT_ADD_TIME);
@@ -231,6 +233,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateWeightedItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(aggregationOperationConstants.GROUP_BY_USERID_FOR_WEIGHTED_QUANTITIES);
 		operations.add(aggregationOperationConstants.LOOKUP_USER);
 		operations.add(aggregationOperationConstants.PROJECT_WEIGHT);
@@ -347,6 +350,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateWeightedStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(aggregationOperationConstants.GROUP_BY_USERID_FOR_WEIGHTED_STAGE_TIMES);
 		operations.add(aggregationOperationConstants.LOOKUP_USER);
 		operations.add(aggregationOperationConstants.PROJECT_WEIGHT);
@@ -487,6 +491,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		if (stageId == null || startTime < 0 || interval < 0)
 			return null;
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(Aggregation.match(Criteria.where("stageId").is(stageId)));
 		operations.add(Aggregation.project("drops", "userID")
 				.and(ArithmeticOperators.Trunc.truncValueOf(ArithmeticOperators.Divide
@@ -683,6 +688,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	public List<Document> aggregateSegmentedWeightedStageTimes(Criteria criteria, String stageId, long startTime,
 			long interval) {
 		List<AggregationOperation> operations = new LinkedList<>();
+		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
 		operations.add(Aggregation.match(Criteria.where("stageId").is(stageId)));
 		operations.add(Aggregation.project("times", "userID", "timestamp")
 				.and(ArithmeticOperators.Trunc.truncValueOf(ArithmeticOperators.Divide

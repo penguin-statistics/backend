@@ -273,6 +273,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	 * @Description: Generate segmented drop results for the given stage and interval.
 	 * @param filter
 	 * @param interval
+	 * @param startTime
 	 * @param stageId Required.
 	 * @param itemId Optional. If itemId is provided, the result map will only contain one key, otherwise it will contain all itemIds under the given stage (must have at least one drop record). 
 	 * @return Map<String,List<DropMatrixElement>> itemId -> result list (index is section#, if no drop in one section, the element will be null)
@@ -280,7 +281,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval,
-			String stageId, String itemId) {
+			long startTime, String stageId, String itemId) {
 		Map<String, List<DropMatrixElement>> segmentedDropMap = new HashMap<>();
 		Map<String, Item> itemMap = itemService.getItemMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
@@ -288,7 +289,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 			logger.error("cannot find stage " + stageId);
 			return segmentedDropMap;
 		}
-		Long startTime = itemDropDao.findMinTimestamp(true, false, stageId);
 		int sectionNum = new Long((System.currentTimeMillis() - startTime) / interval).intValue() + 1;
 		if (sectionNum > Constant.MAX_SECTION_NUM) {
 			logger.error("Section num is too large. MAX is " + Constant.MAX_SECTION_NUM + ", current is " + sectionNum);
@@ -344,6 +344,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 			elements.set(section, new DropMatrixElement(stageId, currentItemId, quantity, times));
 			segmentedDropMap.put(currentItemId, elements);
 		}
+		LastUpdateTimeUtil
+				.setCurrentTimestamp("segmentedDropMatrixElements_" + stageId + (itemId == null ? "" : "_" + itemId));
 		return segmentedDropMap;
 	}
 

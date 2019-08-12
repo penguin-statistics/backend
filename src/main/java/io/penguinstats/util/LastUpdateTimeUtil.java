@@ -7,19 +7,8 @@ public class LastUpdateTimeUtil {
 
 	private static Map<String, Long> lastUpdateTimeMap = new HashMap<>();
 
-	static {
-		lastUpdateTimeMap.put("itemList", null);
-		lastUpdateTimeMap.put("zoneList", null);
-		lastUpdateTimeMap.put("stageList", null);
-		lastUpdateTimeMap.put("extendedLimitationMap", null);
-		lastUpdateTimeMap.put("weightedDropMatrixElements", null);
-		lastUpdateTimeMap.put("notWeightedDropMatrixElements", null);
-	}
-
 	public static void setCurrentTimestamp(String key) {
-		if (lastUpdateTimeMap.containsKey(key)) {
-			lastUpdateTimeMap.put(key, System.currentTimeMillis());
-		}
+		lastUpdateTimeMap.put(key, System.currentTimeMillis());
 	}
 
 	public static Long getLastUpdateTime(String key) {

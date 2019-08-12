@@ -10,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -94,8 +93,7 @@ public class UserController {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
-			List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(new Criteria()
-					.andOperator(Criteria.where("isReliable").is(true), Criteria.where("isDeleted").is(false)), true);
+			List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(null, true);
 			JSONArray array = new JSONArray(elements);
 			return new ResponseEntity<>(array.toString(), HttpStatus.OK);
 		} catch (Exception e) {
