@@ -80,11 +80,10 @@ public class StageController {
 		Long startTime = itemDropService.getMinTimestamp(stageId);
 		Map<String, List<DropMatrixElement>> map =
 				itemDropService.generateDropMatrixElements(null, interval, startTime, stageId, itemId);
-		if (!map.containsKey(itemId))
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		JSONObject obj = new JSONObject();
 		JSONObject subObj = new JSONObject();
-		subObj.put(itemId, getSegmentedItemResultsArray(map.get(itemId)));
+		if (map.containsKey(itemId))
+			subObj.put(itemId, getSegmentedItemResultsArray(map.get(itemId)));
 		obj.put("interval", interval);
 		obj.put("startTime", startTime);
 		obj.put("results", subObj);
