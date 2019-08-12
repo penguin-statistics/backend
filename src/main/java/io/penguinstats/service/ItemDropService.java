@@ -40,6 +40,9 @@ public interface ItemDropService {
 	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
+	Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval, String stageId,
+			String itemId);
+
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);
 
 	Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted);

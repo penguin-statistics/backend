@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+import io.penguinstats.constant.Constant;
 import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.model.DropMatrix;
 import io.penguinstats.model.DropMatrixElement;
@@ -265,6 +266,85 @@ public class ItemDropServiceImpl implements ItemDropService {
 		LastUpdateTimeUtil
 				.setCurrentTimestamp(isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements");
 		return dropMatrixList;
+	}
+
+	/** 
+	 * @Title: generateDropMatrixElements 
+	 * @Description: Generate segmented drop results for the given stage and interval.
+	 * @param filter
+	 * @param interval
+	 * @param stageId Required.
+	 * @param itemId Optional. If itemId is provided, the result map will only contain one key, otherwise it will contain all itemIds under the given stage (must have at least one drop record). 
+	 * @return Map<String,List<DropMatrixElement>> itemId -> result list (index is section#, if no drop in one section, the element will be null)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval,
+			String stageId, String itemId) {
+		Map<String, List<DropMatrixElement>> segmentedDropMap = new HashMap<>();
+		Map<String, Item> itemMap = itemService.getItemMap();
+		Map<String, Stage> stageMap = stageService.getStageMap();
+		if (!stageMap.containsKey(stageId)) {
+			logger.error("cannot find stage " + stageId);
+			return segmentedDropMap;
+		}
+		Long startTime = itemDropDao.findMinTimestamp(true, false, stageId);
+		int sectionNum = new Long((System.currentTimeMillis() - startTime) / interval).intValue() + 1;
+		if (sectionNum > Constant.MAX_SECTION_NUM) {
+			logger.error("Section num is too large. MAX is " + Constant.MAX_SECTION_NUM + ", current is " + sectionNum);
+			return segmentedDropMap;
+		}
+
+		List<Document> quantityDocs =
+				itemDropDao.aggregateSegmentedWeightedItemDropQuantities(filter, stageId, startTime, interval, itemId);
+		List<Document> timesDocs =
+				itemDropDao.aggregateSegmentedWeightedStageTimes(filter, stageId, startTime, interval);
+
+		List<List<Double>> stageTimesList = new ArrayList<>(sectionNum);
+		for (int i = 0; i < sectionNum; i++)
+			stageTimesList.add(new ArrayList<>());
+		for (Document doc : timesDocs) {
+			int section = doc.getDouble("_id").intValue();
+			List<Document> allTimesDocs = (ArrayList<Document>)doc.get("allTimes");
+			int size = allTimesDocs.size();
+			Double[] allTimesArray = new Double[size];
+			for (int i = 0; i < size; i++) {
+				Document subDoc = allTimesDocs.get(i);
+				Integer timePoint = subDoc.getLong("timePoint").intValue();
+				allTimesArray[timePoint] = subDoc.getDouble("times");
+			}
+			stageTimesList.set(section, Arrays.asList(allTimesArray));
+		}
+
+		for (Document doc : quantityDocs) {
+			int section = doc.getDouble("section").intValue();
+			String currentItemId = itemId == null ? doc.getString("itemId") : itemId;
+			Item item = itemMap.get(currentItemId);
+			if (item == null) {
+				logger.error("cannot find item " + currentItemId);
+				continue;
+			}
+			Integer addTimePoint = item.getAddTimePoint();
+			if (addTimePoint == null)
+				addTimePoint = 0;
+			List<Double> allTimes = stageTimesList.get(section);
+			if (addTimePoint >= allTimes.size()) {
+				logger.error("addTimePoint for " + currentItemId + " is too large");
+				continue;
+			}
+			int times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
+			if (times == 0)
+				continue;
+			int quantity = new Long(Math.round(doc.getDouble("quantity"))).intValue();
+			List<DropMatrixElement> elements = segmentedDropMap.getOrDefault(currentItemId, new ArrayList<>());
+			if (elements.isEmpty()) {
+				for (int i = 0; i < sectionNum; i++)
+					elements.add(null);
+			}
+			elements.set(section, new DropMatrixElement(stageId, currentItemId, quantity, times));
+			segmentedDropMap.put(currentItemId, elements);
+		}
+		return segmentedDropMap;
 	}
 
 	/** 
