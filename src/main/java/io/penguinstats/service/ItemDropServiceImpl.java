@@ -281,8 +281,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval,
-			long startTime, String stageId, String itemId) {
+			Long startTime, String stageId, String itemId) {
 		Map<String, List<DropMatrixElement>> segmentedDropMap = new HashMap<>();
+		if (startTime == null)
+			return segmentedDropMap;
 		Map<String, Item> itemMap = itemService.getItemMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
 		if (!stageMap.containsKey(stageId)) {

@@ -42,7 +42,7 @@ public interface ItemDropService {
 
 	@Cacheable(value = "segmented-drop-matrix",
 			key = "#interval + '_' + #stageId + (#itemId == null ? '' : '_' + #itemId)", condition = "#filter == null")
-	Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval, long startTime,
+	Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval, Long startTime,
 			String stageId, String itemId);
 
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);

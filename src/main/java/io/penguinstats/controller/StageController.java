@@ -56,7 +56,7 @@ public class StageController {
 	@GetMapping(path = "/{stageId}/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getSegmentedDropResults(@PathVariable("stageId") String stageId,
 			@RequestParam(name = "interval", required = true, defaultValue = "86400000") long interval) {
-		long startTime = itemDropService.getMinTimestamp(stageId);
+		Long startTime = itemDropService.getMinTimestamp(stageId);
 		Map<String, List<DropMatrixElement>> map =
 				itemDropService.generateDropMatrixElements(null, interval, startTime, stageId, null);
 		JSONObject obj = new JSONObject();
@@ -77,7 +77,7 @@ public class StageController {
 	public ResponseEntity<String> getSegmentedDropResultsByItemId(@PathVariable("stageId") String stageId,
 			@RequestParam(name = "interval", required = true, defaultValue = "86400000") long interval,
 			@RequestParam(name = "itemId", required = true) String itemId) {
-		long startTime = itemDropService.getMinTimestamp(stageId);
+		Long startTime = itemDropService.getMinTimestamp(stageId);
 		Map<String, List<DropMatrixElement>> map =
 				itemDropService.generateDropMatrixElements(null, interval, startTime, stageId, itemId);
 		if (!map.containsKey(itemId))
