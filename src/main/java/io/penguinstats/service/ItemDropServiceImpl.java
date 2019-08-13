@@ -278,10 +278,112 @@ public class ItemDropServiceImpl implements ItemDropService {
 	 * @param itemId Optional. If itemId is provided, the result map will only contain one key, otherwise it will contain all itemIds under the given stage (must have at least one drop record). 
 	 * @return Map<String,List<DropMatrixElement>> itemId -> result list (index is section#, if no drop in one section, the element will be null)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval,
 			Long startTime, String stageId, String itemId) {
+		Map<String, List<DropMatrixElement>> result =
+				generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, itemId);
+		LastUpdateTimeUtil
+				.setCurrentTimestamp("segmentedDropMatrixElements_" + stageId + (itemId == null ? "" : "_" + itemId));
+		return result;
+	}
+
+	/** 
+	 * @Title: generateDropMatrixElements 
+	 * @Description: Generate segmented drop results for all stages under given interval.
+	 * @param filter
+	 * @param interval
+	 * @return Map<String,Map<String,List<DropMatrixElement>>> stageId -> itemId -> result list
+	 */
+	@Override
+	public Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter,
+			long interval) {
+		Map<String, Map<String, List<DropMatrixElement>>> result = new HashMap<>();
+		List<Stage> stages = stageService.getAllStages();
+		for (Stage stage : stages) {
+			String stageId = stage.getStageId();
+			Long startTime = getMinTimestamp(stageId);
+			try {
+				Map<String, List<DropMatrixElement>> subMap =
+						generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, null);
+				result.put(stageId, subMap);
+			} catch (Exception e) {
+				logger.error("Error in generateDropMatrixElements", e);
+			}
+		}
+		LastUpdateTimeUtil.setCurrentTimestamp("segmentedDropMatrixElements");
+		return result;
+	}
+
+	/** 
+	 * @Title: generateDropMatrixMap
+	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
+	 * @param filter
+	 * @return Map<String,Map<String,DropMatrix>> stageId -> itemId -> dropMatrix
+	 */
+	//TODO: This method will be deprecated after a periodic matrix generation method is implemented. Will use WeightedMatrixElement instead.
+	@Override
+	public Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter) {
+		Map<String, Map<String, DropMatrix>> map = new HashMap<>();
+		List<DropMatrix> list = generateDropMatrixList(filter);
+		for (DropMatrix dm : list) {
+			Map<String, DropMatrix> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
+			subMap.put(dm.getItemId(), dm);
+			map.put(dm.getStageId(), subMap);
+		}
+		return map;
+	}
+
+	/** 
+	 * @Title: generateDropMatrixMap
+	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
+	 * @param filter
+	 * @return Map<String,Map<String,DropMatrixElement>> stageId -> itemId -> dropMatrix
+	 */
+	@Override
+	public Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted) {
+		Map<String, Map<String, DropMatrixElement>> map = new HashMap<>();
+		List<DropMatrixElement> list = generateDropMatrixElements(filter, isWeighted);
+		for (DropMatrixElement dm : list) {
+			Map<String, DropMatrixElement> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
+			subMap.put(dm.getItemId(), dm);
+			map.put(dm.getStageId(), subMap);
+		}
+		return map;
+	}
+
+	/** 
+	 * @Title: generateUploadCountMap
+	 * @Description: Generate a map of user's upload count under given criteria
+	 * @param criteria
+	 * @return Map<String, Integer> userID -> count
+	 */
+	@Override
+	public Map<String, Integer> generateUploadCountMap(Criteria criteria) {
+		Map<String, Integer> map = new HashMap<>();
+		List<Document> docs = itemDropDao.aggregateUploadCount(criteria);
+		for (Document doc : docs) {
+			String userID = doc.getString("_id");
+			if (userID != null)
+				map.put(userID, doc.getInteger("count"));
+		}
+		return map;
+	}
+
+	/** 
+	 * @Title: getMinTimestamp 
+	 * @Description: Get the earliest upload time of one stage
+	 * @param stageId
+	 * @return Long
+	 */
+	@Override
+	public Long getMinTimestamp(String stageId) {
+		return itemDropDao.findMinTimestamp(true, false, stageId);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, List<DropMatrixElement>> generateSegmentedDropMatrixElementsHelper(Criteria filter,
+			long interval, Long startTime, String stageId, String itemId) {
 		Map<String, List<DropMatrixElement>> segmentedDropMap = new HashMap<>();
 		if (startTime == null)
 			return segmentedDropMap;
@@ -362,75 +464,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				}
 			}
 		}
-		LastUpdateTimeUtil
-				.setCurrentTimestamp("segmentedDropMatrixElements_" + stageId + (itemId == null ? "" : "_" + itemId));
 		return segmentedDropMap;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixMap
-	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return Map<String,Map<String,DropMatrix>> stageId -> itemId -> dropMatrix
-	 */
-	//TODO: This method will be deprecated after a periodic matrix generation method is implemented. Will use WeightedMatrixElement instead.
-	@Override
-	public Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter) {
-		Map<String, Map<String, DropMatrix>> map = new HashMap<>();
-		List<DropMatrix> list = generateDropMatrixList(filter);
-		for (DropMatrix dm : list) {
-			Map<String, DropMatrix> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
-			subMap.put(dm.getItemId(), dm);
-			map.put(dm.getStageId(), subMap);
-		}
-		return map;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixMap
-	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return Map<String,Map<String,DropMatrixElement>> stageId -> itemId -> dropMatrix
-	 */
-	@Override
-	public Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted) {
-		Map<String, Map<String, DropMatrixElement>> map = new HashMap<>();
-		List<DropMatrixElement> list = generateDropMatrixElements(filter, isWeighted);
-		for (DropMatrixElement dm : list) {
-			Map<String, DropMatrixElement> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
-			subMap.put(dm.getItemId(), dm);
-			map.put(dm.getStageId(), subMap);
-		}
-		return map;
-	}
-
-	/** 
-	 * @Title: generateUploadCountMap
-	 * @Description: Generate a map of user's upload count under given criteria
-	 * @param criteria
-	 * @return Map<String, Integer> userID -> count
-	 */
-	@Override
-	public Map<String, Integer> generateUploadCountMap(Criteria criteria) {
-		Map<String, Integer> map = new HashMap<>();
-		List<Document> docs = itemDropDao.aggregateUploadCount(criteria);
-		for (Document doc : docs) {
-			String userID = doc.getString("_id");
-			if (userID != null)
-				map.put(userID, doc.getInteger("count"));
-		}
-		return map;
-	}
-
-	/** 
-	 * @Title: getMinTimestamp 
-	 * @Description: Get the earliest upload time of one stage
-	 * @param stageId
-	 * @return Long
-	 */
-	@Override
-	public Long getMinTimestamp(String stageId) {
-		return itemDropDao.findMinTimestamp(true, false, stageId);
 	}
 
 }

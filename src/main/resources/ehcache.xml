@@ -86,6 +86,17 @@
             <offheap unit="MB">20</offheap>
         </resources>
     </cache>
+    <cache alias="all-segmented-drop-matrix" uses-template="heap-cache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>java.util.Map</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap unit="entries">50</heap>
+            <offheap unit="MB">20</offheap>
+        </resources>
+    </cache>
     <cache alias="min-timestamp" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>java.lang.Long</value-type>

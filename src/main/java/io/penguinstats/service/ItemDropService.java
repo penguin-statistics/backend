@@ -45,6 +45,9 @@ public interface ItemDropService {
 	Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval, Long startTime,
 			String stageId, String itemId);
 
+	@Cacheable(value = "all-segmented-drop-matrix", key = "#interval", condition = "#filter == null")
+	Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter, long interval);
+
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);
 
 	Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted);
