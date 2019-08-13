@@ -333,6 +333,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Set<String> dropSet = stage.getDropsSet();
 		for (int i = 0; i < sectionNum; i++) {
 			List<Double> allTimes = stageTimesList.get(i);
+			if (allTimes.isEmpty())
+				continue;
 			Map<String, Double> quantityMap = itemQuantitiesList.get(i);
 			for (String currentItemId : dropSet) {
 				Integer quantity = new Long(Math.round(quantityMap.getOrDefault(currentItemId, 0D))).intValue();
