@@ -20,6 +20,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Item implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@JsonIgnore
 	private ObjectId id;

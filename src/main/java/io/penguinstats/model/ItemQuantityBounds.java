@@ -11,6 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ItemQuantityBounds implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	private String itemId;
 	private Bounds bounds;
 

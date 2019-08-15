@@ -17,6 +17,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Bounds implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	private Integer lower;
 	private Integer upper;
 	private List<Integer> exceptions;

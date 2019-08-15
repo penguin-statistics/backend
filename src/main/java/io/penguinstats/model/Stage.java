@@ -22,6 +22,8 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Stage implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@JsonIgnore
 	private ObjectId id;

@@ -16,6 +16,8 @@ import lombok.Setter;
 @Setter
 public class DropMatrixElement implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+
 	private String stageId;
 	private String itemId;
 	private Integer quantity;
