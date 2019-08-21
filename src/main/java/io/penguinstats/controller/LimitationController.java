@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +41,13 @@ public class LimitationController {
 	public ResponseEntity<Limitation> getExtendedLimitation(@PathVariable("stageId") String stageId) {
 		Limitation limitation = limitationService.getExtendedLimitation(stageId);
 		return new ResponseEntity<Limitation>(limitation, limitation != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(path = "/cache")
+	@Caching(evict = {@CacheEvict(value = "maps", key = "'extendedLimitationMap'"),
+			@CacheEvict(value = "limitation", allEntries = true)})
+	public ResponseEntity<String> evictLimitationCache() {
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

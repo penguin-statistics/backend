@@ -3,6 +3,8 @@ package io.penguinstats.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,12 @@ public class ItemController {
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);
 		return new ResponseEntity<Item>(item, item != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(path = "/cache")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'itemList'"), @CacheEvict(value = "maps", key = "'itemMap'")})
+	public ResponseEntity<String> evictItemCache() {
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

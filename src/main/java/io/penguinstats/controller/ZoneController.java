@@ -3,6 +3,8 @@ package io.penguinstats.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +39,12 @@ public class ZoneController {
 	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
 		return new ResponseEntity<Zone>(zone, zone != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(path = "/cache")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
+	public ResponseEntity<String> evictZoneCache() {
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

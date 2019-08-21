@@ -6,6 +6,8 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +52,13 @@ public class StageController {
 	public ResponseEntity<Stage> getStageByStageId(@PathVariable("stageId") String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
 		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+
+	@GetMapping(path = "/cache")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'stageList'"),
+			@CacheEvict(value = "maps", key = "'stageMap'")})
+	public ResponseEntity<String> evictStageCache() {
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@ApiOperation("Get segmented drop data for all items in one stage")
