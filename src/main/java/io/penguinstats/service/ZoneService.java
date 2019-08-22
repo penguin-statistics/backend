@@ -16,6 +16,8 @@ public interface ZoneService {
 
 	Zone getZoneByZoneId(String zoneId);
 
+	Zone getZoneByStageId(String stageId);
+
 	@Cacheable(value = "lists", key = "'zoneList'")
 	List<Zone> getAllZones();
 
