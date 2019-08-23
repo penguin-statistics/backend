@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.ZoneDao;
+import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
@@ -16,6 +17,8 @@ public class ZoneServiceImpl implements ZoneService {
 
 	@Autowired
 	private ZoneDao zoneDao;
+	@Autowired
+	private StageService stageService;
 
 	@Override
 	public void saveZone(Zone zone) {
@@ -25,6 +28,14 @@ public class ZoneServiceImpl implements ZoneService {
 	@Override
 	public Zone getZoneByZoneId(String zoneId) {
 		return zoneDao.findByZoneId(zoneId);
+	}
+
+	@Override
+	public Zone getZoneByStageId(String stageId) {
+		Stage stage = stageService.getStageByStageId(stageId);
+		if (stage == null)
+			return null;
+		return getZoneByZoneId(stage.getZoneId());
 	}
 
 	/**

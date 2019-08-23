@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.penguinstats.util.HashUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -33,6 +32,7 @@ import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.LimitationUtil;
 import io.swagger.annotations.ApiOperation;
@@ -78,12 +78,14 @@ public class ReportController {
 				logger.error("Error in handleUserIDFromCookie: ", e);
 			}
 			logger.info("user " + userID + " POST /report\n" + obj.toString(2));
+			Long timestamp = System.currentTimeMillis();
 			String ip = IpUtil.getIpAddr(request);
 			String stageId = obj.getString("stageId");
 			int furnitureNum = obj.getInt("furnitureNum");
 			JSONArray dropsArray = obj.getJSONArray("drops");
 			String source = obj.has("source") ? obj.getString("source") : null;
 			String version = obj.has("version") ? obj.getString("version") : null;
+
 			List<Drop> drops = new ArrayList<>();
 			for (int i = 0; i < dropsArray.length(); i++) {
 				JSONObject dropObj = dropsArray.getJSONObject(i);
@@ -92,14 +94,16 @@ public class ReportController {
 			}
 			if (furnitureNum > 0)
 				drops.add(new Drop("furni", furnitureNum));
+
+			// TODO: we should design checkers here, such as tag checker, time checker, limitation checker, etc.
 			Boolean isReliable = null;
 			if (source != null && source.equals("penguin-stats.io(internal)"))
 				isReliable = true;
 			else
-				isReliable = limitationUtil.checkDrops(drops, stageId);
+				isReliable = limitationUtil.checkDrops(drops, stageId, timestamp);
 			if (!isReliable)
 				logger.warn("Abnormal drop data!");
-			Long timestamp = System.currentTimeMillis();
+
 			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version, userID);
 			itemDropService.saveItemDrop(itemDrop);
 			String itemDropHashId = HashUtil.getHash(itemDrop.getId().toString());
@@ -166,7 +170,7 @@ public class ReportController {
 	@ApiOperation("Recall the last report")
 	@PostMapping(path = "/recall")
 	public ResponseEntity<String> recallPersonalReport(HttpServletRequest request,
-													   @RequestParam("item_drop_hash_id") String itemDropHashId) {
+			@RequestParam("item_drop_hash_id") String itemDropHashId) {
 		try {
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {

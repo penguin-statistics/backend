@@ -147,10 +147,8 @@ public class ResultController {
 					Stage stage = stageMap.get(element.getStageId());
 					Zone zone = zoneMap.get(stage.getZoneId());
 					Long currentTime = System.currentTimeMillis();
-					if (zone.getOpenTime() != null && zone.getOpenTime().compareTo(currentTime) > 0
-							|| zone.getCloseTime() != null && zone.getCloseTime().compareTo(currentTime) < 0) {
+					if (!zone.isInTimeRange(currentTime))
 						continue;
-					}
 				}
 				if (showItemDetails)
 					subObj.put("item", JSONUtil.convertObjectToJSONObject(itemMap.get(element.getItemId())));

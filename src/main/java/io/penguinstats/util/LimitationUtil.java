@@ -1,30 +1,38 @@
 package io.penguinstats.util;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import io.penguinstats.constant.Constant;
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemQuantityBounds;
 import io.penguinstats.model.Limitation;
+import io.penguinstats.model.Zone;
 import io.penguinstats.service.LimitationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import io.penguinstats.service.ZoneService;
 
 @Component("limitationUtil")
 public class LimitationUtil {
 
+	private static LimitationUtil limitationUtil;
+
 	@Autowired
 	private LimitationService limitationService;
-	private static LimitationUtil limitationUtil;
+	@Autowired
+	private ZoneService zoneService;
 
 	@PostConstruct
 	public void init() {
 		limitationUtil = this;
 		limitationUtil.limitationService = this.limitationService;
+		limitationUtil.zoneService = this.zoneService;
 	}
 
 	/**
@@ -35,10 +43,18 @@ public class LimitationUtil {
 	 * @param stageId
 	 * @return boolean
 	 */
-	public boolean checkDrops(List<Drop> drops, String stageId) {
+	public boolean checkDrops(List<Drop> drops, String stageId, long timestamp) {
+		// first check if the zone is open or not
+		Zone zone = zoneService.getZoneByStageId(stageId);
+		if (zone == null || !zone.isInTimeRange(timestamp))
+			return false;
+
+		// then check limitation
 		Limitation limitation = limitationService.getExtendedLimitation(stageId);
 		if (limitation == null)
 			return true;
+
+		// get number of types excluding furniture
 		boolean hasFurniture = false;
 		for (Drop drop : drops) {
 			if (drop.getItemId().equals("furni")) {
@@ -47,8 +63,12 @@ public class LimitationUtil {
 			}
 		}
 		int typesNum = hasFurniture ? drops.size() - 1 : drops.size();
+
+		// check type bounds
 		if (limitation.getItemTypeBounds() != null && !limitation.getItemTypeBounds().isValid(typesNum))
 			return false;
+
+		// check quantity bounds for every item in the limitation (Note: not in the drop)
 		Map<String, Drop> dropsMap = new HashMap<>();
 		for (Drop drop : drops)
 			dropsMap.put(drop.getItemId(), drop);

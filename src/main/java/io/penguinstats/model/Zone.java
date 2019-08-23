@@ -44,4 +44,13 @@ public class Zone implements Serializable {
 		this.closeTime = closeTime;
 		this.stages = stages;
 	}
+
+	@JsonIgnore
+	public boolean isInTimeRange(long timestamp) {
+		if (this.openTime != null && this.openTime.compareTo(timestamp) > 0)
+			return false;
+		if (this.closeTime != null && this.closeTime.compareTo(timestamp) < 0)
+			return false;
+		return true;
+	}
 }
