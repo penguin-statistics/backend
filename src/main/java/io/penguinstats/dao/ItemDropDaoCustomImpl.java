@@ -70,7 +70,10 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
+		if (criteria == null)
+			operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
+		else
+			operations.add(aggregationOperationConstants.MATCH_NOT_DELETED);
 		operations.add(aggregationOperationConstants.UNWIND_DROPS);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_ITEMID);
 		operations.add(aggregationOperationConstants.MATCH_QUANTITY_NOT_ZERO);
@@ -144,7 +147,10 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Override
 	public List<Document> aggregateStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
-		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
+		if (criteria == null)
+			operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
+		else
+			operations.add(aggregationOperationConstants.MATCH_NOT_DELETED);
 		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME);
 		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
 		operations.add(aggregationOperationConstants.PROJECT_TIMESTAMP_GT_ADD_TIME);
