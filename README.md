@@ -28,10 +28,31 @@ mongorestore -h localhost:27017 -d penguin_stats <path of penguin_stats director
 
 ### Build
  执行`mvn clean package`后，将`target/PenguinStats.war`部署至服务器上即可。
- 
+
  ## API文档
  1. 已上线版本的API文档请见[这里](https://penguin-stats.io/PenguinStats/swagger/swagger-ui.html)
  2. 本地调试版本可以访问`/PenguinStats/swagger/swagger-ui.html`
+
+### 使用maven构建docker镜像
+
+如果准备使用私有registry,请修改`pom.xml`文件中的`docker.image.prefix`值.
+
+构建命令:
+
+```
+mvn jib:dockerBuild
+```
+
+构建默认使用的镜像为`tomcat:8.5-jre8-alpine`，默认端口`8080`，docker运行容器命令参考如下：
+
+```
+docker run -d -p 8081:8080 penguin-stats/backend:<tag>
+```
+
+1. 上述命令中，`<tag>`为构建时的版本号，如`1.3.3`
+
+2. `-p 8081:8080`可以指定暴露内部端口`8080`到外部`8081`，容器外部可以通过`8081`端口访问，适合本地调试时使用，不同环境请根据实际需求修改
+
 
 ## 意见和建议
 各种想法欢迎提Issue，也可以通过[网站介绍页面](https://penguin-stats.io/ "网站介绍页面")下方的联系方式找到我和Penguin Stats的其他团队成员。
