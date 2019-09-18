@@ -353,6 +353,18 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	/** 
+	 * @Title: updateDropMatrixElements 
+	 * @Description: Update matrix by generating a new one.
+	 * @param filter
+	 * @param isWeighted
+	 * @return List<DropMatrixElement>
+	 */
+	@Override
+	public List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted) {
+		return generateDropMatrixElements(filter, isWeighted);
+	}
+
+	/** 
 	 * @Title: generateUploadCountMap
 	 * @Description: Generate a map of user's upload count under given criteria
 	 * @param criteria
