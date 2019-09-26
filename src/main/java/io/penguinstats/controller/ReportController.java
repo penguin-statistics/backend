@@ -51,7 +51,7 @@ public class ReportController {
 
 	@ApiOperation("Save single report")
 	@PostMapping
-	public ResponseEntity<String> saveSingleReport(@RequestBody SaveSingleReportRequest requestBody, HttpServletRequest request,
+	public ResponseEntity<String> saveSingleReport(@RequestBody @Valid SaveSingleReportRequest requestBody, HttpServletRequest request,
 												   HttpServletResponse response) {
 		try {
 			String userID = cookieUtil.readUserIDFromCookie(request);
