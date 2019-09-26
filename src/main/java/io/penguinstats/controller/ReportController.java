@@ -1,33 +1,8 @@
 package io.penguinstats.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.rest.SaveSingleReportRequest;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.UserService;
@@ -36,6 +11,22 @@ import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.LimitationUtil;
 import io.swagger.annotations.ApiOperation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/report")
@@ -60,14 +51,9 @@ public class ReportController {
 
 	@ApiOperation("Save single report")
 	@PostMapping
-	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
-			HttpServletResponse response) {
+	public ResponseEntity<String> saveSingleReport(@RequestBody SaveSingleReportRequest requestBody, HttpServletRequest request,
+												   HttpServletResponse response) {
 		try {
-			if (!isValidSingleReportRequest(requestBody)) {
-				logger.warn("POST /report " + requestBody);
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-			JSONObject obj = new JSONObject(requestBody);
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
 				userID = userService.createNewUser(IpUtil.getIpAddr(request));
@@ -77,21 +63,14 @@ public class ReportController {
 			} catch (UnsupportedEncodingException e) {
 				logger.error("Error in handleUserIDFromCookie: ", e);
 			}
-			logger.info("user " + userID + " POST /report\n" + obj.toString(2));
+			logger.info("user " + userID + " POST /report\n" + requestBody.toString());
 			Long timestamp = System.currentTimeMillis();
 			String ip = IpUtil.getIpAddr(request);
-			String stageId = obj.getString("stageId");
-			int furnitureNum = obj.getInt("furnitureNum");
-			JSONArray dropsArray = obj.getJSONArray("drops");
-			String source = obj.has("source") ? obj.getString("source") : null;
-			String version = obj.has("version") ? obj.getString("version") : null;
-
-			List<Drop> drops = new ArrayList<>();
-			for (int i = 0; i < dropsArray.length(); i++) {
-				JSONObject dropObj = dropsArray.getJSONObject(i);
-				Drop drop = new Drop(dropObj.getString("itemId"), dropObj.getInt("quantity"));
-				drops.add(drop);
-			}
+			String stageId = requestBody.getStageId();
+			int furnitureNum = requestBody.getFurnitureNum();
+			String source = requestBody.getSource();
+			String version = requestBody.getVersion();
+			List<Drop> drops = requestBody.getDrops();
 			if (furnitureNum > 0)
 				drops.add(new Drop("furni", furnitureNum));
 
@@ -185,23 +164,6 @@ public class ReportController {
 			logger.error("Error in recallPersonalReport", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	}
-
-	private boolean isValidSingleReportRequest(String jsonString) {
-		try {
-			JSONObject obj = new JSONObject(jsonString);
-			if (!hasValidValue(obj, "stageId") || !hasValidValue(obj, "furnitureNum") || !hasValidValue(obj, "drops")) {
-				return false;
-			}
-		} catch (JSONException e) {
-			logger.error("Invalid single report request", e);
-			return false;
-		}
-		return true;
-	}
-
-	private boolean hasValidValue(JSONObject obj, String key) {
-		return obj.has(key) && !obj.isNull(key);
 	}
 
 }
