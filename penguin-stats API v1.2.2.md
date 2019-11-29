@@ -1417,7 +1417,7 @@ GET /PenguinStats/api/limitation
 ### URI
 
 ```
-POST /PenguinStats/api/user
+POST /PenguinStats/api/users
 ```
 
 ### 请求消息
