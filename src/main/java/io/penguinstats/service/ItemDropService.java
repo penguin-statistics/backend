@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +52,9 @@ public interface ItemDropService {
 	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);
 
 	Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted);
+
+	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
+	List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted);
 
 	Map<String, Integer> generateUploadCountMap(Criteria criteria);
 

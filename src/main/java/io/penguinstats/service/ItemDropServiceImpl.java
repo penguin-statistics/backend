@@ -244,7 +244,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 					Integer quantity = new Long(Math.round(subMap.getOrDefault(itemId, 0D))).intValue();
 					Item item = itemMap.get(itemId);
 					if (item == null) {
-						logger.error("cannot find item " + itemId);
+						// Sometimes item may be null because it has been removed from dropSet 
+						logger.warn("cannot find item " + itemId);
 						continue;
 					}
 					Integer addTimePoint = item.getAddTimePoint();
@@ -299,18 +300,18 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter,
 			long interval) {
 		Map<String, Map<String, List<DropMatrixElement>>> result = new HashMap<>();
-		List<Stage> stages = stageService.getAllStages();
-		for (Stage stage : stages) {
-			String stageId = stage.getStageId();
-			Long startTime = getMinTimestamp(stageId);
-			try {
-				Map<String, List<DropMatrixElement>> subMap =
-						generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, null);
-				result.put(stageId, subMap);
-			} catch (Exception e) {
-				logger.error("Error in generateDropMatrixElements", e);
-			}
-		}
+		//		List<Stage> stages = stageService.getAllStages();
+		//		for (Stage stage : stages) {
+		//			String stageId = stage.getStageId();
+		//			Long startTime = getMinTimestamp(stageId);
+		//			try {
+		//				Map<String, List<DropMatrixElement>> subMap =
+		//						generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, null);
+		//				result.put(stageId, subMap);
+		//			} catch (Exception e) {
+		//				logger.error("Error in generateDropMatrixElements", e);
+		//			}
+		//		}
 		LastUpdateTimeUtil.setCurrentTimestamp("segmentedDropMatrixElements");
 		return result;
 	}
@@ -350,6 +351,18 @@ public class ItemDropServiceImpl implements ItemDropService {
 			map.put(dm.getStageId(), subMap);
 		}
 		return map;
+	}
+
+	/** 
+	 * @Title: updateDropMatrixElements 
+	 * @Description: Update matrix by generating a new one.
+	 * @param filter
+	 * @param isWeighted
+	 * @return List<DropMatrixElement>
+	 */
+	@Override
+	public List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted) {
+		return generateDropMatrixElements(filter, isWeighted);
 	}
 
 	/** 
@@ -442,7 +455,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				Integer quantity = new Long(Math.round(quantityMap.getOrDefault(currentItemId, 0D))).intValue();
 				Item item = itemMap.get(currentItemId);
 				if (item == null) {
-					logger.error("cannot find item " + currentItemId);
+					logger.warn("cannot find item " + currentItemId);
 					continue;
 				}
 				Integer addTimePoint = item.getAddTimePoint();

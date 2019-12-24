@@ -68,7 +68,7 @@
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
         <expiry>
-            <ttl unit="minutes">10</ttl>
+            <none/>
         </expiry>
         <resources>
             <heap unit="entries">50</heap>
