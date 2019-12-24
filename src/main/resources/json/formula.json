@@ -1,18 +1,18 @@
 [
  {
   "id": "30135",
-  "name": "D32¸Ö",
+  "name": "D32é’¢",
   "goldCost": 400,
   "costs": [
    {
     "id": "30084",
-    "name": "ÈıË®ÃÌ¿ó",
+    "name": "ä¸‰æ°´é”°çŸ¿",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30094",
-    "name": "ÎåË®ÑĞÄ¥Ê¯",
+    "name": "äº”æ°´ç ”ç£¨çŸ³",
     "rarity": 3,
     "count": 1
    },
@@ -26,63 +26,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "Ìá´¿Ô´ÑÒ",
+    "name": "æçº¯æºå²©",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "ÌÇ¾Û¿é",
+    "name": "ç³–èšå—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "¾ÛËáõ¥¿é",
+    "name": "èšé…¸é…¯å—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "ÒìÌú¿é",
+    "name": "å¼‚é“å—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "ÍªÕóÁĞ",
+    "name": "é…®é˜µåˆ—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "¸ÄÁ¿×°ÖÃ",
+    "name": "æ”¹é‡è£…ç½®",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "°×Âí´¼",
+    "name": "ç™½é©¬é†‡",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "ÈıË®ÃÌ¿ó",
+    "name": "ä¸‰æ°´é”°çŸ¿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "ÎåË®ÑĞÄ¥Ê¯",
+    "name": "äº”æ°´ç ”ç£¨çŸ³",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -97,14 +97,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "¾ÛºÏÄı½º",
+    "name": "èšåˆå‡èƒ¶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "³ãºÏ½ğ¿é",
+    "name": "ç‚½åˆé‡‘å—",
     "rarity": 3,
     "weight": 63
    }
@@ -113,18 +113,18 @@
  },
  {
   "id": "30125",
-  "name": "Ë«¼«ÄÉÃ×Æ¬",
+  "name": "åŒæçº³ç±³ç‰‡",
   "goldCost": 400,
   "costs": [
    {
     "id": "30064",
-    "name": "¸ÄÁ¿×°ÖÃ",
+    "name": "æ”¹é‡è£…ç½®",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30074",
-    "name": "°×Âí´¼",
+    "name": "ç™½é©¬é†‡",
     "rarity": 3,
     "count": 2
    }
@@ -132,63 +132,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "Ìá´¿Ô´ÑÒ",
+    "name": "æçº¯æºå²©",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "ÌÇ¾Û¿é",
+    "name": "ç³–èšå—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "¾ÛËáõ¥¿é",
+    "name": "èšé…¸é…¯å—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "ÒìÌú¿é",
+    "name": "å¼‚é“å—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "ÍªÕóÁĞ",
+    "name": "é…®é˜µåˆ—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "¸ÄÁ¿×°ÖÃ",
+    "name": "æ”¹é‡è£…ç½®",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "°×Âí´¼",
+    "name": "ç™½é©¬é†‡",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "ÈıË®ÃÌ¿ó",
+    "name": "ä¸‰æ°´é”°çŸ¿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "ÎåË®ÑĞÄ¥Ê¯",
+    "name": "äº”æ°´ç ”ç£¨çŸ³",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -203,14 +203,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "¾ÛºÏÄı½º",
+    "name": "èšåˆå‡èƒ¶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "³ãºÏ½ğ¿é",
+    "name": "ç‚½åˆé‡‘å—",
     "rarity": 3,
     "weight": 63
    }
@@ -219,24 +219,24 @@
  },
  {
   "id": "30115",
-  "name": "¾ÛºÏ¼Á",
+  "name": "èšåˆå‰‚",
   "goldCost": 400,
   "costs": [
    {
     "id": "30014",
-    "name": "Ìá´¿Ô´ÑÒ",
+    "name": "æçº¯æºå²©",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30044",
-    "name": "ÒìÌú¿é",
+    "name": "å¼‚é“å—",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30054",
-    "name": "ÍªÕóÁĞ",
+    "name": "é…®é˜µåˆ—",
     "rarity": 3,
     "count": 1
    }
@@ -244,63 +244,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "Ìá´¿Ô´ÑÒ",
+    "name": "æçº¯æºå²©",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "ÌÇ¾Û¿é",
+    "name": "ç³–èšå—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "¾ÛËáõ¥¿é",
+    "name": "èšé…¸é…¯å—",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "ÒìÌú¿é",
+    "name": "å¼‚é“å—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "ÍªÕóÁĞ",
+    "name": "é…®é˜µåˆ—",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "¸ÄÁ¿×°ÖÃ",
+    "name": "æ”¹é‡è£…ç½®",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "°×Âí´¼",
+    "name": "ç™½é©¬é†‡",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "ÈıË®ÃÌ¿ó",
+    "name": "ä¸‰æ°´é”°çŸ¿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "ÎåË®ÑĞÄ¥Ê¯",
+    "name": "äº”æ°´ç ”ç£¨çŸ³",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -315,14 +315,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "¾ÛºÏÄı½º",
+    "name": "èšåˆå‡èƒ¶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "³ãºÏ½ğ¿é",
+    "name": "ç‚½åˆé‡‘å—",
     "rarity": 3,
     "weight": 63
    }
@@ -342,13 +342,13 @@
    },
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1
    }
@@ -356,63 +356,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -427,14 +427,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -443,24 +443,24 @@
  },
  {
   "id": "30094",
-  "name": "ÎåË®ÑĞÄ¥Ê¯",
+  "name": "äº”æ°´ç ”ç£¨çŸ³",
   "goldCost": 300,
   "costs": [
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1
    }
@@ -468,63 +468,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -539,14 +539,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -555,24 +555,24 @@
  },
  {
   "id": "30084",
-  "name": "ÈıË®ÃÌ¿ó",
+  "name": "ä¸‰æ°´é”°çŸ¿",
   "goldCost": 300,
   "costs": [
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1
    }
@@ -580,63 +580,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -651,14 +651,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -667,18 +667,18 @@
  },
  {
   "id": "30074",
-  "name": "°×Âí´¼",
+  "name": "ç™½é©¬é†‡",
   "goldCost": 300,
   "costs": [
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1
    },
@@ -692,63 +692,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -763,14 +763,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -779,12 +779,12 @@
  },
  {
   "id": "30062",
-  "name": "×°ÖÃ",
+  "name": "è£…ç½®",
   "goldCost": 100,
   "costs": [
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 3
    }
@@ -792,42 +792,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -837,12 +837,12 @@
  },
  {
   "id": "30063",
-  "name": "È«ĞÂ×°ÖÃ",
+  "name": "å…¨æ–°è£…ç½®",
   "goldCost": 200,
   "costs": [
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 4
    }
@@ -850,42 +850,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -895,24 +895,24 @@
  },
  {
   "id": "30064",
-  "name": "¸ÄÁ¿×°ÖÃ",
+  "name": "æ”¹é‡è£…ç½®",
   "goldCost": 300,
   "costs": [
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1
    }
@@ -920,63 +920,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -991,14 +991,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -1007,12 +1007,12 @@
  },
  {
   "id": "30052",
-  "name": "ÍªÄı¼¯",
+  "name": "é…®å‡é›†",
   "goldCost": 100,
   "costs": [
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 3
    }
@@ -1020,42 +1020,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1065,12 +1065,12 @@
  },
  {
   "id": "30053",
-  "name": "ÍªÄı¼¯×é",
+  "name": "é…®å‡é›†ç»„",
   "goldCost": 200,
   "costs": [
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 4
    }
@@ -1078,42 +1078,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1123,24 +1123,24 @@
  },
  {
   "id": "30054",
-  "name": "ÍªÕóÁĞ",
+  "name": "é…®é˜µåˆ—",
   "goldCost": 300,
   "costs": [
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1
    }
@@ -1148,63 +1148,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1219,14 +1219,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -1235,12 +1235,12 @@
  },
  {
   "id": "30042",
-  "name": "ÒìÌú",
+  "name": "å¼‚é“",
   "goldCost": 100,
   "costs": [
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 3
    }
@@ -1248,42 +1248,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1293,12 +1293,12 @@
  },
  {
   "id": "30043",
-  "name": "ÒìÌú×é",
+  "name": "å¼‚é“ç»„",
   "goldCost": 200,
   "costs": [
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 4
    }
@@ -1306,42 +1306,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1351,24 +1351,24 @@
  },
  {
   "id": "30044",
-  "name": "ÒìÌú¿é",
+  "name": "å¼‚é“å—",
   "goldCost": 300,
   "costs": [
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1
    }
@@ -1376,63 +1376,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1447,14 +1447,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -1463,12 +1463,12 @@
  },
  {
   "id": "30032",
-  "name": "¾ÛËáõ¥",
+  "name": "èšé…¸é…¯",
   "goldCost": 100,
   "costs": [
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 3
    }
@@ -1476,42 +1476,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1521,12 +1521,12 @@
  },
  {
   "id": "30033",
-  "name": "¾ÛËáõ¥×é",
+  "name": "èšé…¸é…¯ç»„",
   "goldCost": 200,
   "costs": [
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 4
    }
@@ -1534,42 +1534,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1579,24 +1579,24 @@
  },
  {
   "id": "30034",
-  "name": "¾ÛËáõ¥¿é",
+  "name": "èšé…¸é…¯å—",
   "goldCost": 300,
   "costs": [
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1
    }
@@ -1604,63 +1604,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1675,14 +1675,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -1691,12 +1691,12 @@
  },
  {
   "id": "30022",
-  "name": "ÌÇ",
+  "name": "ç³–",
   "goldCost": 100,
   "costs": [
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 3
    }
@@ -1704,42 +1704,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1749,12 +1749,12 @@
  },
  {
   "id": "30023",
-  "name": "ÌÇ×é",
+  "name": "ç³–ç»„",
   "goldCost": 200,
   "costs": [
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 4
    }
@@ -1762,42 +1762,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1807,24 +1807,24 @@
  },
  {
   "id": "30024",
-  "name": "ÌÇ¾Û¿é",
+  "name": "ç³–èšå—",
   "goldCost": 300,
   "costs": [
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1
    }
@@ -1832,63 +1832,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1903,14 +1903,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -1919,12 +1919,12 @@
  },
  {
   "id": "30012",
-  "name": "¹ÌÔ´ÑÒ",
+  "name": "å›ºæºå²©",
   "goldCost": 100,
   "costs": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 3
    }
@@ -1932,42 +1932,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "Ô´ÑÒ",
+    "name": "æºå²©",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "´úÌÇ",
+    "name": "ä»£ç³–",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "õ¥Ô­ÁÏ",
+    "name": "é…¯åŸæ–™",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "ÒìÌúËéÆ¬",
+    "name": "å¼‚é“ç¢ç‰‡",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "Ë«Íª",
+    "name": "åŒé…®",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "ÆÆËğ×°ÖÃ",
+    "name": "ç ´æŸè£…ç½®",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1977,12 +1977,12 @@
  },
  {
   "id": "30013",
-  "name": "¹ÌÔ´ÑÒ×é",
+  "name": "å›ºæºå²©ç»„",
   "goldCost": 200,
   "costs": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 5
    }
@@ -1990,42 +1990,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "¹ÌÔ´ÑÒ",
+    "name": "å›ºæºå²©",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "ÌÇ",
+    "name": "ç³–",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "¾ÛËáõ¥",
+    "name": "èšé…¸é…¯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "ÒìÌú",
+    "name": "å¼‚é“",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "ÍªÄı¼¯",
+    "name": "é…®å‡é›†",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "×°ÖÃ",
+    "name": "è£…ç½®",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -2035,12 +2035,12 @@
  },
  {
   "id": "30014",
-  "name": "Ìá´¿Ô´ÑÒ",
+  "name": "æçº¯æºå²©",
   "goldCost": 300,
   "costs": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 4
    }
@@ -2048,63 +2048,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -2119,14 +2119,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
@@ -2138,19 +2138,19 @@
    {
     "count": 1,
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2
    }
   ],
@@ -2158,63 +2158,63 @@
    {
     "count": 1,
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "weight": 60
    },
    {
     "count": 1,
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "weight": 30
    },
    {
     "count": 1,
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "weight": 45
    },
    {
     "count": 1,
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "weight": 36
    },
@@ -2228,21 +2228,21 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
   ],
   "goldCost": 300,
   "id": "31024",
-  "name": "³ãºÏ½ğ¿é",
+  "name": "ç‚½åˆé‡‘å—",
   "totalWeight": 497
  },
  {
@@ -2250,19 +2250,19 @@
    {
     "count": 1,
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2
    }
   ],
@@ -2270,63 +2270,63 @@
    {
     "count": 1,
     "id": "30013",
-    "name": "¹ÌÔ´ÑÒ×é",
+    "name": "å›ºæºå²©ç»„",
     "rarity": 2,
     "weight": 60
    },
    {
     "count": 1,
     "id": "30023",
-    "name": "ÌÇ×é",
+    "name": "ç³–ç»„",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30033",
-    "name": "¾ÛËáõ¥×é",
+    "name": "èšé…¸é…¯ç»„",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30043",
-    "name": "ÒìÌú×é",
+    "name": "å¼‚é“ç»„",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30053",
-    "name": "ÍªÄı¼¯×é",
+    "name": "é…®å‡é›†ç»„",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30063",
-    "name": "È«ĞÂ×°ÖÃ",
+    "name": "å…¨æ–°è£…ç½®",
     "rarity": 2,
     "weight": 30
    },
    {
     "count": 1,
     "id": "30073",
-    "name": "Å¤×ª´¼",
+    "name": "æ‰­è½¬é†‡",
     "rarity": 2,
     "weight": 45
    },
    {
     "count": 1,
     "id": "30083",
-    "name": "ÇáÃÌ¿ó",
+    "name": "è½»é”°çŸ¿",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "ÑĞÄ¥Ê¯",
+    "name": "ç ”ç£¨çŸ³",
     "rarity": 2,
     "weight": 36
    },
@@ -2340,21 +2340,21 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "Äı½º",
+    "name": "å‡èƒ¶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "³ãºÏ½ğ",
+    "name": "ç‚½åˆé‡‘",
     "rarity": 2,
     "weight": 40
    }
   ],
   "goldCost": 300,
   "id": "31014",
-  "name": "¾ÛºÏÄı½º",
+  "name": "èšåˆå‡èƒ¶",
   "totalWeight": 497
  }
 ]
