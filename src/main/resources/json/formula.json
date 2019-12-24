@@ -1,18 +1,18 @@
 [
  {
   "id": "30135",
-  "name": "D32\u94a2",
+  "name": "D32钢",
   "goldCost": 400,
   "costs": [
    {
     "id": "30084",
-    "name": "\u4e09\u6c34\u9530\u77ff",
+    "name": "三水锰矿",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30094",
-    "name": "\u4e94\u6c34\u7814\u78e8\u77f3",
+    "name": "五水研磨石",
     "rarity": 3,
     "count": 1
    },
@@ -26,63 +26,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "\u63d0\u7eaf\u6e90\u5ca9",
+    "name": "提纯源岩",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "\u7cd6\u805a\u5757",
+    "name": "糖聚块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "\u805a\u9178\u916f\u5757",
+    "name": "聚酸酯块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "\u5f02\u94c1\u5757",
+    "name": "异铁块",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "\u916e\u9635\u5217",
+    "name": "酮阵列",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "\u6539\u91cf\u88c5\u7f6e",
+    "name": "改量装置",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "\u767d\u9a6c\u9187",
+    "name": "白马醇",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "\u4e09\u6c34\u9530\u77ff",
+    "name": "三水锰矿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "\u4e94\u6c34\u7814\u78e8\u77f3",
+    "name": "五水研磨石",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -97,14 +97,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "\u805a\u5408\u51dd\u80f6",
+    "name": "聚合凝胶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "\u70bd\u5408\u91d1\u5757",
+    "name": "炽合金块",
     "rarity": 3,
     "weight": 63
    }
@@ -113,18 +113,18 @@
  },
  {
   "id": "30125",
-  "name": "\u53cc\u6781\u7eb3\u7c73\u7247",
+  "name": "双极纳米片",
   "goldCost": 400,
   "costs": [
    {
     "id": "30064",
-    "name": "\u6539\u91cf\u88c5\u7f6e",
+    "name": "改量装置",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30074",
-    "name": "\u767d\u9a6c\u9187",
+    "name": "白马醇",
     "rarity": 3,
     "count": 2
    }
@@ -132,63 +132,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "\u63d0\u7eaf\u6e90\u5ca9",
+    "name": "提纯源岩",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "\u7cd6\u805a\u5757",
+    "name": "糖聚块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "\u805a\u9178\u916f\u5757",
+    "name": "聚酸酯块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "\u5f02\u94c1\u5757",
+    "name": "异铁块",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "\u916e\u9635\u5217",
+    "name": "酮阵列",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "\u6539\u91cf\u88c5\u7f6e",
+    "name": "改量装置",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "\u767d\u9a6c\u9187",
+    "name": "白马醇",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "\u4e09\u6c34\u9530\u77ff",
+    "name": "三水锰矿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "\u4e94\u6c34\u7814\u78e8\u77f3",
+    "name": "五水研磨石",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -203,14 +203,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "\u805a\u5408\u51dd\u80f6",
+    "name": "聚合凝胶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "\u70bd\u5408\u91d1\u5757",
+    "name": "炽合金块",
     "rarity": 3,
     "weight": 63
    }
@@ -219,24 +219,24 @@
  },
  {
   "id": "30115",
-  "name": "\u805a\u5408\u5242",
+  "name": "聚合剂",
   "goldCost": 400,
   "costs": [
    {
     "id": "30014",
-    "name": "\u63d0\u7eaf\u6e90\u5ca9",
+    "name": "提纯源岩",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30044",
-    "name": "\u5f02\u94c1\u5757",
+    "name": "异铁块",
     "rarity": 3,
     "count": 1
    },
    {
     "id": "30054",
-    "name": "\u916e\u9635\u5217",
+    "name": "酮阵列",
     "rarity": 3,
     "count": 1
    }
@@ -244,63 +244,63 @@
   "extraOutcome": [
    {
     "id": "30014",
-    "name": "\u63d0\u7eaf\u6e90\u5ca9",
+    "name": "提纯源岩",
     "rarity": 3,
     "count": 1,
     "weight": 84
    },
    {
     "id": "30024",
-    "name": "\u7cd6\u805a\u5757",
+    "name": "糖聚块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30034",
-    "name": "\u805a\u9178\u916f\u5757",
+    "name": "聚酸酯块",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30044",
-    "name": "\u5f02\u94c1\u5757",
+    "name": "异铁块",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30054",
-    "name": "\u916e\u9635\u5217",
+    "name": "酮阵列",
     "rarity": 3,
     "count": 1,
     "weight": 56
    },
    {
     "id": "30064",
-    "name": "\u6539\u91cf\u88c5\u7f6e",
+    "name": "改量装置",
     "rarity": 3,
     "count": 1,
     "weight": 42
    },
    {
     "id": "30074",
-    "name": "\u767d\u9a6c\u9187",
+    "name": "白马醇",
     "rarity": 3,
     "count": 1,
     "weight": 72
    },
    {
     "id": "30084",
-    "name": "\u4e09\u6c34\u9530\u77ff",
+    "name": "三水锰矿",
     "rarity": 3,
     "count": 1,
     "weight": 63
    },
    {
     "id": "30094",
-    "name": "\u4e94\u6c34\u7814\u78e8\u77f3",
+    "name": "五水研磨石",
     "rarity": 3,
     "count": 1,
     "weight": 63
@@ -315,14 +315,14 @@
    {
     "count": 1,
     "id": "31014",
-    "name": "\u805a\u5408\u51dd\u80f6",
+    "name": "聚合凝胶",
     "rarity": 3,
     "weight": 72
    },
    {
     "count": 1,
     "id": "31024",
-    "name": "\u70bd\u5408\u91d1\u5757",
+    "name": "炽合金块",
     "rarity": 3,
     "weight": 63
    }
@@ -342,13 +342,13 @@
    },
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1
    }
@@ -356,63 +356,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -427,14 +427,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -443,24 +443,24 @@
  },
  {
   "id": "30094",
-  "name": "\u4e94\u6c34\u7814\u78e8\u77f3",
+  "name": "五水研磨石",
   "goldCost": 300,
   "costs": [
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1
    }
@@ -468,63 +468,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -539,14 +539,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -555,24 +555,24 @@
  },
  {
   "id": "30084",
-  "name": "\u4e09\u6c34\u9530\u77ff",
+  "name": "三水锰矿",
   "goldCost": 300,
   "costs": [
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1
    }
@@ -580,63 +580,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -651,14 +651,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -667,18 +667,18 @@
  },
  {
   "id": "30074",
-  "name": "\u767d\u9a6c\u9187",
+  "name": "白马醇",
   "goldCost": 300,
   "costs": [
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1
    },
@@ -692,63 +692,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -763,14 +763,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -779,12 +779,12 @@
  },
  {
   "id": "30062",
-  "name": "\u88c5\u7f6e",
+  "name": "装置",
   "goldCost": 100,
   "costs": [
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 3
    }
@@ -792,42 +792,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -837,12 +837,12 @@
  },
  {
   "id": "30063",
-  "name": "\u5168\u65b0\u88c5\u7f6e",
+  "name": "全新装置",
   "goldCost": 200,
   "costs": [
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 4
    }
@@ -850,42 +850,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -895,24 +895,24 @@
  },
  {
   "id": "30064",
-  "name": "\u6539\u91cf\u88c5\u7f6e",
+  "name": "改量装置",
   "goldCost": 300,
   "costs": [
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1
    }
@@ -920,63 +920,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -991,14 +991,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -1007,12 +1007,12 @@
  },
  {
   "id": "30052",
-  "name": "\u916e\u51dd\u96c6",
+  "name": "酮凝集",
   "goldCost": 100,
   "costs": [
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 3
    }
@@ -1020,42 +1020,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1065,12 +1065,12 @@
  },
  {
   "id": "30053",
-  "name": "\u916e\u51dd\u96c6\u7ec4",
+  "name": "酮凝集组",
   "goldCost": 200,
   "costs": [
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 4
    }
@@ -1078,42 +1078,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1123,24 +1123,24 @@
  },
  {
   "id": "30054",
-  "name": "\u916e\u9635\u5217",
+  "name": "酮阵列",
   "goldCost": 300,
   "costs": [
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1
    }
@@ -1148,63 +1148,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1219,14 +1219,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -1235,12 +1235,12 @@
  },
  {
   "id": "30042",
-  "name": "\u5f02\u94c1",
+  "name": "异铁",
   "goldCost": 100,
   "costs": [
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 3
    }
@@ -1248,42 +1248,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1293,12 +1293,12 @@
  },
  {
   "id": "30043",
-  "name": "\u5f02\u94c1\u7ec4",
+  "name": "异铁组",
   "goldCost": 200,
   "costs": [
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 4
    }
@@ -1306,42 +1306,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1351,24 +1351,24 @@
  },
  {
   "id": "30044",
-  "name": "\u5f02\u94c1\u5757",
+  "name": "异铁块",
   "goldCost": 300,
   "costs": [
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1
    }
@@ -1376,63 +1376,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1447,14 +1447,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -1463,12 +1463,12 @@
  },
  {
   "id": "30032",
-  "name": "\u805a\u9178\u916f",
+  "name": "聚酸酯",
   "goldCost": 100,
   "costs": [
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 3
    }
@@ -1476,42 +1476,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1521,12 +1521,12 @@
  },
  {
   "id": "30033",
-  "name": "\u805a\u9178\u916f\u7ec4",
+  "name": "聚酸酯组",
   "goldCost": 200,
   "costs": [
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 4
    }
@@ -1534,42 +1534,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1579,24 +1579,24 @@
  },
  {
   "id": "30034",
-  "name": "\u805a\u9178\u916f\u5757",
+  "name": "聚酸酯块",
   "goldCost": 300,
   "costs": [
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1
    }
@@ -1604,63 +1604,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1675,14 +1675,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -1691,12 +1691,12 @@
  },
  {
   "id": "30022",
-  "name": "\u7cd6",
+  "name": "糖",
   "goldCost": 100,
   "costs": [
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 3
    }
@@ -1704,42 +1704,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1749,12 +1749,12 @@
  },
  {
   "id": "30023",
-  "name": "\u7cd6\u7ec4",
+  "name": "糖组",
   "goldCost": 200,
   "costs": [
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 4
    }
@@ -1762,42 +1762,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -1807,24 +1807,24 @@
  },
  {
   "id": "30024",
-  "name": "\u7cd6\u805a\u5757",
+  "name": "糖聚块",
   "goldCost": 300,
   "costs": [
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 2
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1
    }
@@ -1832,63 +1832,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -1903,14 +1903,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -1919,12 +1919,12 @@
  },
  {
   "id": "30012",
-  "name": "\u56fa\u6e90\u5ca9",
+  "name": "固源岩",
   "goldCost": 100,
   "costs": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 3
    }
@@ -1932,42 +1932,42 @@
   "extraOutcome": [
    {
     "id": "30011",
-    "name": "\u6e90\u5ca9",
+    "name": "源岩",
     "rarity": 0,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30021",
-    "name": "\u4ee3\u7cd6",
+    "name": "代糖",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30031",
-    "name": "\u916f\u539f\u6599",
+    "name": "酯原料",
     "rarity": 0,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30041",
-    "name": "\u5f02\u94c1\u788e\u7247",
+    "name": "异铁碎片",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30051",
-    "name": "\u53cc\u916e",
+    "name": "双酮",
     "rarity": 0,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30061",
-    "name": "\u7834\u635f\u88c5\u7f6e",
+    "name": "破损装置",
     "rarity": 0,
     "count": 1,
     "weight": 6
@@ -1977,12 +1977,12 @@
  },
  {
   "id": "30013",
-  "name": "\u56fa\u6e90\u5ca9\u7ec4",
+  "name": "固源岩组",
   "goldCost": 200,
   "costs": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 5
    }
@@ -1990,42 +1990,42 @@
   "extraOutcome": [
    {
     "id": "30012",
-    "name": "\u56fa\u6e90\u5ca9",
+    "name": "固源岩",
     "rarity": 1,
     "count": 1,
     "weight": 15
    },
    {
     "id": "30022",
-    "name": "\u7cd6",
+    "name": "糖",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30032",
-    "name": "\u805a\u9178\u916f",
+    "name": "聚酸酯",
     "rarity": 1,
     "count": 1,
     "weight": 10
    },
    {
     "id": "30042",
-    "name": "\u5f02\u94c1",
+    "name": "异铁",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30052",
-    "name": "\u916e\u51dd\u96c6",
+    "name": "酮凝集",
     "rarity": 1,
     "count": 1,
     "weight": 8
    },
    {
     "id": "30062",
-    "name": "\u88c5\u7f6e",
+    "name": "装置",
     "rarity": 1,
     "count": 1,
     "weight": 6
@@ -2035,12 +2035,12 @@
  },
  {
   "id": "30014",
-  "name": "\u63d0\u7eaf\u6e90\u5ca9",
+  "name": "提纯源岩",
   "goldCost": 300,
   "costs": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 4
    }
@@ -2048,63 +2048,63 @@
   "extraOutcome": [
    {
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "count": 1,
     "weight": 60
    },
    {
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "count": 1,
     "weight": 50
    },
    {
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "count": 1,
     "weight": 30
    },
    {
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "count": 1,
     "weight": 45
    },
    {
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "count": 1,
     "weight": 40
    },
    {
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "count": 1,
     "weight": 36
@@ -2119,14 +2119,14 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
@@ -2138,19 +2138,19 @@
    {
     "count": 1,
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2
    }
   ],
@@ -2158,63 +2158,63 @@
    {
     "count": 1,
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "weight": 60
    },
    {
     "count": 1,
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "weight": 30
    },
    {
     "count": 1,
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "weight": 45
    },
    {
     "count": 1,
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "weight": 36
    },
@@ -2228,21 +2228,21 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
   ],
   "goldCost": 300,
   "id": "31024",
-  "name": "\u70bd\u5408\u91d1\u5757",
+  "name": "炽合金块",
   "totalWeight": 497
  },
  {
@@ -2250,19 +2250,19 @@
    {
     "count": 1,
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2
    }
   ],
@@ -2270,63 +2270,63 @@
    {
     "count": 1,
     "id": "30013",
-    "name": "\u56fa\u6e90\u5ca9\u7ec4",
+    "name": "固源岩组",
     "rarity": 2,
     "weight": 60
    },
    {
     "count": 1,
     "id": "30023",
-    "name": "\u7cd6\u7ec4",
+    "name": "糖组",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30033",
-    "name": "\u805a\u9178\u916f\u7ec4",
+    "name": "聚酸酯组",
     "rarity": 2,
     "weight": 50
    },
    {
     "count": 1,
     "id": "30043",
-    "name": "\u5f02\u94c1\u7ec4",
+    "name": "异铁组",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30053",
-    "name": "\u916e\u51dd\u96c6\u7ec4",
+    "name": "酮凝集组",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30063",
-    "name": "\u5168\u65b0\u88c5\u7f6e",
+    "name": "全新装置",
     "rarity": 2,
     "weight": 30
    },
    {
     "count": 1,
     "id": "30073",
-    "name": "\u626d\u8f6c\u9187",
+    "name": "扭转醇",
     "rarity": 2,
     "weight": 45
    },
    {
     "count": 1,
     "id": "30083",
-    "name": "\u8f7b\u9530\u77ff",
+    "name": "轻锰矿",
     "rarity": 2,
     "weight": 40
    },
    {
     "count": 1,
     "id": "30093",
-    "name": "\u7814\u78e8\u77f3",
+    "name": "研磨石",
     "rarity": 2,
     "weight": 36
    },
@@ -2340,21 +2340,21 @@
    {
     "count": 1,
     "id": "31013",
-    "name": "\u51dd\u80f6",
+    "name": "凝胶",
     "rarity": 2,
     "weight": 36
    },
    {
     "count": 1,
     "id": "31023",
-    "name": "\u70bd\u5408\u91d1",
+    "name": "炽合金",
     "rarity": 2,
     "weight": 40
    }
   ],
   "goldCost": 300,
   "id": "31014",
-  "name": "\u805a\u5408\u51dd\u80f6",
+  "name": "聚合凝胶",
   "totalWeight": 497
  }
 ]
