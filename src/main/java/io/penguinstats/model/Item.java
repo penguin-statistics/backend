@@ -2,6 +2,7 @@ package io.penguinstats.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -10,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +30,8 @@ public class Item implements Serializable {
 	@Indexed
 	private String itemId;
 	private String name;
+	@JsonProperty("name_i18n")
+	private Map<String, String> nameMap;
 	private Integer sortId;
 	private Integer rarity;
 	@Deprecated
@@ -37,10 +41,11 @@ public class Item implements Serializable {
 	private Integer addTimePoint;
 	private List<Integer> spriteCoord;
 
-	public Item(String itemId, String name, Integer sortId, Integer rarity, String iconUrl, String itemType,
-			Integer addTimePoint, List<Integer> spriteCoord) {
+	public Item(String itemId, String name, Map<String, String> nameMap, Integer sortId, Integer rarity, String iconUrl,
+			String itemType, Integer addTimePoint, List<Integer> spriteCoord) {
 		this.itemId = itemId;
 		this.name = name;
+		this.nameMap = nameMap;
 		this.sortId = sortId;
 		this.rarity = rarity;
 		this.iconUrl = iconUrl;

@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.model.Zone;
@@ -27,8 +28,11 @@ public class ZoneController {
 
 	@ApiOperation("Get all zones")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Zone>> getAllZones() {
+	public ResponseEntity<List<Zone>>
+			getAllZones(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		List<Zone> zones = zoneService.getAllZones();
+		if (!i18n)
+			zones.forEach(zone -> zone.setZoneNameMap(null));
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
@@ -36,8 +40,11 @@ public class ZoneController {
 
 	@ApiOperation("Get zone by zone ID")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
+	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
+			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
+		if (!i18n)
+			zone.setZoneNameMap(null);
 		return new ResponseEntity<Zone>(zone, zone != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 

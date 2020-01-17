@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.model.Item;
@@ -27,8 +28,11 @@ public class ItemController {
 
 	@ApiOperation("Get all items")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Item>> getAllItems() {
+	public ResponseEntity<List<Item>>
+			getAllItems(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		List<Item> items = itemService.getAllItems();
+		if (!i18n)
+			items.forEach(item -> item.setNameMap(null));
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
@@ -36,8 +40,11 @@ public class ItemController {
 
 	@ApiOperation("Get item by item ID")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
+	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId,
+			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		Item item = itemService.getItemByItemId(itemId);
+		if (!i18n)
+			item.setNameMap(null);
 		return new ResponseEntity<Item>(item, item != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 
