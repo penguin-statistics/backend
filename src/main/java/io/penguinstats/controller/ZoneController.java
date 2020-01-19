@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,24 +29,27 @@ public class ZoneController {
 
 	@ApiOperation("Get all zones")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Zone>>
+	public ResponseEntity<MappingJacksonValue>
 			getAllZones(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		List<Zone> zones = zoneService.getAllZones();
-		if (!i18n)
-			zones.forEach(zone -> zone.setZoneNameMap(null));
+		MappingJacksonValue result = new MappingJacksonValue(zones);
+		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneBaseView.class);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
-		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
+		return new ResponseEntity<MappingJacksonValue>(result, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation("Get zone by zone ID")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
+	public ResponseEntity<MappingJacksonValue> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
 			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
-		if (!i18n)
-			zone.setZoneNameMap(null);
-		return new ResponseEntity<Zone>(zone, zone != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		if (zone == null)
+			return new ResponseEntity<MappingJacksonValue>(HttpStatus.NOT_FOUND);
+
+		MappingJacksonValue result = new MappingJacksonValue(zone);
+		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneBaseView.class);
+		return new ResponseEntity<MappingJacksonValue>(result, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")
