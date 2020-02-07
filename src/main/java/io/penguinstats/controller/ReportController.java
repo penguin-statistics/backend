@@ -28,8 +28,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.Stage;
 import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.StageService;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.HashUtil;
@@ -51,6 +53,9 @@ public class ReportController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private StageService stageService;
 
 	@Autowired
 	private LimitationUtil limitationUtil;
@@ -104,7 +109,20 @@ public class ReportController {
 			if (!isReliable)
 				logger.warn("Abnormal drop data!");
 
-			ItemDrop itemDrop = new ItemDrop(stageId, 1, drops, timestamp, ip, isReliable, source, version, userID);
+			Integer times = 1;
+			// for gacha type stage, the # of times should be the sum of quantities.
+			Stage stage = stageService.getStageByStageId(stageId);
+			if (stage != null) {
+				Boolean isGacha = stage.getIsGacha();
+				if (isGacha != null && isGacha) {
+					times = 0;
+					for (Drop drop : drops) {
+						times += drop.getQuantity();
+					}
+				}
+			}
+
+			ItemDrop itemDrop = new ItemDrop(stageId, times, drops, timestamp, ip, isReliable, source, version, userID);
 			itemDropService.saveItemDrop(itemDrop);
 			String itemDropHashId = HashUtil.getHash(itemDrop.getId().toString());
 			if (isReliable) {

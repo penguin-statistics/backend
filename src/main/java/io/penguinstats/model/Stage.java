@@ -33,17 +33,19 @@ public class Stage implements Serializable {
 	private String zoneId;
 	private String code;
 	private Integer apCost;
+	private Boolean isGacha;
 	private List<String> normalDrop;
 	private List<String> specialDrop;
 	private List<String> extraDrop;
 
-	public Stage(String stageType, String stageId, String zoneId, String code, Integer apCost, List<String> normalDrop,
-			List<String> specialDrop, List<String> extraDrop) {
+	public Stage(String stageType, String stageId, String zoneId, String code, Integer apCost, Boolean isGacha,
+			List<String> normalDrop, List<String> specialDrop, List<String> extraDrop) {
 		this.stageType = stageType;
 		this.stageId = stageId;
 		this.zoneId = zoneId;
 		this.code = code;
 		this.apCost = apCost;
+		this.isGacha = isGacha;
 		this.normalDrop = normalDrop;
 		this.specialDrop = specialDrop;
 		this.extraDrop = extraDrop;

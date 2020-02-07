@@ -14,8 +14,10 @@ import io.penguinstats.model.Drop;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemQuantityBounds;
 import io.penguinstats.model.Limitation;
+import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
 import io.penguinstats.service.LimitationService;
+import io.penguinstats.service.StageService;
 import io.penguinstats.service.ZoneService;
 
 @Component("limitationUtil")
@@ -27,12 +29,15 @@ public class LimitationUtil {
 	private LimitationService limitationService;
 	@Autowired
 	private ZoneService zoneService;
+	@Autowired
+	private StageService stageService;
 
 	@PostConstruct
 	public void init() {
 		limitationUtil = this;
 		limitationUtil.limitationService = this.limitationService;
 		limitationUtil.zoneService = this.zoneService;
+		limitationUtil.stageService = this.stageService;
 	}
 
 	/**
@@ -48,6 +53,15 @@ public class LimitationUtil {
 		Zone zone = zoneService.getZoneByStageId(stageId);
 		if (zone == null || !zone.isInTimeRange(timestamp))
 			return false;
+
+		// for gacha type stage, we do not check drops
+		Stage stage = stageService.getStageByStageId(stageId);
+		if (stage != null) {
+			Boolean isGacha = stage.getIsGacha();
+			if (isGacha != null && isGacha) {
+				return true;
+			}
+		}
 
 		// then check limitation
 		Limitation limitation = limitationService.getExtendedLimitation(stageId);
