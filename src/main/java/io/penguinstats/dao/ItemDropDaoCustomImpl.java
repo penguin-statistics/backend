@@ -117,7 +117,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		                if: {
 		                    $gt: ["$timestamp", "$addTime"]
 		                },
-		                then: 1,
+		                then: $times,
 		                else: 0
 		            }
 		        }

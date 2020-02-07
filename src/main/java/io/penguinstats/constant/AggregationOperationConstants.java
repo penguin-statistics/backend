@@ -44,8 +44,7 @@ public class AggregationOperationConstants {
 	public final AggregationOperation PROJECT_ADD_TIME = Aggregation.project("stageId", "times", "timestamp")
 			.and(LiteralOperators.Literal.asLiteral(Arrays.asList(Constant.ADD_TIME_POINTS))).as("addTime");
 	public final AggregationOperation PROJECT_TIMESTAMP_GT_ADD_TIME = Aggregation.project("stageId", "point")
-			.and(ConditionalOperators.when(Criteria.where("timestamp").gt("$addTime"))
-					.thenValueOf(LiteralOperators.Literal.asLiteral(1))
+			.and(ConditionalOperators.when(Criteria.where("timestamp").gt("$addTime")).thenValueOf("$times")
 					.otherwise(LiteralOperators.Literal.asLiteral(0)))
 			.as("times");
 	public final AggregationOperation GROUP_BY_STAGEID_AND_POINT =
