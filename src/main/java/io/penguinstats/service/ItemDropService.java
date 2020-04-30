@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import io.penguinstats.model.DropMatrix;
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.ItemDrop;
 
@@ -36,8 +36,6 @@ public interface ItemDropService {
 
 	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);
 
-	List<DropMatrix> generateDropMatrixList(Criteria filter);
-
 	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
@@ -49,8 +47,6 @@ public interface ItemDropService {
 	@Cacheable(value = "all-segmented-drop-matrix", key = "#interval", condition = "#filter == null")
 	Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter, long interval);
 
-	Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter);
-
 	Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted);
 
 	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
@@ -60,5 +56,11 @@ public interface ItemDropService {
 
 	@Cacheable(value = "min-timestamp", key = "#stageId", unless = "#result == null")
 	Long getMinTimestamp(String stageId);
+
+	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, Long forceLatestRangeTime,
+			Integer forceLatestRangeTimes);
+
+	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Long start, Long end);
 
 }

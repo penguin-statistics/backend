@@ -27,24 +27,26 @@ public class LimitationController {
 	@Autowired
 	private LimitationService limitationService;
 
-	@ApiOperation("Get all real limitations")
+	@ApiOperation("Get all limitations")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Limitation>> getAllExtendedLimitations() {
-		Map<String, Limitation> limitationsMap = limitationService.getExtendedLimitationMap();
+	public ResponseEntity<List<List<Limitation>>> getAllLimitations() {
+		Map<String, List<Limitation>> limitationsMap = limitationService.getLimitationMap();
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("extendedLimitationMap").toString());
-		return new ResponseEntity<List<Limitation>>(new ArrayList<>(limitationsMap.values()), headers, HttpStatus.OK);
+		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("limitationMap").toString());
+		return new ResponseEntity<List<List<Limitation>>>(new ArrayList<>(limitationsMap.values()), headers,
+				HttpStatus.OK);
 	}
 
 	@ApiOperation("Get limitation by stageId")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Limitation> getExtendedLimitation(@PathVariable("stageId") String stageId) {
-		Limitation limitation = limitationService.getExtendedLimitation(stageId);
-		return new ResponseEntity<Limitation>(limitation, limitation != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	public ResponseEntity<List<Limitation>> getExtendedLimitation(@PathVariable("stageId") String stageId) {
+		List<Limitation> limitations = limitationService.getLimitationsByStageId(stageId);
+		return new ResponseEntity<List<Limitation>>(limitations,
+				limitations != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 
 	@GetMapping(path = "/cache")
-	@Caching(evict = {@CacheEvict(value = "maps", key = "'extendedLimitationMap'"),
+	@Caching(evict = {@CacheEvict(value = "maps", key = "'limitationMap'"),
 			@CacheEvict(value = "limitation", allEntries = true)})
 	public ResponseEntity<String> evictLimitationCache() {
 		return new ResponseEntity<>(HttpStatus.OK);

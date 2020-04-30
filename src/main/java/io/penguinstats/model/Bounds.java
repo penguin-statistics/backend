@@ -50,7 +50,14 @@ public class Bounds implements Serializable {
 		return true;
 	}
 
+	@JsonIgnore
+	public Bounds simpleCombine(Bounds b) {
+		return new Bounds(this.getLower() == null ? null : this.getLower() + b.getLower(),
+				this.getUpper() == null ? null : this.getUpper() + b.getUpper());
+	}
+
 	@Override
+	@JsonIgnore
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.lower == null ? "-inf" : this.lower).append("~").append(this.upper == null ? "inf" : this.upper);

@@ -1,7 +1,8 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v2;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.Stage;
@@ -33,10 +34,10 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/api/result")
-public class ResultController {
+@RequestMapping("/api/v2/result")
+public class ResultControllerV2 {
 
-	private static Logger logger = LogManager.getLogger(ResultController.class);
+	private static Logger logger = LogManager.getLogger(ResultControllerV2.class);
 
 	@Autowired
 	private ZoneService zoneService;
@@ -53,17 +54,20 @@ public class ResultController {
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<String> getMatrix(HttpServletRequest request,
 			@RequestParam(name = "is_personal", required = false, defaultValue = "false") boolean isPersonal,
-			@RequestParam(name = "is_weighted", required = false, defaultValue = "false") boolean isWeighted,
 			@RequestParam(name = "show_item_details", required = false, defaultValue = "false") boolean showItemDetails,
 			@RequestParam(name = "show_stage_details", required = false,
 					defaultValue = "false") boolean showStageDetails,
-			@RequestParam(name = "show_closed_zones", required = false,
-					defaultValue = "false") boolean showClosedZones) {
+			@RequestParam(name = "show_closed_zones", required = false, defaultValue = "false") boolean showClosedZones,
+			@RequestParam(name = "force_latest_seconds", required = false,
+					defaultValue = "86400") Long forceLatestRangeTime,
+			@RequestParam(name = "force_latest_times", required = false,
+					defaultValue = "100") Integer forceLatestRangeTimes,
+			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
 		logger.info("GET /matrix");
 		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
-			Criteria criteria = isPersonal && userID != null ? Criteria.where("userID").is(userID) : null;
-			List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(criteria, isWeighted);
+			List<DropMatrixElement> elements = itemDropService.generateGlobalDropMatrixElements(server, userID,
+					TimeUnit.SECONDS.toMillis(forceLatestRangeTime), forceLatestRangeTimes);
 
 			JSONObject obj = new JSONObject();
 			JSONArray array = new JSONArray();
@@ -88,11 +92,11 @@ public class ResultController {
 			}
 			obj.put("matrix", array);
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("LAST-UPDATE-TIME",
-					LastUpdateTimeUtil
-							.getLastUpdateTime(
-									isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
-							.toString());
+			//			headers.add("LAST-UPDATE-TIME",
+			//					LastUpdateTimeUtil
+			//							.getLastUpdateTime(
+			//									isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
+			//							.toString());
 			return new ResponseEntity<>(obj.toString(), headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);

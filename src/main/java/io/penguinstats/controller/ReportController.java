@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
 import io.penguinstats.model.Stage;
-import io.penguinstats.service.DropMatrixService;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.UserService;
@@ -47,9 +46,6 @@ public class ReportController {
 
 	@Autowired
 	private ItemDropService itemDropService;
-
-	@Autowired
-	private DropMatrixService dropMatrixService;
 
 	@Autowired
 	private UserService userService;
@@ -125,14 +121,6 @@ public class ReportController {
 			ItemDrop itemDrop = new ItemDrop(stageId, times, drops, timestamp, ip, isReliable, source, version, userID);
 			itemDropService.saveItemDrop(itemDrop);
 			String itemDropHashId = HashUtil.getHash(itemDrop.getId().toString());
-			if (isReliable) {
-				// FIXME: For old stages, if a new kind of item drops, it has no corresponding matrix element in the database.
-				if (!dropMatrixService.hasElementsForOneStage(stageId))
-					dropMatrixService.initializeElementsForOneStage(stageId);
-				for (Drop drop : drops)
-					dropMatrixService.increaseQuantityForOneElement(stageId, drop.getItemId(), drop.getQuantity());
-				dropMatrixService.increaseTimesForOneStage(stageId, 1);
-			}
 			return new ResponseEntity<>(itemDropHashId, HttpStatus.CREATED);
 		} catch (JSONException jsonException) {
 			logger.error("Error in saveSingleReport", jsonException);

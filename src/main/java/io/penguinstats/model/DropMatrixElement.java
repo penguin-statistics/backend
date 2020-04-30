@@ -22,12 +22,16 @@ public class DropMatrixElement implements Serializable {
 	private String itemId;
 	private Integer quantity;
 	private Integer times;
+	private Long start;
+	private Long end;
 
-	public DropMatrixElement(String stageId, String itemId, Integer quantity, Integer times) {
+	public DropMatrixElement(String stageId, String itemId, Integer quantity, Integer times, Long start, Long end) {
 		this.stageId = stageId;
 		this.itemId = itemId;
 		this.quantity = quantity;
 		this.times = times;
+		this.start = start;
+		this.end = end;
 	}
 
 }

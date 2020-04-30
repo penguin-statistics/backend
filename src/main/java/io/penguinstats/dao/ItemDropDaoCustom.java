@@ -5,7 +5,11 @@ import java.util.List;
 import org.bson.Document;
 import org.springframework.data.mongodb.core.query.Criteria;
 
+import io.penguinstats.model.QueryConditions;
+
 public interface ItemDropDaoCustom {
+
+	List<Document> aggregateItemDropQuantities(QueryConditions conditions);
 
 	List<Document> aggregateItemDropQuantities(Criteria criteria);
 
