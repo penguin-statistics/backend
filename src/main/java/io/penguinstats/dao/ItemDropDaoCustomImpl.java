@@ -17,10 +17,9 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
+import org.springframework.data.mongodb.core.aggregation.LiteralOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import com.mongodb.BasicDBObject;
 
 import io.penguinstats.constant.AggregationOperationConstants;
 import io.penguinstats.enums.Server;
@@ -39,33 +38,13 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 	@Override
 	public List<Document> aggregateItemDropQuantities(QueryConditions conditions) {
+		Long currentTime = System.currentTimeMillis();
+
 		List<String> userIDs = conditions.getUserIDs();
 		List<String> itemIds = conditions.getItemIds();
 		List<Server> servers = conditions.getServers();
 		List<StageWithTimeRange> stages = conditions.getStages();
 		Long interval = conditions.getInterval();
-
-		// Calculate base time and interval (if not provided)
-		Long baseTime = 0L;
-		Long currentTime = System.currentTimeMillis();
-		if (interval == null)
-			interval = currentTime;
-		else if (!stages.isEmpty()) {
-			final Long firstStartTime = stages.get(0).getStart();
-			boolean passCheck = true;
-			for (int i = 1, l = stages.size(); i < l; i++) {
-				StageWithTimeRange stage = stages.get(i);
-				if (!stage.getStart().equals(firstStartTime)) {
-					logger.error("start time must be identical for all stages in the conditions");
-					passCheck = false;
-					break;
-				}
-			}
-			if (passCheck)
-				baseTime = firstStartTime == null ? 0L : firstStartTime;
-			else
-				interval = currentTime;
-		}
 
 		List<AggregationOperation> operations = new LinkedList<>();
 
@@ -103,33 +82,59 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
 
 		// Pipe 2: project section number
-		operations.add(Aggregation.project("drops", "stageId", "times")
-				.and(ArithmeticOperators.Trunc.truncValueOf(ArithmeticOperators.Divide
-						.valueOf(ArithmeticOperators.Subtract.valueOf("timestamp").subtract(baseTime))
-						.divideBy(interval)))
-				.as("section"));
+		if (interval != null) {
+			Long baseTime = null;
+			if (stages.isEmpty())
+				baseTime = 0L;
+			else {
+				final Long firstStartTime = stages.get(0).getStart();
+				boolean passCheck = true;
+				for (int i = 1, l = stages.size(); i < l; i++) {
+					StageWithTimeRange stage = stages.get(i);
+					if (!stage.getStart().equals(firstStartTime)) {
+						logger.error("start time must be identical for all stages in the conditions");
+						passCheck = false;
+						break;
+					}
+				}
+				if (passCheck)
+					baseTime = firstStartTime == null ? 0L : firstStartTime;
+			}
+
+			operations.add(Aggregation.project("drops", "stageId", "times")
+					.and(ArithmeticOperators.Trunc.truncValueOf(ArithmeticOperators.Divide
+							.valueOf(ArithmeticOperators.Subtract.valueOf("timestamp").subtract(baseTime))
+							.divideBy(interval)))
+					.as("section"));
+		} else {
+			operations.add(Aggregation.project("drops", "stageId", "times")
+					.and(LiteralOperators.Literal.asLiteral(0.0d)).as("section"));
+		}
 
 		// Pipe 3: group by section and stageId, calculate times
-		operations.add(Aggregation.group("section", "stageId").push(new BasicDBObject("drops", "$$ROOT.drops"))
-				.as("dropList").sum("times").as("times"));
+		operations
+				.add(Aggregation.group("section", "stageId").push("$$ROOT.drops").as("drops").sum("times").as("times"));
 
 		// Pipe 4 & 5: unwind drops
-		operations.add(Aggregation.unwind("dropList", false));
-		operations.add(Aggregation.unwind("dropList.drops", false));
+		operations.add(Aggregation.unwind("drops", false));
+		operations.add(Aggregation.unwind("drops", false));
 
 		// Pipe 6: filter on itemId
 		if (!itemIds.isEmpty())
-			operations.add(Aggregation.match(Criteria.where("dropList.drops.itemId").in(itemIds)));
+			operations.add(Aggregation.match(Criteria.where("drops.itemId").in(itemIds)));
 
 		// Pipe 7: project and group by itemId and calculate quantities
-		operations.add(Aggregation.project("section", "stageId", "times").and("dropList.drops.itemId").as("itemId")
-				.and("dropList.drops.quantity").as("quantity"));
+		operations.add(Aggregation.project("section", "stageId", "times").and("drops.itemId").as("itemId")
+				.and("drops.quantity").as("quantity"));
 		operations.add(Aggregation.group("section", "stageId", "times", "itemId").sum("quantity").as("quantity"));
 
 		Aggregation aggregation =
 				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
 
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
+
+		logger.info(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
+
 		return results.getMappedResults();
 	}
 

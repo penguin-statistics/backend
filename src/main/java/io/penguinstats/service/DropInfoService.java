@@ -15,14 +15,17 @@ public interface DropInfoService {
 	void saveDropInfo(DropInfo dropInfo);
 
 	@Cacheable(value = "latest-time-range-map", key = "#server", condition = "#filter == null")
-	Map<String, TimeRange> getLatestTimeRangeMapByServer(Server server);
+	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
-	@Cacheable(value = "second-last-time-range-map", key = "#server", condition = "#filter == null")
-	Map<String, TimeRange> getSecondLastTimeRangeMapByServer(Server server);
+	//	@Cacheable(value = "second-last-time-range-map", key = "#server", condition = "#filter == null")
+	//	Map<String, TimeRange> getSecondLastTimeRangeMapByServer(Server server);
 
 	Map<String, List<TimeRange>> getActualTimeRangesByServerAndStageId(Server server, String stageId,
 			TimeRange timeRange);
 
-	Map<String, Set<String>> getDropSet(Server server, Long time);
+	@Cacheable(value = "dropset-map", key = "#server + '_' + time", condition = "#filter == null")
+	Map<String, Set<String>> getDropSetMap(Server server, Long time);
+
+	Set<String> getDropSet(Server server, String stageId, Long time);
 
 }

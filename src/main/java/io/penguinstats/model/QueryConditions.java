@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.penguinstats.enums.Server;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +52,13 @@ public class QueryConditions {
 		return this;
 	}
 
+	@JsonIgnore
+	@Override
+	public String toString() {
+		return "QueryConditions [stages=" + stages + ", itemIds=" + itemIds + ", servers=" + servers + ", userIDs="
+				+ userIDs + ", interval=" + interval + "]";
+	}
+
 	@Getter
 	@Setter
 	public static class StageWithTimeRange {
@@ -64,5 +73,12 @@ public class QueryConditions {
 			this.end = end;
 		}
 
+		@JsonIgnore
+		@Override
+		public String toString() {
+			return stageId + ": " + start + "-" + end;
+		}
+
 	}
+
 }

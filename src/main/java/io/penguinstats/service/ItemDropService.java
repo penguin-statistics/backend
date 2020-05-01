@@ -57,8 +57,7 @@ public interface ItemDropService {
 	@Cacheable(value = "min-timestamp", key = "#stageId", unless = "#result == null")
 	Long getMinTimestamp(String stageId);
 
-	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, Long forceLatestRangeTime,
-			Integer forceLatestRangeTimes);
+	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID);
 
 	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
 			Integer interval, Long start, Long end);

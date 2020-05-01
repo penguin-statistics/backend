@@ -21,7 +21,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Document(collection = "limitation")
+@Document(collection = "limitation_v2")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Limitation implements Serializable {
 

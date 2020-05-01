@@ -29,37 +29,33 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
-	public Map<String, TimeRange> getLatestTimeRangeMapByServer(Server server) {
-		Map<String, TimeRange> result = new HashMap<>();
+	public Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
+		Map<String, List<TimeRange>> result = new HashMap<>();
+		Map<String, Map<String, TimeRange>> helper = new HashMap<>();
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
 		infos.forEach(info -> {
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
 			String stageId = info.getStageId();
-			if (!result.containsKey(stageId) || result.get(stageId).getStart().compareTo(range.getStart()) < 0)
-				result.put(stageId, range);
+			Map<String, TimeRange> subMap = helper.getOrDefault(stageId, new HashMap<>());
+			subMap.putIfAbsent(range.getRangeID(), range);
+			helper.put(stageId, subMap);
+		});
+		helper.forEach((stageId, subMap) -> {
+			subMap.forEach((rangeID, range) -> {
+				List<TimeRange> ranges = result.getOrDefault(stageId, new ArrayList<>());
+				ranges.add(range);
+				result.put(stageId, ranges);
+			});
+		});
+		result.forEach((stageId, ranges) -> {
+			ranges.sort((r1, r2) -> r1.getStart().compareTo(r2.getStart()));
+			int pointer = ranges.size() - 1;
+			while (pointer > 0 && ranges.get(pointer).getAccumulatable())
+				pointer--;
+			result.put(stageId, new ArrayList<>(ranges.subList(pointer, ranges.size())));
 		});
 		return result;
-	}
-
-	@Override
-	public Map<String, TimeRange> getSecondLastTimeRangeMapByServer(Server server) {
-		Map<String, TimeRange> secondLastTimeRangeMap = new HashMap<>();
-		Map<String, TimeRange> latestTimeRangeMap = new HashMap<>();
-		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
-		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
-		infos.forEach(info -> {
-			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-			String stageId = info.getStageId();
-			if (!latestTimeRangeMap.containsKey(stageId)) {
-				latestTimeRangeMap.put(stageId, range);
-				secondLastTimeRangeMap.put(stageId, range);
-			} else if (latestTimeRangeMap.get(stageId).getStart().compareTo(range.getStart()) < 0) {
-				secondLastTimeRangeMap.put(stageId, latestTimeRangeMap.get(stageId));
-				latestTimeRangeMap.put(stageId, range);
-			}
-		});
-		return secondLastTimeRangeMap;
 	}
 
 	@Override
@@ -81,7 +77,7 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
-	public Map<String, Set<String>> getDropSet(Server server, Long time) {
+	public Map<String, Set<String>> getDropSetMap(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
 		Map<String, Set<String>> result = new HashMap<>();
@@ -96,6 +92,12 @@ public class DropInfoServiceImpl implements DropInfoService {
 			}
 		});
 		return result;
+	}
+
+	@Override
+	public Set<String> getDropSet(Server server, String stageId, Long time) {
+		Map<String, Set<String>> dropsetMap = getDropSetMap(server, time);
+		return dropsetMap.get(stageId);
 	}
 
 }
