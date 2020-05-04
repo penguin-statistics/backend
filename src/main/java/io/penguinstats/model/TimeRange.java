@@ -60,7 +60,9 @@ public class TimeRange implements Serializable {
 
 	@JsonIgnore
 	public boolean isIn(Long time) {
-		return this.end == null || this.start.compareTo(time) <= 0 && this.end.compareTo(time) > 0;
+		if (time == null)
+			return false;
+		return this.start.compareTo(time) <= 0 && (this.end == null || this.end.compareTo(time) > 0);
 	}
 
 	@JsonIgnore

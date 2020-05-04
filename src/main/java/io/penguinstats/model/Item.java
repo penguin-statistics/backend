@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.penguinstats.enums.Server;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +43,7 @@ public class Item implements Serializable {
 
 	@JsonProperty("name_i18n")
 	@JsonView(ItemI18nView.class)
-	private Map<String, String> nameMap;
+	private Map<Server, String> nameMap;
 
 	@JsonView(ItemBaseView.class)
 	private Integer sortId;
@@ -50,9 +51,8 @@ public class Item implements Serializable {
 	@JsonView(ItemBaseView.class)
 	private Integer rarity;
 
-	@Deprecated
-	@JsonIgnore
-	private String iconUrl;
+	@JsonView(ItemBaseView.class)
+	private Map<Server, ItemExistence> existence;
 
 	@JsonView(ItemBaseView.class)
 	private String itemType;
@@ -63,14 +63,14 @@ public class Item implements Serializable {
 	@JsonView(ItemBaseView.class)
 	private List<Integer> spriteCoord;
 
-	public Item(String itemId, String name, Map<String, String> nameMap, Integer sortId, Integer rarity, String iconUrl,
-			String itemType, Integer addTimePoint, List<Integer> spriteCoord) {
+	public Item(String itemId, String name, Map<Server, String> nameMap, Integer sortId, Integer rarity,
+			Map<Server, ItemExistence> existence, String itemType, Integer addTimePoint, List<Integer> spriteCoord) {
 		this.itemId = itemId;
 		this.name = name;
 		this.nameMap = nameMap;
 		this.sortId = sortId;
 		this.rarity = rarity;
-		this.iconUrl = iconUrl;
+		this.existence = existence;
 		this.itemType = itemType;
 		this.addTimePoint = addTimePoint;
 		this.spriteCoord = spriteCoord;

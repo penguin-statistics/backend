@@ -14,18 +14,18 @@ public interface DropInfoService {
 
 	void saveDropInfo(DropInfo dropInfo);
 
+	@Cacheable(value = "drop-info-list", key = "#server", condition = "#filter == null")
+	List<DropInfo> getDropInfosByServer(Server server);
+
 	@Cacheable(value = "latest-time-range-map", key = "#server", condition = "#filter == null")
 	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
-	//	@Cacheable(value = "second-last-time-range-map", key = "#server", condition = "#filter == null")
-	//	Map<String, TimeRange> getSecondLastTimeRangeMapByServer(Server server);
-
-	Map<String, List<TimeRange>> getActualTimeRangesByServerAndStageId(Server server, String stageId,
-			TimeRange timeRange);
-
-	@Cacheable(value = "dropset-map", key = "#server + '_' + time", condition = "#filter == null")
+	@Cacheable(value = "dropset-map", key = "#server + '_' + #time", condition = "#filter == null")
 	Map<String, Set<String>> getDropSetMap(Server server, Long time);
 
+	@Cacheable(value = "dropset", key = "#server + '_' + #stageId + '_' + #time", condition = "#filter == null")
 	Set<String> getDropSet(Server server, String stageId, Long time);
+
+	Set<String> getOpeningStages(Server server, Long time);
 
 }

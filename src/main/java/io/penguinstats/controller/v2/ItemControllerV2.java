@@ -1,4 +1,4 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v2;
 
 import java.util.List;
 
@@ -16,14 +16,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/api/items")
-public class ItemController {
+@RequestMapping("/api/v2/items")
+public class ItemControllerV2 {
 
 	@Autowired
 	private ItemService itemService;
@@ -36,6 +39,10 @@ public class ItemController {
 		List<Item> items = itemService.getAllItems();
 		MappingJacksonValue result = new MappingJacksonValue(items);
 		result.setSerializationView(i18n ? Item.ItemI18nView.class : Item.ItemBaseView.class);
+		try {
+			System.out.println(new ObjectMapper().writeValueAsString(result));
+		} catch (JsonProcessingException e) {
+		}
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
 		return new ResponseEntity<MappingJacksonValue>(result, headers, HttpStatus.OK);

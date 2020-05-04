@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import io.penguinstats.enums.Server;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -48,7 +49,10 @@ public class Zone implements Serializable {
 
 	@JsonProperty("zoneName_i18n")
 	@JsonView(ZoneI18nView.class)
-	private Map<String, String> zoneNameMap;
+	private Map<Server, String> zoneNameMap;
+
+	@JsonView(ZoneBaseView.class)
+	private Map<Server, ZoneExistence> existence;
 
 	@JsonView(ZoneBaseView.class)
 	private Long openTime;
@@ -59,13 +63,14 @@ public class Zone implements Serializable {
 	@JsonView(ZoneBaseView.class)
 	private List<String> stages;
 
-	public Zone(String zoneId, Integer zoneIndex, String type, String zoneName, Map<String, String> zoneNameMap,
-			Long openTime, Long closeTime, List<String> stages) {
+	public Zone(String zoneId, Integer zoneIndex, String type, String zoneName, Map<Server, String> zoneNameMap,
+			Map<Server, ZoneExistence> existence, Long openTime, Long closeTime, List<String> stages) {
 		this.zoneId = zoneId;
 		this.zoneIndex = zoneIndex;
 		this.type = type;
 		this.zoneName = zoneName;
 		this.zoneNameMap = zoneNameMap;
+		this.existence = existence;
 		this.openTime = openTime;
 		this.closeTime = closeTime;
 		this.stages = stages;

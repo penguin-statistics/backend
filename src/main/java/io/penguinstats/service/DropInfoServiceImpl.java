@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import io.penguinstats.dao.DropInfoDao;
 import io.penguinstats.enums.Server;
@@ -22,6 +24,8 @@ public class DropInfoServiceImpl implements DropInfoService {
 	private DropInfoDao dropInfoDao;
 	@Autowired
 	private TimeRangeService timeRangeService;
+	@Autowired
+	private ApplicationContext applicationContext;
 
 	@Override
 	public void saveDropInfo(DropInfo dropInfo) {
@@ -29,11 +33,17 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
+	@Transactional
+	public List<DropInfo> getDropInfosByServer(Server server) {
+		return dropInfoDao.findDropInfosByServer(server);
+	}
+
+	@Override
 	public Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
 		Map<String, List<TimeRange>> result = new HashMap<>();
 		Map<String, Map<String, TimeRange>> helper = new HashMap<>();
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
-		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
+		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
 		infos.forEach(info -> {
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
 			String stageId = info.getStageId();
@@ -59,27 +69,9 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
-	public Map<String, List<TimeRange>> getActualTimeRangesByServerAndStageId(Server server, String stageId,
-			TimeRange timeRange) {
-		Map<String, List<TimeRange>> result = new HashMap<>();
-		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
-		List<DropInfo> infos = dropInfoDao.findDropInfosByServerAndStageId(server, stageId);
-		infos.forEach(info -> {
-			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-			String itemId = info.getItemId();
-			if (itemId != null && timeRange.isInclude(range)) {
-				List<TimeRange> ranges = result.getOrDefault(itemId, new ArrayList<>());
-				ranges.add(range);
-				result.put(itemId, ranges);
-			}
-		});
-		return result;
-	}
-
-	@Override
 	public Map<String, Set<String>> getDropSetMap(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
-		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
+		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
 		Map<String, Set<String>> result = new HashMap<>();
 		infos.forEach(info -> {
 			String itemId = info.getItemId();
@@ -98,6 +90,32 @@ public class DropInfoServiceImpl implements DropInfoService {
 	public Set<String> getDropSet(Server server, String stageId, Long time) {
 		Map<String, Set<String>> dropsetMap = getDropSetMap(server, time);
 		return dropsetMap.get(stageId);
+	}
+
+	@Override
+	public Set<String> getOpeningStages(Server server, Long time) {
+		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
+		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
+		Set<String> stageIds = new HashSet<>();
+		infos.forEach(info -> {
+			String stageId = info.getStageId();
+			if (!stageIds.contains(stageId)) {
+				TimeRange range = timeRangeMap.get(info.getTimeRangeID());
+				if (range.isIn(time)) {
+					stageIds.add(stageId);
+				}
+			}
+		});
+		return stageIds;
+	}
+
+	/** 
+	 * @Title: getSpringProxy 
+	 * @Description: Use proxy to hit cache 
+	 * @return DropInfoService
+	 */
+	private DropInfoService getSpringProxy() {
+		return applicationContext.getBean(DropInfoService.class);
 	}
 
 }

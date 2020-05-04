@@ -425,7 +425,15 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
 		Map<String, List<TimeRange>> timeRangeMap =
 				dropInfoService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
-		return generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
+		List<DropMatrixElement> result =
+				generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
+		LastUpdateTimeUtil.setCurrentTimestamp("DropMatrixElements");
+		return result;
+	}
+
+	@Override
+	public List<DropMatrixElement> updateGlobalDropMatrixElements(Server server) {
+		return generateGlobalDropMatrixElements(server, null);
 	}
 
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
@@ -558,6 +566,13 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Override
 	public Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Integer range) {
+		Long end = System.currentTimeMillis();
+		Long start = end - TimeUnit.DAYS.toMillis(range);
+		return generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
+	}
+
+	private Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
 			Integer interval, Long start, Long end) {
 		if (start == null || end == null || start.compareTo(end) >= 0)
 			return new HashMap<>();
@@ -620,6 +635,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				});
 			});
 		});
+		LastUpdateTimeUtil.setCurrentTimestamp("segmentedDropMatrixElements");
 		return map;
 	}
 

@@ -57,9 +57,17 @@ public interface ItemDropService {
 	@Cacheable(value = "min-timestamp", key = "#stageId", unless = "#result == null")
 	Long getMinTimestamp(String stageId);
 
+	// below is v2
+
+	@Cacheable(value = "drop-matrix-v2", key = "#server", condition = "#filter == null && #userID == null")
 	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID);
 
+	@CachePut(value = "drop-matrix-v2", key = "#server", condition = "#filter == null && #userID == null")
+	List<DropMatrixElement> updateGlobalDropMatrixElements(Server server);
+
+	@Cacheable(value = "all-segmented-drop-matrix-v2", key = "#server + '_' + #interval + '_' + #range",
+			condition = "#filter == null")
 	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Long start, Long end);
+			Integer interval, Integer range);
 
 }

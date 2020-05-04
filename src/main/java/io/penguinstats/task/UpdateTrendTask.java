@@ -10,21 +10,19 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.service.ItemDropService;
 
 @Component
-public class UpdateDropMatrixTask implements Task {
+public class UpdateTrendTask implements Task {
 
-	private static Logger logger = LogManager.getLogger(UpdateDropMatrixTask.class);
+	private static Logger logger = LogManager.getLogger(UpdateTrendTask.class);
 
 	@Autowired
 	private ItemDropService itemDropService;
 
-	@Scheduled(fixedRate = 600000, initialDelay = 3600000)
+	@Scheduled(fixedRate = 86400000, initialDelay = 3600000)
 	@Override
 	public void execute() {
-		logger.info("execute UpdateDropMatrixTask");
-		itemDropService.updateDropMatrixElements(null, false);
-		for (Server server : Server.values()) {
-			itemDropService.updateGlobalDropMatrixElements(server);
-		}
+		logger.info("execute UpdateTrendTask");
+		for (Server server : Server.values())
+			itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, 1, 14);
 	}
 
 }
