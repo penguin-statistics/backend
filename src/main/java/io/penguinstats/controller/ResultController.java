@@ -100,37 +100,4 @@ public class ResultController {
 		}
 	}
 
-	@ApiOperation("Get segmented drop data for all items in all stages")
-	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<String> getAllSegmentedDropResults(
-			@RequestParam(name = "interval", required = true, defaultValue = "86400000") long interval) {
-		Map<String, Map<String, List<DropMatrixElement>>> map =
-				itemDropService.generateDropMatrixElements(null, interval);
-
-		JSONObject returnObj = new JSONObject();
-		for (String stageId : map.keySet()) {
-			Map<String, List<DropMatrixElement>> subMap = map.get(stageId);
-			JSONObject obj = new JSONObject();
-			JSONObject subObj = new JSONObject();
-			for (String itemId : subMap.keySet()) {
-				List<DropMatrixElement> elements = subMap.get(itemId);
-				JSONArray quantityArray = new JSONArray();
-				JSONArray timesArray = new JSONArray();
-				for (DropMatrixElement element : elements) {
-					quantityArray.put(element != null ? element.getQuantity() : 0);
-					timesArray.put(element != null ? element.getTimes() : 0);
-				}
-				subObj.put(itemId, new JSONObject().put("times", timesArray).put("quantity", quantityArray));
-			}
-			obj.put("interval", interval);
-			obj.put("startTime", itemDropService.getMinTimestamp(stageId));
-			obj.put("results", subObj);
-			returnObj.put(stageId, obj);
-		}
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("segmentedDropMatrixElements").toString());
-		return new ResponseEntity<>(new JSONObject().put("results", returnObj).toString(), headers, HttpStatus.OK);
-	}
-
 }

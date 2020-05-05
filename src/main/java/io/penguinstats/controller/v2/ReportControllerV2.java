@@ -1,4 +1,4 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v2;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -38,12 +38,13 @@ import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.LimitationUtil;
 import io.swagger.annotations.ApiOperation;
 
-@RestController
-@RequestMapping("/api/report")
-@Deprecated
-public class ReportController {
+// TODO: refactor this
 
-	private static Logger logger = LogManager.getLogger(ReportController.class);
+@RestController
+@RequestMapping("/api/v2/report")
+public class ReportControllerV2 {
+
+	private static Logger logger = LogManager.getLogger(ReportControllerV2.class);
 
 	@Autowired
 	private ItemDropService itemDropService;

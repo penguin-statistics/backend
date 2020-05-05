@@ -26,7 +26,13 @@ public class Zone implements Serializable {
 
 	public interface ZoneBaseView {};
 
-	public interface ZoneI18nView extends ZoneBaseView {};
+	public interface ZoneLegacyView extends ZoneBaseView {};
+
+	public interface ZoneNewView extends ZoneBaseView {};
+
+	public interface ZoneLegacyI18nView extends ZoneLegacyView {};
+
+	public interface ZoneI18nView extends ZoneNewView {};
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,20 +54,20 @@ public class Zone implements Serializable {
 	private String zoneName;
 
 	@JsonProperty("zoneName_i18n")
-	@JsonView(ZoneI18nView.class)
+	@JsonView({ZoneI18nView.class, ZoneLegacyI18nView.class})
 	private Map<Server, String> zoneNameMap;
 
-	@JsonView(ZoneBaseView.class)
+	@JsonView(ZoneNewView.class)
 	private Map<Server, ZoneExistence> existence;
 
 	@JsonView(ZoneBaseView.class)
+	private List<String> stages;
+
+	@JsonView(ZoneLegacyView.class)
 	private Long openTime;
 
-	@JsonView(ZoneBaseView.class)
+	@JsonView(ZoneLegacyView.class)
 	private Long closeTime;
-
-	@JsonView(ZoneBaseView.class)
-	private List<String> stages;
 
 	public Zone(String zoneId, Integer zoneIndex, String type, String zoneName, Map<Server, String> zoneNameMap,
 			Map<Server, ZoneExistence> existence, Long openTime, Long closeTime, List<String> stages) {
@@ -77,6 +83,7 @@ public class Zone implements Serializable {
 	}
 
 	@JsonIgnore
+	@Deprecated
 	public boolean isInTimeRange(long timestamp) {
 		if (this.openTime != null && this.openTime.compareTo(timestamp) > 0)
 			return false;

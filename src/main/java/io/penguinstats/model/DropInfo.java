@@ -9,9 +9,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import io.penguinstats.enums.DropType;
 import io.penguinstats.enums.Server;
+import io.penguinstats.model.Stage.StageBaseView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,14 +28,23 @@ public class DropInfo implements Serializable {
 	@Id
 	@JsonIgnore
 	private ObjectId id;
+
 	@Indexed
 	private Server server;
+
 	@Indexed
 	private String stageId;
+
 	@Indexed
+	@JsonView(StageBaseView.class)
 	private String itemId;
+
+	@JsonView(StageBaseView.class)
 	private DropType dropType;
+
 	private String timeRangeID;
+
+	@JsonView(StageBaseView.class)
 	private Bounds bounds;
 
 	public DropInfo(Server server, String stageId, String itemId, DropType dropType, String timeRangeID,

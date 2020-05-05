@@ -17,6 +17,7 @@ public class UpdateDropMatrixTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
+	// TODO: remove initialDelay
 	@Scheduled(fixedRate = 600000, initialDelay = 3600000)
 	@Override
 	public void execute() {

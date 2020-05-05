@@ -1,4 +1,4 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v2;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,12 +21,12 @@ import io.penguinstats.util.IpUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/api/users")
-public class UserController {
+@RequestMapping("/api/v2/users")
+public class UserControllerV2 {
 
 	public static final String INTERNAL_USER_ID_PREFIX = "internal_";
 
-	private static Logger logger = LogManager.getLogger(UserController.class);
+	private static Logger logger = LogManager.getLogger(UserControllerV2.class);
 
 	@Autowired
 	private UserService userService;

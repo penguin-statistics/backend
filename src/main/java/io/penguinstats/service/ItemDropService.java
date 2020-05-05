@@ -39,23 +39,10 @@ public interface ItemDropService {
 	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
-	@Cacheable(value = "segmented-drop-matrix",
-			key = "#interval + '_' + #stageId + (#itemId == null ? '' : '_' + #itemId)", condition = "#filter == null")
-	Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval, Long startTime,
-			String stageId, String itemId);
-
-	@Cacheable(value = "all-segmented-drop-matrix", key = "#interval", condition = "#filter == null")
-	Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter, long interval);
-
-	Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted);
-
 	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
 	List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted);
 
 	Map<String, Integer> generateUploadCountMap(Criteria criteria);
-
-	@Cacheable(value = "min-timestamp", key = "#stageId", unless = "#result == null")
-	Long getMinTimestamp(String stageId);
 
 	// below is v2
 

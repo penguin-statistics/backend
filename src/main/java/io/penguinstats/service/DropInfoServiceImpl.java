@@ -10,7 +10,6 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import io.penguinstats.dao.DropInfoDao;
 import io.penguinstats.enums.Server;
@@ -33,7 +32,6 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
-	@Transactional
 	public List<DropInfo> getDropInfosByServer(Server server) {
 		return dropInfoDao.findDropInfosByServer(server);
 	}
@@ -93,6 +91,23 @@ public class DropInfoServiceImpl implements DropInfoService {
 	}
 
 	@Override
+	public Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time) {
+		Map<String, List<DropInfo>> result = new HashMap<>();
+		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
+		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
+		infos.forEach(info -> {
+			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
+			if (range != null && range.isIn(time)) {
+				String stageId = info.getStageId();
+				List<DropInfo> list = result.getOrDefault(stageId, new ArrayList<>());
+				list.add(info);
+				result.put(stageId, list);
+			}
+		});
+		return result;
+	}
+
+	@Override
 	public Set<String> getOpeningStages(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
@@ -101,7 +116,7 @@ public class DropInfoServiceImpl implements DropInfoService {
 			String stageId = info.getStageId();
 			if (!stageIds.contains(stageId)) {
 				TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-				if (range.isIn(time)) {
+				if (range != null && range.isIn(time)) {
 					stageIds.add(stageId);
 				}
 			}

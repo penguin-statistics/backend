@@ -1,4 +1,4 @@
-package io.penguinstats.controller.v2;
+package io.penguinstats.controller;
 
 import java.util.List;
 
@@ -13,48 +13,50 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.model.Zone;
-import io.penguinstats.service.ZoneService;
+import io.penguinstats.model.Item;
+import io.penguinstats.service.ItemService;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-@RequestMapping("/api/v2/zones")
-public class ZoneControllerV2 {
+@RequestMapping("/api/items")
+public class ItemController {
 
 	@Autowired
-	private ZoneService zoneService;
+	private ItemService itemService;
 
-	@ApiOperation("Get all zones")
+	@ApiOperation("Get all items")
 	@GetMapping(produces = "application/json;charset=UTF-8")
+	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<MappingJacksonValue>
-			getAllZones(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
-		List<Zone> zones = zoneService.getAllZones();
-		MappingJacksonValue result = new MappingJacksonValue(zones);
-		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneNewView.class);
+			getAllItems(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+		List<Item> items = itemService.getAllItems();
+		MappingJacksonValue result = new MappingJacksonValue(items);
+		result.setSerializationView(i18n ? Item.ItemI18nView.class : Item.ItemBaseView.class);
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
+		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
 		return new ResponseEntity<MappingJacksonValue>(result, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation("Get zone by zone ID")
-	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<MappingJacksonValue> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
+	@ApiOperation("Get item by item ID")
+	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<MappingJacksonValue> getItemByItemId(@PathVariable("itemId") String itemId,
 			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
-		Zone zone = zoneService.getZoneByZoneId(zoneId);
-		if (zone == null)
+		Item item = itemService.getItemByItemId(itemId);
+		if (item == null)
 			return new ResponseEntity<MappingJacksonValue>(HttpStatus.NOT_FOUND);
 
-		MappingJacksonValue result = new MappingJacksonValue(zone);
-		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneNewView.class);
+		MappingJacksonValue result = new MappingJacksonValue(item);
+		result.setSerializationView(i18n ? Item.ItemI18nView.class : Item.ItemBaseView.class);
 		return new ResponseEntity<MappingJacksonValue>(result, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
-	public ResponseEntity<String> evictZoneCache() {
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'itemList'"), @CacheEvict(value = "maps", key = "'itemMap'")})
+	public ResponseEntity<String> evictItemCache() {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 

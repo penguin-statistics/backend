@@ -21,7 +21,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Document(collection = "limitation_v2")
+@Document(collection = "limitation")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Limitation implements Serializable {
 
@@ -67,6 +67,8 @@ public class Limitation implements Serializable {
 	 * @return void
 	 */
 	public void merge(Limitation otherLimitation) {
+		if (otherLimitation == null)
+			return;
 		if (this.itemTypeBounds == null && otherLimitation.itemTypeBounds != null)
 			this.itemTypeBounds = otherLimitation.itemTypeBounds;
 

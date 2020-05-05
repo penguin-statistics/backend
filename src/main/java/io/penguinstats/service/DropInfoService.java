@@ -20,11 +20,12 @@ public interface DropInfoService {
 	@Cacheable(value = "latest-time-range-map", key = "#server", condition = "#filter == null")
 	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
-	@Cacheable(value = "dropset-map", key = "#server + '_' + #time", condition = "#filter == null")
 	Map<String, Set<String>> getDropSetMap(Server server, Long time);
 
 	@Cacheable(value = "dropset", key = "#server + '_' + #stageId + '_' + #time", condition = "#filter == null")
 	Set<String> getDropSet(Server server, String stageId, Long time);
+
+	Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time);
 
 	Set<String> getOpeningStages(Server server, Long time);
 

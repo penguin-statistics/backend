@@ -33,7 +33,7 @@ public class ZoneController {
 			getAllZones(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		List<Zone> zones = zoneService.getAllZones();
 		MappingJacksonValue result = new MappingJacksonValue(zones);
-		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneBaseView.class);
+		result.setSerializationView(i18n ? Zone.ZoneLegacyI18nView.class : Zone.ZoneLegacyView.class);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
 		return new ResponseEntity<MappingJacksonValue>(result, headers, HttpStatus.OK);
@@ -48,7 +48,7 @@ public class ZoneController {
 			return new ResponseEntity<MappingJacksonValue>(HttpStatus.NOT_FOUND);
 
 		MappingJacksonValue result = new MappingJacksonValue(zone);
-		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneBaseView.class);
+		result.setSerializationView(i18n ? Zone.ZoneLegacyI18nView.class : Zone.ZoneLegacyView.class);
 		return new ResponseEntity<MappingJacksonValue>(result, HttpStatus.OK);
 	}
 
