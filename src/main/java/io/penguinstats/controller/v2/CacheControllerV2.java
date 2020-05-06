@@ -25,11 +25,16 @@ public class CacheControllerV2 {
 	}
 
 	@DeleteMapping(path = "/stage")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'stageList'"),
-			@CacheEvict(value = "maps", key = "'stageMap'"), @CacheEvict(value = "drop-info-list", allEntries = true),
-			@CacheEvict(value = "latest-time-range-map", allEntries = true),
-			@CacheEvict(value = "dropset", allEntries = true)})
+	@Caching(evict = {@CacheEvict(value = "lists", allEntries = true), @CacheEvict(value = "maps", allEntries = true),
+			@CacheEvict(value = "sets", allEntries = true)})
 	public ResponseEntity<String> evictStageCache() {
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@DeleteMapping(path = "/time-range")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
+			@CacheEvict(value = "maps", key = "'timeRangeMap'")})
+	public ResponseEntity<String> evictTimeRangeCache() {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

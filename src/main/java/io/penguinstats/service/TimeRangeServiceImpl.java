@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.TimeRangeDao;
 import io.penguinstats.model.TimeRange;
-import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("timeRangeService")
 public class TimeRangeServiceImpl implements TimeRangeService {
@@ -35,7 +34,6 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 	@Override
 	public List<TimeRange> getAllTimeRanges() {
 		List<TimeRange> ranges = timeRangeDao.findAll();
-		LastUpdateTimeUtil.setCurrentTimestamp("timeRangeList");
 		return ranges;
 	}
 

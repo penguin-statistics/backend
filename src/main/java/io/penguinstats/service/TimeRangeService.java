@@ -12,11 +12,9 @@ import io.penguinstats.model.TimeRange;
 public interface TimeRangeService {
 
 	@Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
-			@CacheEvict(value = "maps", key = "'timeRangeMap'"),
-			@CacheEvict(value = "time-range", key = "'time-range_' + #timeRange.rangeID")})
+			@CacheEvict(value = "maps", key = "'timeRangeMap'")})
 	void saveTimeRange(TimeRange timeRange);
 
-	@Cacheable(value = "time-range", key = "'time-range_' + #rangeID", unless = "#result == null")
 	TimeRange getTimeRangeByRangeID(String rangeID);
 
 	@Cacheable(value = "lists", key = "'timeRangeList'")

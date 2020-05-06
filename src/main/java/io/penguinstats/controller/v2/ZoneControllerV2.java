@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.model.Zone;
 import io.penguinstats.service.ZoneService;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -31,7 +32,8 @@ public class ZoneControllerV2 {
 		List<Zone> zones = zoneService.getAllZones();
 		zones.forEach(zone -> zone = i18n ? zone.toNewI18nView() : zone.toNewNonI18nView());
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
+		headers.add("LAST-UPDATE-TIME",
+				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST).toString());
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
 	}
 

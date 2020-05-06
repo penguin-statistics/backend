@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.Stage;
@@ -49,8 +50,12 @@ public class StageControllerV2 {
 				iter.remove();
 		}
 		stages.forEach(stage -> stage.toNewView());
+
+		Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
+				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
+
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("stageList").toString());
+		headers.add("LAST-UPDATE-TIME", lastUpdateTime.toString());
 		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 	}
 

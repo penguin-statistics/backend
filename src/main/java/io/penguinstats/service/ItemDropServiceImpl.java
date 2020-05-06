@@ -23,6 +23,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
@@ -265,7 +266,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 				dropInfoService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
 		List<DropMatrixElement> result =
 				generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
-		LastUpdateTimeUtil.setCurrentTimestamp("DropMatrixElements");
+		if (userID == null)
+			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 		return result;
 	}
 
@@ -407,7 +409,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 			Integer interval, Integer range) {
 		Long end = System.currentTimeMillis();
 		Long start = end - TimeUnit.DAYS.toMillis(range);
-		return generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
+		LastUpdateTimeUtil
+				.setCurrentTimestamp(LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
+		Map<String, Map<String, List<DropMatrixElement>>> result =
+				generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
+		return result;
 	}
 
 	private Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
@@ -473,7 +479,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 				});
 			});
 		});
-		LastUpdateTimeUtil.setCurrentTimestamp("segmentedDropMatrixElements");
 		return map;
 	}
 

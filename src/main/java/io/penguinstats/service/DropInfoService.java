@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
@@ -12,6 +14,9 @@ import io.penguinstats.model.TimeRange;
 
 public interface DropInfoService {
 
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'dropInfoList_' + #dropInfo.server"),
+			@CacheEvict(value = "maps", key = "'latestTimeRangeMap_' + #dropInfo.server"),
+			@CacheEvict(value = "sets", allEntries = true)})
 	void saveDropInfo(DropInfo dropInfo);
 
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server", condition = "#filter == null")

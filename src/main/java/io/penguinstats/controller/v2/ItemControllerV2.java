@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -34,7 +35,8 @@ public class ItemControllerV2 {
 		if (!i18n)
 			items.forEach(item -> item.toNonI18nView());
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
+		headers.add("LAST-UPDATE-TIME",
+				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST).toString());
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 

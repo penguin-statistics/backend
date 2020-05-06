@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.DropInfoDao;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.TimeRange;
+import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("dropInfoService")
 public class DropInfoServiceImpl implements DropInfoService {
@@ -33,7 +35,9 @@ public class DropInfoServiceImpl implements DropInfoService {
 
 	@Override
 	public List<DropInfo> getDropInfosByServer(Server server) {
-		return dropInfoDao.findDropInfosByServer(server);
+		List<DropInfo> result = dropInfoDao.findDropInfosByServer(server);
+		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server);
+		return result;
 	}
 
 	/** 
