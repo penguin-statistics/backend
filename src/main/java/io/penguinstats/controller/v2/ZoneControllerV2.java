@@ -3,8 +3,6 @@ package io.penguinstats.controller.v2;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,12 +48,6 @@ public class ZoneControllerV2 {
 		MappingJacksonValue result = new MappingJacksonValue(zone);
 		result.setSerializationView(i18n ? Zone.ZoneI18nView.class : Zone.ZoneNewView.class);
 		return new ResponseEntity<MappingJacksonValue>(result, HttpStatus.OK);
-	}
-
-	@GetMapping(path = "/cache")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
-	public ResponseEntity<String> evictZoneCache() {
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }

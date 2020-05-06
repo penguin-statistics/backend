@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -72,15 +70,6 @@ public class StageControllerV2 {
 		MappingJacksonValue result = new MappingJacksonValue(stage);
 		result.setSerializationView(StageNewView.class);
 		return new ResponseEntity<MappingJacksonValue>(result, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-	}
-
-	@GetMapping(path = "/cache")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'stageList'"),
-			@CacheEvict(value = "maps", key = "'stageMap'"), @CacheEvict(value = "drop-info-list", allEntries = true),
-			@CacheEvict(value = "latest-time-range-map", allEntries = true),
-			@CacheEvict(value = "dropset", allEntries = true)})
-	public ResponseEntity<String> evictStageCache() {
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 }
