@@ -9,7 +9,7 @@ import io.penguinstats.model.QueryConditions;
 
 public interface ItemDropDaoCustom {
 
-	List<Document> aggregateItemDropQuantities(QueryConditions conditions);
+	List<Document> aggregateItemDrops(QueryConditions conditions);
 
 	List<Document> aggregateItemDropQuantities(Criteria criteria);
 

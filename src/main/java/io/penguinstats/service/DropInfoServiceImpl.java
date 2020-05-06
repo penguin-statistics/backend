@@ -36,6 +36,23 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return dropInfoDao.findDropInfosByServer(server);
 	}
 
+	/** 
+	 * @Title: getLatestMaxAccumulatableTimeRangesMapByServer 
+	 * @Description: Latest max accumulatable time ranges map, key is stageId.
+	 *               For example we have 5 time ranges for a stage:
+	 *               Range I, Time 0~8, droplist: A, B
+	 *               Range II, Time 10~15, droplist: A, B, C
+	 *               Range III, Time 15~20, droplist: A, B
+	 *               Range IV, Time 20~25, droplist: A, B, D
+	 *               Range V, Time 30~present, droplist: A, B
+	 *               C is a new material, we think it may affect others' drop rates.
+	 *               D is AP supplement item, we think it is independent from others.
+	 *               Thus, data from Range I should not be calculated into the global matrix.
+	 *               D does not affect drop rates, so data from Range IV can be combined with II, III and V.
+	 *               So the longest, and accumulatable time ranges are: II, III, IV and V.
+	 * @param server
+	 * @return Map<String,List<TimeRange>>
+	 */
 	@Override
 	public Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
 		Map<String, List<TimeRange>> result = new HashMap<>();
@@ -66,6 +83,13 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return result;
 	}
 
+	/** 
+	 * @Title: getDropSetMap 
+	 * @Description: Get all dropsets in a map, key is stageId
+	 * @param server
+	 * @param time
+	 * @return Map<String,Set<String>>
+	 */
 	@Override
 	public Map<String, Set<String>> getDropSetMap(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
@@ -84,12 +108,27 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return result;
 	}
 
+	/** 
+	 * @Title: getDropSet 
+	 * @Description: Get all dropped itemIds in a set, under given server, stage and time
+	 * @param server
+	 * @param stageId
+	 * @param time
+	 * @return Set<String>
+	 */
 	@Override
 	public Set<String> getDropSet(Server server, String stageId, Long time) {
 		Map<String, Set<String>> dropsetMap = getDropSetMap(server, time);
 		return dropsetMap.get(stageId);
 	}
 
+	/** 
+	 * @Title: getOpeningDropInfosMap 
+	 * @Description: Get lists of dropInfos whose stage are opening under the given time and server. key is stageId
+	 * @param server
+	 * @param time
+	 * @return Map<String,List<DropInfo>>
+	 */
 	@Override
 	public Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time) {
 		Map<String, List<DropInfo>> result = new HashMap<>();
@@ -107,6 +146,13 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return result;
 	}
 
+	/** 
+	 * @Title: getOpeningStages 
+	 * @Description: Get a list of stageIds which are opening under the given time and server
+	 * @param server
+	 * @param time
+	 * @return Set<String>
+	 */
 	@Override
 	public Set<String> getOpeningStages(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();

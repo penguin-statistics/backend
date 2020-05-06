@@ -34,8 +34,14 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	@Autowired
 	AggregationOperationConstants aggregationOperationConstants;
 
+	/** 
+	 * @Title: aggregateItemDrops 
+	 * @Description: Use aggregation to get item drop times and quantities under given query conditions
+	 * @param conditions
+	 * @return List<Document>
+	 */
 	@Override
-	public List<Document> aggregateItemDropQuantities(QueryConditions conditions) {
+	public List<Document> aggregateItemDrops(QueryConditions conditions) {
 		Long currentTime = System.currentTimeMillis();
 
 		List<String> userIDs = conditions.getUserIDs();
@@ -46,7 +52,30 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		List<AggregationOperation> operations = new LinkedList<>();
 
-		// Pipe 1: filter by isReliable, isDeleted, stageId and timestamp
+		/* Pipe 1: filter by isReliable, isDeleted, stageId and timestamp
+			{
+			  $match:{
+			    $or:[
+			      {
+			        stageId:"main_01-07",
+			        timestamp:{
+			          $gt:1586853840000,
+			          $lt:91559229418034
+			        }
+			      },
+			      {
+			        stageId:"main_04-04",
+			        timestamp:{
+			          $gt:1586853840000,
+			          $lt:91569229418034
+			        }
+			      }
+			    ],
+			    isReliable:true,
+			    isDeleted:false
+			  }
+			}
+		 */
 		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
 
 		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
@@ -79,7 +108,32 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
 
-		// Pipe 2: project section number
+		/* Pipe 2: project section number.
+		 * If no interval is provided, which means we are not calculating segmented results, then project
+		 * 0.0 as section number for all docs.
+		 * Otherwise, we calculate section number using section = (timestamp - baseTime) / interval
+			{
+			  $project:{
+			    _id:0,
+			    stageId:1,
+			    drops:1,
+			    times:1,
+			    section:{
+			      $trunc:{
+			        $divide:[
+			          {
+			            $subtract:[
+			              '$timestamp',
+			              1586853840000 // this is 'baseTime'
+			            ]
+			          },
+			          86400000 // this is 'interval'
+			        ]
+			      }
+			    }
+			  }
+			}
+		 */
 		if (interval != null) {
 			Long baseTime = null;
 			if (stages.isEmpty())
@@ -109,19 +163,62 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 					.and(LiteralOperators.Literal.asLiteral(0.0d)).as("section"));
 		}
 
-		// Pipe 3: group by section and stageId, calculate times
+		/* Pipe 3: group by section and stageId, sum up 'times' to calculate total times for this stage in one section
+			{
+			  $group:{
+			    _id:{
+			      section:"$section",
+			      stageId:"$stageId"
+			    },
+			    times:{
+			      $sum:"$times"
+			    },
+			    drops:{
+			      $push:"$drops"
+			    }
+			  }
+			}
+		 */
 		operations
 				.add(Aggregation.group("section", "stageId").push("$$ROOT.drops").as("drops").sum("times").as("times"));
 
-		// Pipe 4 & 5: unwind drops
+		// Pipe 4 & 5: unwind drops twice
+		/*
+			{
+			  $unwind:{
+			    path:"$drops",
+			    preserveNullAndEmptyArrays:false
+			  }
+			},
+			{
+			  $unwind:{
+			    path:"$drops",
+			    preserveNullAndEmptyArrays:false
+			  }
+			}		 * 
+		 */
 		operations.add(Aggregation.unwind("drops", false));
 		operations.add(Aggregation.unwind("drops", false));
 
-		// Pipe 6: filter on itemId
+		// Pipe 6 (Optional): filter on itemId
 		if (!itemIds.isEmpty())
 			operations.add(Aggregation.match(Criteria.where("drops.itemId").in(itemIds)));
 
-		// Pipe 7: project and group by itemId and calculate quantities
+		/* Pipe 7: project and group by itemId, sum up 'quantities' to calculate total quantities
+			{
+			  $group:{
+			    _id:{
+			      stageId:"$_id.stageId",
+			      section:"$_id.section",
+			      times:"$times", // this value is the same for one stage under certain section
+			      itemId:"$drops.itemId"
+			    },
+			    quantity:{
+			      $sum:"$drops.quantity"
+			    }
+			  }
+			}
+		 */
 		operations.add(Aggregation.project("section", "stageId", "times").and("drops.itemId").as("itemId")
 				.and("drops.quantity").as("quantity"));
 		operations.add(Aggregation.group("section", "stageId", "times", "itemId").sum("quantity").as("quantity"));
@@ -177,6 +274,8 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		]
 	 */
 	@Override
+	@Deprecated
+	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		if (criteria == null)
@@ -254,6 +353,8 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		}]
 	 */
 	@Override
+	@Deprecated
+	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		if (criteria == null)
@@ -346,6 +447,8 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		}]
 	 */
 	@Override
+	@Deprecated
+	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateWeightedItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
@@ -463,6 +566,8 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		}]
 	 */
 	@Override
+	@Deprecated
+	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateWeightedStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);

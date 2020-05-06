@@ -291,7 +291,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 			Long end = timestamps[1];
 			stages.forEach(stageId -> conditions.addStage(stageId, start, end));
 
-			List<Document> docs = itemDropDao.aggregateItemDropQuantities(conditions);
+			List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
 			docs.forEach(doc -> {
 				String stageId = doc.getString("stageId");
 				Map<String, List<Document>> docsMapByStart =
@@ -427,7 +427,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		//		conditions.addServer(server);
 		conditions.addStage(null, start, end);
 		conditions.setInterval(interval);
-		List<Document> docs = itemDropDao.aggregateItemDropQuantities(conditions);
+		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
 
 		Map<String, Map<String, List<DropMatrixElement>>> map = new HashMap<>();
 		Map<String, Map<Integer, Integer>> timesMap = new HashMap<>();
