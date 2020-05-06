@@ -13,10 +13,10 @@ public interface TimeRangeService {
 
 	@Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
 			@CacheEvict(value = "maps", key = "'timeRangeMap'"),
-			@CacheEvict(value = "time-range", key = "#timeRange.rangeID")})
+			@CacheEvict(value = "time-range", key = "'time-range_' + #timeRange.rangeID")})
 	void saveTimeRange(TimeRange timeRange);
 
-	@Cacheable(value = "time-range", key = "#rangeID", unless = "#result == null")
+	@Cacheable(value = "time-range", key = "'time-range_' + #rangeID", unless = "#result == null")
 	TimeRange getTimeRangeByRangeID(String rangeID);
 
 	@Cacheable(value = "lists", key = "'timeRangeList'")

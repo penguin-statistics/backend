@@ -13,7 +13,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -24,48 +23,22 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Stage implements Serializable {
 
-	public interface StageBaseView {};
-
-	public interface StageNewView extends StageBaseView {};
-
-	public interface StageLegacyView extends StageBaseView {};
-
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@JsonIgnore
 	private ObjectId id;
-
-	@JsonView(StageBaseView.class)
 	private String stageType;
-
 	@Indexed
-	@JsonView(StageBaseView.class)
 	private String stageId;
-
-	@JsonView(StageBaseView.class)
 	private String zoneId;
-
-	@JsonView(StageBaseView.class)
 	private String code;
-
-	@JsonView(StageBaseView.class)
 	private Integer apCost;
-
-	@JsonView(StageBaseView.class)
 	private Boolean isGacha;
-
 	@Transient
-	@JsonView(StageNewView.class)
 	private List<DropInfo> dropInfos;
-
-	@JsonView(StageLegacyView.class)
 	private List<String> normalDrop;
-
-	@JsonView(StageLegacyView.class)
 	private List<String> specialDrop;
-
-	@JsonView(StageLegacyView.class)
 	private List<String> extraDrop;
 
 	public Stage(String stageType, String stageId, String zoneId, String code, Integer apCost, Boolean isGacha,
@@ -92,6 +65,20 @@ public class Stage implements Serializable {
 			set.addAll(this.extraDrop);
 		set.add("furni");
 		return set;
+	}
+
+	@JsonIgnore
+	public Stage toLegacyView() {
+		this.dropInfos = null;
+		return this;
+	}
+
+	@JsonIgnore
+	public Stage toNewView() {
+		this.normalDrop = null;
+		this.specialDrop = null;
+		this.extraDrop = null;
+		return this;
 	}
 
 }

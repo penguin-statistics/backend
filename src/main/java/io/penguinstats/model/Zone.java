@@ -12,7 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import io.penguinstats.enums.Server;
 import lombok.Getter;
@@ -24,49 +23,21 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Zone implements Serializable {
 
-	public interface ZoneBaseView {};
-
-	public interface ZoneLegacyView extends ZoneBaseView {};
-
-	public interface ZoneNewView extends ZoneBaseView {};
-
-	public interface ZoneLegacyI18nView extends ZoneLegacyView {};
-
-	public interface ZoneI18nView extends ZoneNewView {};
-
 	private static final long serialVersionUID = 1L;
 
 	@Id
 	@JsonIgnore
 	private ObjectId id;
-
 	@Indexed
-	@JsonView(ZoneBaseView.class)
 	private String zoneId;
-
-	@JsonView(ZoneBaseView.class)
 	private Integer zoneIndex;
-
-	@JsonView(ZoneBaseView.class)
 	private String type;
-
-	@JsonView(ZoneBaseView.class)
 	private String zoneName;
-
 	@JsonProperty("zoneName_i18n")
-	@JsonView({ZoneI18nView.class, ZoneLegacyI18nView.class})
 	private Map<Server, String> zoneNameMap;
-
-	@JsonView(ZoneNewView.class)
 	private Map<Server, ZoneExistence> existence;
-
-	@JsonView(ZoneBaseView.class)
 	private List<String> stages;
-
-	@JsonView(ZoneLegacyView.class)
 	private Long openTime;
-
-	@JsonView(ZoneLegacyView.class)
 	private Long closeTime;
 
 	public Zone(String zoneId, Integer zoneIndex, String type, String zoneName, Map<Server, String> zoneNameMap,
@@ -91,4 +62,33 @@ public class Zone implements Serializable {
 			return false;
 		return true;
 	}
+
+	@JsonIgnore
+	public Zone toLegacyNonI18nView() {
+		this.existence = null;
+		this.zoneNameMap = null;
+		return this;
+	}
+
+	@JsonIgnore
+	public Zone toLegacyI18nView() {
+		this.existence = null;
+		return this;
+	}
+
+	@JsonIgnore
+	public Zone toNewNonI18nView() {
+		this.zoneNameMap = null;
+		this.openTime = null;
+		this.closeTime = null;
+		return this;
+	}
+
+	@JsonIgnore
+	public Zone toNewI18nView() {
+		this.openTime = null;
+		this.closeTime = null;
+		return this;
+	}
+
 }

@@ -1,7 +1,14 @@
 <config xmlns="http://www.ehcache.org/v3" xmlns:jsr107="http://www.ehcache.org/v3/jsr107" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="             http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd             http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
     <service>
-        <jsr107:defaults enable-statistics="true" />
+		<jsr107:defaults default-template="heap-cache" enable-management="false" enable-statistics="true">
+			<jsr107:cache name="default" template="byRefTemplate"/>
+			<jsr107:cache name="byRefCache" template="byRefTemplate"/>
+			<jsr107:cache name="byValCache" template="byValueTemplate"/>
+		</jsr107:defaults>
     </service>
+    
+    <cache alias="default" uses-template="heap-cache"></cache>
+    
     <cache-template name="heap-cache">
         <listeners>
             <listener>
@@ -16,35 +23,88 @@
             </listener>
         </listeners>
         <resources>
-            <heap unit="entries">500</heap>
-            <offheap unit="MB">20</offheap>
+            <heap unit="entries">2000</heap>
+            <offheap unit="MB">100</offheap>
         </resources>
     </cache-template>
-    <cache alias="lists" uses-template="heap-cache">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
+    
+	<cache-template name="byRefTemplate">
+        <listeners>
+            <listener>
+                <class>io.penguinstats.configuration.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <resources>
+            <heap unit="entries">2000</heap>
+            <offheap unit="MB">100</offheap>
+        </resources>
+	</cache-template>
+
+	<cache-template name="byValueTemplate">
+        <listeners>
+            <listener>
+                <class>io.penguinstats.configuration.CacheEventLogger</class>
+                <event-firing-mode>ASYNCHRONOUS</event-firing-mode>
+                <event-ordering-mode>UNORDERED</event-ordering-mode>
+                <events-to-fire-on>CREATED</events-to-fire-on>
+                <events-to-fire-on>UPDATED</events-to-fire-on>
+                <events-to-fire-on>EXPIRED</events-to-fire-on>
+                <events-to-fire-on>REMOVED</events-to-fire-on>
+                <events-to-fire-on>EVICTED</events-to-fire-on>
+            </listener>
+        </listeners>
+        <resources>
+            <heap unit="entries">2000</heap>
+            <offheap unit="MB">100</offheap>
+        </resources>
+	</cache-template>
+	
+    <cache alias="lists" uses-template="byValueTemplate">
+        <key-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.SerializingCopier">java.util.List</value-type>
         <expiry>
             <ttl unit="hours">24</ttl>
         </expiry>
         <resources>
-            <heap unit="entries">50</heap>
-            <offheap unit="MB">10</offheap>
+            <heap unit="entries">200</heap>
+            <offheap unit="MB">20</offheap>
         </resources>
     </cache>
-    <cache alias="maps" uses-template="heap-cache">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.Map</value-type>
+    
+    <cache alias="maps" uses-template="byValueTemplate">
+        <key-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.SerializingCopier">java.util.Map</value-type>
         <expiry>
             <ttl unit="hours">24</ttl>
         </expiry>
         <resources>
-            <heap unit="entries">50</heap>
+            <heap unit="entries">200</heap>
+            <offheap unit="MB">20</offheap>
+        </resources>
+    </cache>
+    
+    <cache alias="sets" uses-template="byValueTemplate">
+        <key-type copier="org.ehcache.impl.copy.SerializingCopier">java.lang.String</key-type>
+        <value-type copier="org.ehcache.impl.copy.SerializingCopier">java.util.Set</value-type>
+        <expiry>
+            <ttl unit="hours">24</ttl>
+        </expiry>
+        <resources>
+            <heap unit="entries">100</heap>
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
+    
     <cache alias="limitation" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
+        <value-type>io.penguinstats.model.Limitation</value-type>
         <expiry>
             <ttl unit="hours">24</ttl>
         </expiry>
@@ -53,6 +113,7 @@
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
+    
     <cache alias="time-range" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>io.penguinstats.model.TimeRange</value-type>
@@ -64,6 +125,7 @@
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
+    
     <cache alias="user" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>io.penguinstats.model.User</value-type>
@@ -75,6 +137,7 @@
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
+    
     <cache alias="drop-matrix" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
@@ -86,8 +149,9 @@
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
+    
     <cache alias="drop-matrix-v2" uses-template="heap-cache">
-        <key-type>io.penguinstats.enums.Server</key-type>
+        <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
         <expiry>
             <none/>
@@ -97,6 +161,7 @@
             <offheap unit="MB">20</offheap>
         </resources>
     </cache>
+    
     <cache alias="all-segmented-drop-matrix-v2" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.Map</value-type>
@@ -106,39 +171,6 @@
         <resources>
             <heap unit="entries">50</heap>
             <offheap unit="MB">20</offheap>
-        </resources>
-    </cache>
-    <cache alias="latest-time-range-map" uses-template="heap-cache">
-        <key-type>io.penguinstats.enums.Server</key-type>
-        <value-type>java.util.Map</value-type>
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <heap unit="entries">10</heap>
-            <offheap unit="MB">10</offheap>
-        </resources>
-    </cache>
-    <cache alias="dropset" uses-template="heap-cache">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.Set</value-type>
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <heap unit="entries">100</heap>
-            <offheap unit="MB">10</offheap>
-        </resources>
-    </cache>
-    <cache alias="drop-info-list" uses-template="heap-cache">
-        <key-type>io.penguinstats.enums.Server</key-type>
-        <value-type>java.util.List</value-type>
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <heap unit="entries">20</heap>
-            <offheap unit="MB">10</offheap>
         </resources>
     </cache>
 </config>

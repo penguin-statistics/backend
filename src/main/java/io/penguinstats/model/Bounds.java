@@ -1,23 +1,21 @@
 package io.penguinstats.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonView;
 
-import io.penguinstats.model.Stage.StageBaseView;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonView(StageBaseView.class)
 public class Bounds implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -26,16 +24,10 @@ public class Bounds implements Serializable {
 	private Integer upper;
 	private List<Integer> exceptions;
 
-	public Bounds() {
-		this.lower = null;
-		this.upper = null;
-		this.exceptions = new ArrayList<>();
-	}
-
 	public Bounds(Integer lower, Integer upper) {
 		this.lower = lower;
 		this.upper = upper;
-		this.exceptions = new ArrayList<>();
+		this.exceptions = null;
 	}
 
 	@JsonIgnore

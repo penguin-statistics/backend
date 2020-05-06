@@ -10,20 +10,20 @@ import io.penguinstats.model.User;
 
 public interface UserService {
 
-	@CacheEvict(value = "user", key = "#user.userID")
+	@CacheEvict(value = "user", key = "'user_' + #user.userID")
 	void saveUser(User user);
 
-	@Cacheable(value = "user", key = "#userID", unless = "#result == null")
+	@Cacheable(value = "user", key = "'user_' + #userID", unless = "#result == null")
 	User getUserByUserID(String userID);
 
 	String createNewUser(String ip);
 
 	String createNewUser(String userID, String ip);
 
-	@CacheEvict(value = "user", key = "#userID")
+	@CacheEvict(value = "user", key = "'user_' + #userID")
 	void addIP(String userID, String ip);
 
-	@CacheEvict(value = "user", key = "#userID")
+	@CacheEvict(value = "user", key = "'user_' + #userID")
 	void addTag(String userID, String tag);
 
 	@CacheEvict(value = "user", allEntries = true)
