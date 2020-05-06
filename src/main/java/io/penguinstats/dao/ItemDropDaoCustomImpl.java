@@ -87,7 +87,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 			else {
 				final Long firstStartTime = stages.get(0).getStart();
 				boolean passCheck = true;
-				for (int i = 1, l = stages.size(); i < l; i++) {
+				for (int i = 1, size = stages.size(); i < size; i++) {
 					StageWithTimeRange stage = stages.get(i);
 					if (!stage.getStart().equals(firstStartTime)) {
 						logger.error("start time must be identical for all stages in the conditions");
