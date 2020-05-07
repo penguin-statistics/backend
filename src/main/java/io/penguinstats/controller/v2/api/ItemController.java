@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,11 +28,8 @@ public class ItemController {
 	@ApiOperation("Get all items")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<Item>>
-			getAllItems(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+	public ResponseEntity<List<Item>> getAllItems() {
 		List<Item> items = itemService.getAllItems();
-		if (!i18n)
-			items.forEach(item -> item.toNonI18nView());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME",
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST).toString());
@@ -42,13 +38,10 @@ public class ItemController {
 
 	@ApiOperation("Get item by item ID")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId,
-			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);
 		if (item == null)
 			return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
-		if (!i18n)
-			item.toNonI18nView();
 		return new ResponseEntity<Item>(item, HttpStatus.OK);
 	}
 

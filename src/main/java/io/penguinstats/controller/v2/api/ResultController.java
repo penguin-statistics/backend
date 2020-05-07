@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
-import io.penguinstats.controller.v2.response.MatrixResult;
+import io.penguinstats.controller.v2.response.MatrixResponse;
 import io.penguinstats.controller.v2.response.StageTrend;
 import io.penguinstats.controller.v2.response.TrendDetail;
-import io.penguinstats.controller.v2.response.TrendResult;
+import io.penguinstats.controller.v2.response.TrendResponse;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.service.DropInfoService;
@@ -48,7 +48,7 @@ public class ResultController {
 
 	@ApiOperation("Get matrix")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<MatrixResult> getMatrix(HttpServletRequest request,
+	public ResponseEntity<MatrixResponse> getMatrix(HttpServletRequest request,
 			@RequestParam(name = "is_personal", required = false, defaultValue = "false") boolean isPersonal,
 			@RequestParam(name = "show_closed_zones", required = false, defaultValue = "false") boolean showClosedZones,
 			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
@@ -67,13 +67,13 @@ public class ResultController {
 						iter.remove();
 				}
 			}
-			MatrixResult result = new MatrixResult(elements);
+			MatrixResponse result = new MatrixResponse(elements);
 
 			HttpHeaders headers = new HttpHeaders();
 			if (userID == null)
 				headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil
 						.getLastUpdateTime(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server).toString());
-			return new ResponseEntity<MatrixResult>(result, headers, HttpStatus.OK);
+			return new ResponseEntity<MatrixResponse>(result, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,7 +82,7 @@ public class ResultController {
 
 	@ApiOperation("Get segmented drop data for all items in all stages")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<TrendResult> getAllSegmentedDropResults(
+	public ResponseEntity<TrendResponse> getAllSegmentedDropResults(
 			@RequestParam(name = "interval_day", required = false, defaultValue = "1") int interval,
 			@RequestParam(name = "range_day", required = false, defaultValue = "14") int range,
 			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
@@ -109,7 +109,7 @@ public class ResultController {
 			StageTrend stageTrend = new StageTrend(startTime[0], trendDetailMap);
 			stageTrendMap.put(stageId, stageTrend);
 		});
-		TrendResult result = new TrendResult(stageTrendMap);
+		TrendResponse result = new TrendResponse(stageTrendMap);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME",
@@ -117,7 +117,7 @@ public class ResultController {
 						.getLastUpdateTime(
 								LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range)
 						.toString());
-		return new ResponseEntity<TrendResult>(result, headers, HttpStatus.OK);
+		return new ResponseEntity<TrendResponse>(result, headers, HttpStatus.OK);
 	}
 
 }

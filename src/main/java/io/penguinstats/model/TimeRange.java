@@ -10,11 +10,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "time_range")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TimeRange implements Serializable {
@@ -31,12 +33,10 @@ public class TimeRange implements Serializable {
 	private String comment;
 	private Boolean accumulatable;
 
-	public TimeRange(String rangeID, Long start, Long end, String comment, Boolean accumulatable) {
-		this.rangeID = rangeID;
-		this.start = start == null ? 0L : start;
+	public TimeRange(Long start, Long end) {
+		this.start = start;
 		this.end = end;
-		this.comment = comment;
-		this.accumulatable = accumulatable;
+		this.accumulatable = true;
 	}
 
 	@JsonIgnore
@@ -68,9 +68,9 @@ public class TimeRange implements Serializable {
 	@JsonIgnore
 	public TimeRange combine(TimeRange range) {
 		if (range.getStart().equals(this.end))
-			return new TimeRange(null, this.start, range.getEnd(), null, true);
+			return new TimeRange(this.start, range.getEnd());
 		if (this.start.equals(range.getEnd()))
-			return new TimeRange(null, range.getStart(), this.end, null, true);
+			return new TimeRange(range.getStart(), this.end);
 		return null;
 	}
 

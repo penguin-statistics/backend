@@ -15,14 +15,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.enums.Server;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "item")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Item implements Serializable {

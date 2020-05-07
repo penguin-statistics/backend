@@ -14,11 +14,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.enums.Server;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "zone")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Zone implements Serializable {
@@ -39,19 +41,6 @@ public class Zone implements Serializable {
 	private List<String> stages;
 	private Long openTime;
 	private Long closeTime;
-
-	public Zone(String zoneId, Integer zoneIndex, String type, String zoneName, Map<Server, String> zoneNameMap,
-			Map<Server, ZoneExistence> existence, Long openTime, Long closeTime, List<String> stages) {
-		this.zoneId = zoneId;
-		this.zoneIndex = zoneIndex;
-		this.type = type;
-		this.zoneName = zoneName;
-		this.zoneNameMap = zoneNameMap;
-		this.existence = existence;
-		this.openTime = openTime;
-		this.closeTime = closeTime;
-		this.stages = stages;
-	}
 
 	@JsonIgnore
 	@Deprecated
@@ -77,15 +66,7 @@ public class Zone implements Serializable {
 	}
 
 	@JsonIgnore
-	public Zone toNewNonI18nView() {
-		this.zoneNameMap = null;
-		this.openTime = null;
-		this.closeTime = null;
-		return this;
-	}
-
-	@JsonIgnore
-	public Zone toNewI18nView() {
+	public Zone toNewView() {
 		this.openTime = null;
 		this.closeTime = null;
 		return this;

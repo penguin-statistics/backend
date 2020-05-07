@@ -119,7 +119,8 @@ public class ReportController {
 				}
 			}
 
-			ItemDrop itemDrop = new ItemDrop(stageId, times, drops, timestamp, ip, isReliable, source, version, userID);
+			ItemDrop itemDrop = new ItemDrop(null, stageId, times, drops, timestamp, ip, isReliable, false, source,
+					version, userID);
 			itemDropService.saveItemDrop(itemDrop);
 			String itemDropHashId = HashUtil.getHash(itemDrop.getId().toString());
 			return new ResponseEntity<>(itemDropHashId, HttpStatus.CREATED);

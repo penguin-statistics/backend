@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
@@ -27,10 +26,9 @@ public class ZoneController {
 
 	@ApiOperation("Get all zones")
 	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Zone>>
-			getAllZones(@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+	public ResponseEntity<List<Zone>> getAllZones() {
 		List<Zone> zones = zoneService.getAllZones();
-		zones.forEach(zone -> zone = i18n ? zone.toNewI18nView() : zone.toNewNonI18nView());
+		zones.forEach(zone -> zone.toNewView());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME",
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST).toString());
@@ -39,12 +37,11 @@ public class ZoneController {
 
 	@ApiOperation("Get zone by zone ID")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
-			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
 		if (zone == null)
 			return new ResponseEntity<Zone>(HttpStatus.NOT_FOUND);
-		zone = i18n ? zone.toNewI18nView() : zone.toNewNonI18nView();
+		zone.toNewView();
 		return new ResponseEntity<Zone>(zone, HttpStatus.OK);
 	}
 

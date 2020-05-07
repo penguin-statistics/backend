@@ -12,11 +12,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.DropType;
 import io.penguinstats.enums.Server;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "drop_info")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DropInfo implements Serializable {
@@ -35,16 +37,6 @@ public class DropInfo implements Serializable {
 	private DropType dropType;
 	private String timeRangeID;
 	private Bounds bounds;
-
-	public DropInfo(Server server, String stageId, String itemId, DropType dropType, String timeRangeID,
-			Bounds bounds) {
-		this.server = server;
-		this.stageId = stageId;
-		this.itemId = itemId;
-		this.dropType = dropType;
-		this.timeRangeID = timeRangeID;
-		this.bounds = bounds;
-	}
 
 	@JsonIgnore
 	public DropInfo toStageView() {
