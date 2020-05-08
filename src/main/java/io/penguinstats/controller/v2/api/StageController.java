@@ -55,7 +55,7 @@ public class StageController {
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME", lastUpdateTime.toString());
+		headers.add(HttpHeaders.LAST_MODIFIED, lastUpdateTime.toString());
 		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 	}
 

@@ -71,7 +71,7 @@ public class ResultController {
 
 			HttpHeaders headers = new HttpHeaders();
 			if (userID == null)
-				headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil
+				headers.add(HttpHeaders.LAST_MODIFIED, LastUpdateTimeUtil
 						.getLastUpdateTime(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server).toString());
 			return new ResponseEntity<MatrixResponse>(result, headers, HttpStatus.OK);
 		} catch (Exception e) {
@@ -112,7 +112,7 @@ public class ResultController {
 		TrendResponse result = new TrendResponse(stageTrendMap);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME",
+		headers.add(HttpHeaders.LAST_MODIFIED,
 				LastUpdateTimeUtil
 						.getLastUpdateTime(
 								LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range)
