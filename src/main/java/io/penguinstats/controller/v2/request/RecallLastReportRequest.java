@@ -1,6 +1,6 @@
-package io.penguinstats.model;
+package io.penguinstats.controller.v2.request;
 
-import java.io.Serializable;
+import javax.validation.constraints.NotBlank;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -12,11 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Drop implements Serializable {
+public class RecallLastReportRequest {
 
-	private static final long serialVersionUID = 1L;
-
-	private String itemId;
-	private Integer quantity;
+	@NotBlank
+	private String reportHash;
 
 }

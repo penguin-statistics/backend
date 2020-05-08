@@ -9,9 +9,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.penguinstats.model.DropMatrixElement;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MatrixResponse implements Serializable {
 

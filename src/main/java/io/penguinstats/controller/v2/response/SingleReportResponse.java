@@ -1,10 +1,6 @@
 package io.penguinstats.controller.v2.response;
 
-import java.io.Serializable;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,11 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class TrendResponse implements Serializable {
+public class SingleReportResponse {
 
-	private static final long serialVersionUID = 1L;
-
-	@JsonProperty("trend")
-	private Map<String, StageTrend> stageTrendMap;
+	private String reportHash;
 
 }

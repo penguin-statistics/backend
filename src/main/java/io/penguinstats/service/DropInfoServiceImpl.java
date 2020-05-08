@@ -1,5 +1,9 @@
 package io.penguinstats.service;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toSet;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,17 +102,12 @@ public class DropInfoServiceImpl implements DropInfoService {
 	public Map<String, Set<String>> getDropSetMap(Server server, Long time) {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
-		Map<String, Set<String>> result = new HashMap<>();
-		infos.forEach(info -> {
+
+		Map<String, Set<String>> result = infos.stream().filter(info -> {
 			String itemId = info.getItemId();
-			String stageId = info.getStageId();
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-			if (itemId != null && range.isIn(time)) {
-				Set<String> dropSet = result.getOrDefault(stageId, new HashSet<>());
-				dropSet.add(itemId);
-				result.put(stageId, dropSet);
-			}
-		});
+			return itemId != null && range.isIn(time);
+		}).collect(groupingBy(DropInfo::getStageId, mapping(DropInfo::getItemId, toSet())));
 		return result;
 	}
 
@@ -135,18 +134,13 @@ public class DropInfoServiceImpl implements DropInfoService {
 	 */
 	@Override
 	public Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time) {
-		Map<String, List<DropInfo>> result = new HashMap<>();
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
-		infos.forEach(info -> {
+
+		Map<String, List<DropInfo>> result = infos.stream().filter(info -> {
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-			if (range != null && range.isIn(time)) {
-				String stageId = info.getStageId();
-				List<DropInfo> list = result.getOrDefault(stageId, new ArrayList<>());
-				list.add(info);
-				result.put(stageId, list);
-			}
-		});
+			return range.isIn(time);
+		}).collect(groupingBy(DropInfo::getStageId));
 		return result;
 	}
 

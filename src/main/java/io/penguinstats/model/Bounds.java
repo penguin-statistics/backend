@@ -49,12 +49,4 @@ public class Bounds implements Serializable {
 				this.getUpper() == null ? null : this.getUpper() + b.getUpper());
 	}
 
-	@Override
-	@JsonIgnore
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.lower == null ? "-inf" : this.lower).append("~").append(this.upper == null ? "inf" : this.upper);
-		return sb.toString();
-	}
-
 }
