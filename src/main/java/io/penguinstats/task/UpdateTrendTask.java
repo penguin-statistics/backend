@@ -17,8 +17,7 @@ public class UpdateTrendTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	// TODO: remove initialDelay
-	@Scheduled(fixedRate = 86400000, initialDelay = 3600000)
+	@Scheduled(fixedRate = 86400000)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateTrendTask");

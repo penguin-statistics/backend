@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toList;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,7 +85,7 @@ public class ReportController {
 				logger.error("Error in handleUserIDFromCookie: ", e);
 			}
 			logger.info("user " + userID + " POST /report\n"
-					+ JSONUtil.convertObjectToJSONObject(singleReportRequest).toString(2));
+					+ Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(singleReportRequest)).toString(2));
 
 			String stageId = singleReportRequest.getStageId();
 			String source = singleReportRequest.getSource();

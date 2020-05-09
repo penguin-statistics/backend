@@ -55,7 +55,7 @@ public class DropsValidator extends BaseValidator {
 			}
 
 			List<TypedDrop> typedDrops = typedDropMapByDropType.getOrDefault(dropType, new ArrayList<>());
-			Map<String, TypedDrop> typedDropMapByItemId = null;
+			Map<String, TypedDrop> typedDropMapByItemId;
 			try {
 				typedDropMapByItemId = typedDrops.stream().collect(toMap(TypedDrop::getItemId, typedDrop -> typedDrop));
 			} catch (IllegalStateException ex) {

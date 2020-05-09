@@ -283,9 +283,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Map<String, Map<String, List<Document>>> docsMapByStageIdAndTimeRange = new HashMap<>();
 		stagesMapByRange.forEach((key, stages) -> {
 			QueryConditions conditions = new QueryConditions();
-			// TODO: uncomment this
-			//			if (server != null)
-			// conditions.addServer(server);
+			if (server != null)
+				conditions.addServer(server);
 			if (userID != null)
 				conditions.addUserID(userID);
 			Long[] timestamps = timeRangeStrToLong(key);
@@ -429,8 +428,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		}
 
 		QueryConditions conditions = new QueryConditions();
-		// TODO: uncomment this
-		//		conditions.addServer(server);
+		conditions.addServer(server);
 		conditions.addStage(null, start, end);
 		conditions.setInterval(interval);
 		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
