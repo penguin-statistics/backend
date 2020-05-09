@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,12 +23,15 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.ItemDropDao;
-import io.penguinstats.model.DropMatrix;
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.QueryConditions;
 import io.penguinstats.model.Stage;
+import io.penguinstats.model.TimeRange;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
@@ -43,6 +48,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Autowired
 	private ItemDropDao itemDropDao;
+
+	@Autowired
+	private DropInfoService dropInfoService;
 
 	@Override
 	public void saveItemDrop(ItemDrop itemDrop) {
@@ -166,53 +174,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	/** 
-	 * @Title: generateDropMatrixList 
-	 * @Description: Generate a list of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return List<DropMatrix>
-	 */
-	//TODO: This method will be deprecated after a periodic matrix generation method is implemented. Will use DropMatrixElement instead.
-	@Override
-	public List<DropMatrix> generateDropMatrixList(Criteria filter) {
-		Long startTime = System.currentTimeMillis();
-		List<DropMatrix> dropMatrixList = new ArrayList<>();
-		try {
-			Map<String, Map<String, Double>> quantitiesMap = getQuantitiesMap(filter, false);
-			Map<String, List<Double>> stageTimesMap = getStageTimesMap(filter, false);
-			Map<String, Item> itemMap = itemService.getItemMap();
-			for (String stageId : quantitiesMap.keySet()) {
-				List<Double> allTimes = stageTimesMap.get(stageId);
-				if (allTimes == null) {
-					logger.error("cannot find allTimes for " + stageId);
-					continue;
-				}
-				Map<String, Double> subMap = quantitiesMap.get(stageId);
-				for (String itemId : subMap.keySet()) {
-					Double quantity = subMap.get(itemId);
-					Item item = itemMap.get(itemId);
-					if (item == null) {
-						logger.error("cannot find item " + itemId);
-						continue;
-					}
-					Integer addTimePoint = item.getAddTimePoint();
-					if (addTimePoint == null)
-						addTimePoint = 0;
-					if (addTimePoint >= allTimes.size()) {
-						logger.error("addTimePoint for " + itemId + " is too large");
-						continue;
-					}
-					Double times = allTimes.get(addTimePoint);
-					dropMatrixList.add(new DropMatrix(stageId, itemId, quantity.intValue(), times.intValue()));
-				}
-			}
-			logger.debug("generateDropMatrixList " + (System.currentTimeMillis() - startTime) + "ms");
-		} catch (Exception e) {
-			logger.error("Error in generateDropMatrixList", e);
-		}
-		return dropMatrixList;
-	}
-
-	/** 
 	 * @Title: generateMatrixElements 
 	 * @Description: Generate a list of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
 	 * @param filter
@@ -257,7 +218,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 					}
 					Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
 					if (!times.equals(0))
-						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times));
+						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times, null, null));
 				}
 			}
 			logger.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms");
@@ -267,90 +228,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 		LastUpdateTimeUtil
 				.setCurrentTimestamp(isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements");
 		return dropMatrixList;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixElements 
-	 * @Description: Generate segmented drop results for the given stage and interval.
-	 * @param filter
-	 * @param interval
-	 * @param startTime
-	 * @param stageId Required.
-	 * @param itemId Optional. If itemId is provided, the result map will only contain one key, otherwise it will contain all itemIds under the given stage (must have at least one drop record). 
-	 * @return Map<String,List<DropMatrixElement>> itemId -> result list (index is section#, if no drop in one section, the element will be null)
-	 */
-	@Override
-	public Map<String, List<DropMatrixElement>> generateDropMatrixElements(Criteria filter, long interval,
-			Long startTime, String stageId, String itemId) {
-		Map<String, List<DropMatrixElement>> result =
-				generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, itemId);
-		LastUpdateTimeUtil
-				.setCurrentTimestamp("segmentedDropMatrixElements_" + stageId + (itemId == null ? "" : "_" + itemId));
-		return result;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixElements 
-	 * @Description: Generate segmented drop results for all stages under given interval.
-	 * @param filter
-	 * @param interval
-	 * @return Map<String,Map<String,List<DropMatrixElement>>> stageId -> itemId -> result list
-	 */
-	@Override
-	public Map<String, Map<String, List<DropMatrixElement>>> generateDropMatrixElements(Criteria filter,
-			long interval) {
-		Map<String, Map<String, List<DropMatrixElement>>> result = new HashMap<>();
-		//		List<Stage> stages = stageService.getAllStages();
-		//		for (Stage stage : stages) {
-		//			String stageId = stage.getStageId();
-		//			Long startTime = getMinTimestamp(stageId);
-		//			try {
-		//				Map<String, List<DropMatrixElement>> subMap =
-		//						generateSegmentedDropMatrixElementsHelper(filter, interval, startTime, stageId, null);
-		//				result.put(stageId, subMap);
-		//			} catch (Exception e) {
-		//				logger.error("Error in generateDropMatrixElements", e);
-		//			}
-		//		}
-		LastUpdateTimeUtil.setCurrentTimestamp("segmentedDropMatrixElements");
-		return result;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixMap
-	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return Map<String,Map<String,DropMatrix>> stageId -> itemId -> dropMatrix
-	 */
-	//TODO: This method will be deprecated after a periodic matrix generation method is implemented. Will use WeightedMatrixElement instead.
-	@Override
-	public Map<String, Map<String, DropMatrix>> generateDropMatrixMap(Criteria filter) {
-		Map<String, Map<String, DropMatrix>> map = new HashMap<>();
-		List<DropMatrix> list = generateDropMatrixList(filter);
-		for (DropMatrix dm : list) {
-			Map<String, DropMatrix> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
-			subMap.put(dm.getItemId(), dm);
-			map.put(dm.getStageId(), subMap);
-		}
-		return map;
-	}
-
-	/** 
-	 * @Title: generateDropMatrixMap
-	 * @Description: Generate a map of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return Map<String,Map<String,DropMatrixElement>> stageId -> itemId -> dropMatrix
-	 */
-	@Override
-	public Map<String, Map<String, DropMatrixElement>> generateDropMatrixMap(Criteria filter, boolean isWeighted) {
-		Map<String, Map<String, DropMatrixElement>> map = new HashMap<>();
-		List<DropMatrixElement> list = generateDropMatrixElements(filter, isWeighted);
-		for (DropMatrixElement dm : list) {
-			Map<String, DropMatrixElement> subMap = map.getOrDefault(dm.getStageId(), new HashMap<>());
-			subMap.put(dm.getItemId(), dm);
-			map.put(dm.getStageId(), subMap);
-		}
-		return map;
 	}
 
 	/** 
@@ -383,101 +260,226 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return map;
 	}
 
-	/** 
-	 * @Title: getMinTimestamp 
-	 * @Description: Get the earliest upload time of one stage
-	 * @param stageId
-	 * @return Long
-	 */
 	@Override
-	public Long getMinTimestamp(String stageId) {
-		return itemDropDao.findMinTimestamp(true, false, stageId);
+	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
+		Map<String, List<TimeRange>> timeRangeMap =
+				dropInfoService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
+		List<DropMatrixElement> result =
+				generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
+		if (userID == null)
+			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
+		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Map<String, List<DropMatrixElement>> generateSegmentedDropMatrixElementsHelper(Criteria filter,
-			long interval, Long startTime, String stageId, String itemId) {
-		Map<String, List<DropMatrixElement>> segmentedDropMap = new HashMap<>();
-		if (startTime == null)
-			return segmentedDropMap;
-		Map<String, Item> itemMap = itemService.getItemMap();
-		Map<String, Stage> stageMap = stageService.getStageMap();
-		if (!stageMap.containsKey(stageId)) {
-			logger.error("cannot find stage " + stageId);
-			return segmentedDropMap;
+	@Override
+	public List<DropMatrixElement> updateGlobalDropMatrixElements(Server server) {
+		return generateGlobalDropMatrixElements(server, null);
+	}
+
+	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
+			Map<String, List<TimeRange>> timeRangeMap, Server server, String userID) {
+		Map<String, List<String>> stagesMapByRange = transferTimeRangeMapByStageIdToStagesMapByRange(timeRangeMap);
+
+		Map<String, Map<String, List<Document>>> docsMapByStageIdAndTimeRange = new HashMap<>();
+		stagesMapByRange.forEach((key, stages) -> {
+			QueryConditions conditions = new QueryConditions();
+			// TODO: uncomment this
+			//			if (server != null)
+			// conditions.addServer(server);
+			if (userID != null)
+				conditions.addUserID(userID);
+			Long[] timestamps = timeRangeStrToLong(key);
+			Long start = timestamps[0];
+			Long end = timestamps[1];
+			stages.forEach(stageId -> conditions.addStage(stageId, start, end));
+
+			List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
+			docs.forEach(doc -> {
+				String stageId = doc.getString("stageId");
+				Map<String, List<Document>> docsMapByStart =
+						docsMapByStageIdAndTimeRange.getOrDefault(stageId, new HashMap<>());
+				List<Document> subDocs = docsMapByStart.getOrDefault(key, new ArrayList<>());
+				subDocs.add(doc);
+				docsMapByStart.put(key, subDocs);
+				docsMapByStageIdAndTimeRange.put(stageId, docsMapByStart);
+			});
+		});
+
+		Map<String, Map<String, List<DropMatrixElement>>> mapByStageIdAndItemId = new HashMap<>();
+		docsMapByStageIdAndTimeRange.forEach((stageId, docsMapByStart) -> {
+			docsMapByStart.forEach((key, docs) -> {
+				Long[] timestamps = timeRangeStrToLong(key);
+				Long start = timestamps[0];
+				Long end = timestamps[1];
+				Integer timesForStage = docs.get(0).getInteger("times");
+				Set<String> dropSet = dropInfoService.getDropSet(server, stageId, start);
+				docs.forEach(doc -> {
+					String itemId = doc.getString("itemId");
+					Integer quantity = doc.getInteger("quantity");
+					Integer times = doc.getInteger("times");
+					DropMatrixElement element = new DropMatrixElement(stageId, itemId, quantity, times, start, end);
+
+					Map<String, List<DropMatrixElement>> mapByItemId =
+							mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
+					List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
+					elements.add(element);
+					mapByItemId.put(itemId, elements);
+					mapByStageIdAndItemId.put(stageId, mapByItemId);
+
+					if (!dropSet.contains(itemId))
+						logger.error("Item " + itemId + " is invalid in stage " + stageId);
+					else
+						dropSet.remove(itemId);
+				});
+
+				if (!dropSet.isEmpty()) {
+					dropSet.forEach(itemId -> {
+						DropMatrixElement element =
+								new DropMatrixElement(stageId, itemId, 0, timesForStage, start, end);
+						Map<String, List<DropMatrixElement>> mapByItemId =
+								mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
+						List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
+						elements.add(element);
+						mapByItemId.put(itemId, elements);
+						mapByStageIdAndItemId.put(stageId, mapByItemId);
+					});
+				}
+			});
+		});
+
+		List<DropMatrixElement> result = new ArrayList<>();
+		mapByStageIdAndItemId.forEach((stageId, mapByItemId) -> {
+			mapByItemId.forEach((itemId, elements) -> {
+				DropMatrixElement newElement = combineElements(elements);
+				result.add(newElement);
+			});
+		});
+		return result;
+	}
+
+	private Map<String, List<String>>
+			transferTimeRangeMapByStageIdToStagesMapByRange(Map<String, List<TimeRange>> timeRangeMap) {
+		Map<String, List<String>> stagesMapByRange = new HashMap<>();
+		timeRangeMap.forEach((stageId, ranges) -> {
+			ranges.forEach(range -> {
+				String key = timeRangeLongToStr(range.getStart(), range.getEnd());
+				List<String> stages = stagesMapByRange.getOrDefault(key, new ArrayList<>());
+				stages.add(stageId);
+				stagesMapByRange.put(key, stages);
+			});
+		});
+		return stagesMapByRange;
+	}
+
+	private Long[] timeRangeStrToLong(String str) {
+		String[] strs = str.split("_");
+		Long start = "null".equals(strs[0]) ? null : Long.parseLong(strs[0]);
+		Long end = "null".equals(strs[1]) ? null : Long.parseLong(strs[1]);
+		return new Long[] {start, end};
+	}
+
+	private String timeRangeLongToStr(Long start, Long end) {
+		return start + "_" + end;
+	}
+
+	private DropMatrixElement combineElements(List<DropMatrixElement> elements) {
+		if (elements.isEmpty())
+			return null;
+		DropMatrixElement firstElement = elements.get(0);
+		String stageId = firstElement.getStageId();
+		String itemId = firstElement.getItemId();
+		Integer quantity = 0;
+		Integer times = 0;
+		Long start = firstElement.getStart();
+		Long end = firstElement.getEnd();
+		for (int i = 0, l = elements.size(); i < l; i++) {
+			DropMatrixElement element = elements.get(i);
+			quantity += element.getQuantity();
+			times += element.getTimes();
+			if (element.getStart().compareTo(start) < 0)
+				start = element.getStart();
+			if (end != null && (element.getEnd() == null || element.getEnd().compareTo(end) > 0))
+				end = element.getEnd();
 		}
-		int sectionNum = new Long((System.currentTimeMillis() - startTime) / interval).intValue() + 1;
+		return new DropMatrixElement(stageId, itemId, quantity, times, start, end);
+	}
+
+	@Override
+	public Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Integer range) {
+		Long end = System.currentTimeMillis();
+		Long start = end - TimeUnit.DAYS.toMillis(range);
+		LastUpdateTimeUtil
+				.setCurrentTimestamp(LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
+		Map<String, Map<String, List<DropMatrixElement>>> result =
+				generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
+		return result;
+	}
+
+	private Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Long start, Long end) {
+		if (start == null || end == null || start.compareTo(end) >= 0)
+			return new HashMap<>();
+		Long intervalMillis = TimeUnit.DAYS.toMillis(interval);
+		int sectionNum =
+				new Double(Math.ceil(new Double((end - start) * 1.0 / intervalMillis).doubleValue())).intValue();
 		if (sectionNum > Constant.MAX_SECTION_NUM) {
-			logger.error("Section num is too large. MAX is " + Constant.MAX_SECTION_NUM + ", current is " + sectionNum);
-			return segmentedDropMap;
+			logger.error("exceed max section num, now is " + sectionNum);
+			return new HashMap<>();
 		}
 
-		List<Document> quantityDocs =
-				itemDropDao.aggregateSegmentedWeightedItemDropQuantities(filter, stageId, startTime, interval, itemId);
-		List<Document> timesDocs =
-				itemDropDao.aggregateSegmentedWeightedStageTimes(filter, stageId, startTime, interval);
+		QueryConditions conditions = new QueryConditions();
+		// TODO: uncomment this
+		//		conditions.addServer(server);
+		conditions.addStage(null, start, end);
+		conditions.setInterval(interval);
+		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
 
-		List<List<Double>> stageTimesList = new ArrayList<>(sectionNum);
-		for (int i = 0; i < sectionNum; i++)
-			stageTimesList.add(new ArrayList<>());
-		for (Document doc : timesDocs) {
-			int section = doc.getDouble("_id").intValue();
-			List<Document> allTimesDocs = (ArrayList<Document>)doc.get("allTimes");
-			int size = allTimesDocs.size();
-			Double[] allTimesArray = new Double[size];
-			for (int i = 0; i < size; i++) {
-				Document subDoc = allTimesDocs.get(i);
-				Integer timePoint = subDoc.getLong("timePoint").intValue();
-				allTimesArray[timePoint] = subDoc.getDouble("times");
-			}
-			stageTimesList.set(section, Arrays.asList(allTimesArray));
-		}
+		Map<String, Map<String, List<DropMatrixElement>>> map = new HashMap<>();
+		Map<String, Map<Integer, Integer>> timesMap = new HashMap<>();
+		docs.forEach(doc -> {
+			String stageId = doc.getString("stageId");
+			String itemId = doc.getString("itemId");
+			Integer quantity = doc.getInteger("quantity");
+			Integer times = doc.getInteger("times");
+			Integer section = doc.getDouble("section").intValue();
 
-		List<Map<String, Double>> itemQuantitiesList = new ArrayList<>();
-		for (int i = 0; i < sectionNum; i++)
-			itemQuantitiesList.add(new HashMap<>());
-		for (Document doc : quantityDocs) {
-			int section = doc.getDouble("section").intValue();
-			String currentItemId = itemId == null ? doc.getString("itemId") : itemId;
-			Double quantity = doc.getDouble("quantity");
-			Map<String, Double> quantityMap = itemQuantitiesList.get(section);
-			quantityMap.put(currentItemId, quantity);
-		}
+			DropMatrixElement element =
+					new DropMatrixElement(stageId, itemId, quantity, times, new Long(section), null);
 
-		Stage stage = stageMap.get(stageId);
-		Set<String> dropSet = stage.getDropsSet();
-		for (int i = 0; i < sectionNum; i++) {
-			List<Double> allTimes = stageTimesList.get(i);
-			if (allTimes.isEmpty())
-				continue;
-			Map<String, Double> quantityMap = itemQuantitiesList.get(i);
-			for (String currentItemId : dropSet) {
-				Integer quantity = new Long(Math.round(quantityMap.getOrDefault(currentItemId, 0D))).intValue();
-				Item item = itemMap.get(currentItemId);
-				if (item == null) {
-					logger.warn("cannot find item " + currentItemId);
-					continue;
-				}
-				Integer addTimePoint = item.getAddTimePoint();
-				if (addTimePoint == null)
-					addTimePoint = 0;
-				if (addTimePoint >= allTimes.size()) {
-					logger.error("addTimePoint for " + currentItemId + " is too large");
-					continue;
-				}
-				Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
-				if (!times.equals(0)) {
-					List<DropMatrixElement> elements = segmentedDropMap.getOrDefault(currentItemId, new ArrayList<>());
-					if (elements.isEmpty()) {
-						for (int j = 0; j < sectionNum; j++)
-							elements.add(null);
-					}
-					elements.set(i, new DropMatrixElement(stageId, currentItemId, quantity, times));
-					segmentedDropMap.put(currentItemId, elements);
-				}
-			}
-		}
-		return segmentedDropMap;
+			Map<String, List<DropMatrixElement>> subMap = map.getOrDefault(stageId, new HashMap<>());
+			List<DropMatrixElement> elements = subMap.getOrDefault(itemId, new ArrayList<>());
+			elements.add(element);
+			subMap.put(itemId, elements);
+			map.put(stageId, subMap);
+
+			Map<Integer, Integer> timesMapSubMap = timesMap.getOrDefault(stageId, new HashMap<>());
+			timesMapSubMap.put(section, times);
+			timesMap.put(stageId, timesMapSubMap);
+		});
+
+		map.forEach((stageId, subMap) -> {
+			Map<Integer, Integer> timesSubMap = timesMap.get(stageId);
+			subMap.forEach((itemId, elements) -> {
+				Set<Integer> sectionSet = new HashSet<>();
+				for (int i = 0; i < sectionNum; i++)
+					sectionSet.add(i);
+				elements.forEach(el -> sectionSet.remove(el.getStart().intValue()));
+				sectionSet.forEach(section -> {
+					Integer times =
+							timesSubMap == null || !timesSubMap.containsKey(section) ? 0 : timesSubMap.get(section);
+					DropMatrixElement newElement =
+							new DropMatrixElement(stageId, itemId, 0, times, new Long(section), null);
+					elements.add(newElement);
+				});
+				elements.sort((e1, e2) -> e1.getStart().compareTo(e2.getStart()));
+				elements.forEach(el -> {
+					el.setStart(el.getStart() * intervalMillis + start);
+					el.setEnd(el.getStart() + intervalMillis);
+				});
+			});
+		});
+		return map;
 	}
 
 }

@@ -1,15 +1,22 @@
 package io.penguinstats.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import java.io.Serializable;
 
-@Getter
-@Setter
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 @AllArgsConstructor
-public class Drop {
+@NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Drop implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private String itemId;
-	private int quantity;
+	private Integer quantity;
 
 }

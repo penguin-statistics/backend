@@ -1,11 +1,10 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v1.api;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import io.swagger.annotations.ApiOperation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -16,7 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+import io.swagger.annotations.ApiOperation;
+
+@RestController("formulaController_v1")
 @RequestMapping("/api/formula")
 public class FormulaController {
 

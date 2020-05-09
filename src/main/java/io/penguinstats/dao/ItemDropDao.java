@@ -20,4 +20,7 @@ public interface ItemDropDao extends MongoRepository<ItemDrop, String>, ItemDrop
 
 	List<ItemDrop> findByUserID(String userID);
 
+	@Query("{'$and' : [{'isDeleted' : false}, {'isReliable' : true}, {'stageId': ?0}]}")
+	List<ItemDrop> findValidItemDropByStageId(String stageId);
+
 }

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.StageDao;
 import io.penguinstats.model.Stage;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -46,7 +47,7 @@ public class StageServiceImpl implements StageService {
 	@Override
 	public List<Stage> getAllStages() {
 		List<Stage> stages = stageDao.findAll();
-		LastUpdateTimeUtil.setCurrentTimestamp("stageList");
+		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.STAGE_LIST);
 		return stages;
 	}
 

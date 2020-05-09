@@ -9,11 +9,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import lombok.Getter;
-import lombok.Setter;
+import io.penguinstats.enums.Server;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 @Document(collection = "item_drop_v2")
 public class ItemDrop {
 
@@ -21,6 +26,8 @@ public class ItemDrop {
 	private ObjectId id;
 	@Indexed
 	private String stageId;
+	@Indexed
+	private Server server;
 	private Integer times;
 	private List<Drop> drops;
 	@Indexed
@@ -36,19 +43,6 @@ public class ItemDrop {
 	@Indexed
 	private String userID;
 
-	public ItemDrop(String stageId, Integer times, List<Drop> drops, Long timestamp, String ip, Boolean isReliable,
-			String source, String version, String userID) {
-		this.stageId = stageId;
-		this.times = times;
-		this.drops = drops;
-		this.timestamp = timestamp;
-		this.ip = ip;
-		this.isReliable = isReliable;
-		this.source = source;
-		this.version = version;
-		this.userID = userID;
-	}
-
 	@JsonIgnore
 	public int getDropQuantity(String itemId) {
 		for (Drop drop : this.drops) {
@@ -57,6 +51,12 @@ public class ItemDrop {
 			}
 		}
 		return 0;
+	}
+
+	@JsonIgnore
+	public ItemDrop toNoIDView() {
+		this.id = null;
+		return this;
 	}
 
 }

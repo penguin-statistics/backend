@@ -104,7 +104,7 @@ public class LimitationServiceImpl implements LimitationService {
 		Deque<String> stack = new LinkedList<>();
 		Set<String> hasIterated = new HashSet<>();
 		stack.offerFirst(stageId);
-		Limitation limitation = new Limitation(stageId, null, new ArrayList<>(), new ArrayList<>());
+		Limitation limitation = new Limitation(null, stageId, null, new ArrayList<>(), new ArrayList<>());
 		while (!stack.isEmpty()) {
 			String oneStageId = stack.pollFirst();
 			if (hasIterated.contains(oneStageId))

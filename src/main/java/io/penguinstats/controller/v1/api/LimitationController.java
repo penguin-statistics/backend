@@ -1,4 +1,4 @@
-package io.penguinstats.controller;
+package io.penguinstats.controller.v1.api;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import io.penguinstats.service.LimitationService;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
-@RestController
+@RestController("limitationController_v1")
 @RequestMapping("/api/limitations")
 public class LimitationController {
 
