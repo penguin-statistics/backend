@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v2.api;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.model.Zone;
 import io.penguinstats.service.ZoneService;
+import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
@@ -30,8 +32,9 @@ public class ZoneController {
 		List<Zone> zones = zoneService.getAllZones();
 		zones.forEach(zone -> zone.toNewView());
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.LAST_MODIFIED,
-				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST).toString());
+		String lastModified =
+				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST)));
+		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
 	}
 
