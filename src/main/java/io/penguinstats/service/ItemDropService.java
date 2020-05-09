@@ -47,16 +47,12 @@ public interface ItemDropService {
 	// below is v2
 
 	@Cacheable(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
-			condition = "#filter == null && #userID == null")
+			condition = "#filter == null && #userID == null", sync = true)
 	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID);
-
-	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
-			condition = "#filter == null && #userID == null")
-	List<DropMatrixElement> updateGlobalDropMatrixElements(Server server);
 
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
-			condition = "#filter == null")
+			condition = "#filter == null", sync = true)
 	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
 			Integer interval, Integer range);
 

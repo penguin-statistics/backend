@@ -228,7 +228,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 
-		logger.info(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
+		logger.debug(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
 
 		return results.getMappedResults();
 	}
