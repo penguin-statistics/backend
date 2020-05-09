@@ -30,7 +30,7 @@ public class ZoneController {
 		List<Zone> zones = zoneService.getAllZones();
 		zones.forEach(zone -> zone.toNewView());
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME",
+		headers.add(HttpHeaders.LAST_MODIFIED,
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST).toString());
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
 	}

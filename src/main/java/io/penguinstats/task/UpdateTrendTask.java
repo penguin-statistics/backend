@@ -1,5 +1,8 @@
 package io.penguinstats.task;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +20,16 @@ public class UpdateTrendTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	// TODO: remove initialDelay
-	@Scheduled(fixedRate = 86400000, initialDelay = 3600000)
+	@Scheduled(fixedRate = 86400000)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateTrendTask");
-		for (Server server : Server.values())
-			itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, 1, 14);
+
+		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+		for (Server server : Server.values()) {
+			singleThreadExecutor
+					.execute(() -> itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, 1, 30));
+		}
 	}
 
 }

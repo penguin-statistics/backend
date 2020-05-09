@@ -1,5 +1,8 @@
 package io.penguinstats.task;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +20,16 @@ public class UpdateDropMatrixTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	// TODO: remove initialDelay
-	@Scheduled(fixedRate = 600000, initialDelay = 3600000)
+	@Scheduled(fixedRate = 600000)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateDropMatrixTask");
+
 		itemDropService.updateDropMatrixElements(null, false);
+
+		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
-			itemDropService.updateGlobalDropMatrixElements(server);
+			singleThreadExecutor.execute(() -> itemDropService.generateGlobalDropMatrixElements(server, null));
 		}
 	}
 

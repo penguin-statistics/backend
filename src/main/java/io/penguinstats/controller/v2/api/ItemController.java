@@ -31,7 +31,7 @@ public class ItemController {
 	public ResponseEntity<List<Item>> getAllItems() {
 		List<Item> items = itemService.getAllItems();
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME",
+		headers.add(HttpHeaders.LAST_MODIFIED,
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST).toString());
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}

@@ -1,11 +1,16 @@
 package io.penguinstats.controller.v2.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,6 +35,7 @@ import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
@@ -55,7 +61,15 @@ public class ResultController {
 		logger.info("GET /matrix");
 		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
-			List<DropMatrixElement> elements = itemDropService.generateGlobalDropMatrixElements(server, userID);
+
+			List<DropMatrixElement> elements;
+			if (userID == null) {
+				ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+				Future<List<DropMatrixElement>> future = singleThreadExecutor
+						.submit(() -> itemDropService.generateGlobalDropMatrixElements(server, null));
+				elements = future.get(2, TimeUnit.MINUTES);
+			} else
+				elements = itemDropService.generateGlobalDropMatrixElements(server, userID);
 
 			if (!showClosedZones) {
 				Set<String> openingStages =
@@ -70,9 +84,11 @@ public class ResultController {
 			MatrixResponse result = new MatrixResponse(elements);
 
 			HttpHeaders headers = new HttpHeaders();
-			if (userID == null)
-				headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil
-						.getLastUpdateTime(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server).toString());
+			if (userID == null) {
+				String lastModified = DateUtil.formatDate(new Date(
+						LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server)));
+				headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+			}
 			return new ResponseEntity<MatrixResponse>(result, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);
@@ -84,40 +100,46 @@ public class ResultController {
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<TrendResponse> getAllSegmentedDropResults(
 			@RequestParam(name = "interval_day", required = false, defaultValue = "1") int interval,
-			@RequestParam(name = "range_day", required = false, defaultValue = "14") int range,
+			@RequestParam(name = "range_day", required = false, defaultValue = "30") int range,
 			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
-		Map<String, Map<String, List<DropMatrixElement>>> map =
-				itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, interval, range);
+		try {
+			Map<String, Map<String, List<DropMatrixElement>>> map;
+			ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+			Future<Map<String, Map<String, List<DropMatrixElement>>>> future = singleThreadExecutor
+					.submit(() -> itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, interval, range));
+			map = future.get(3, TimeUnit.MINUTES);
 
-		Map<String, StageTrend> stageTrendMap = new HashMap<>();
-		map.forEach((stageId, subMap) -> {
-			Long[] startTime = new Long[] {null};
-			Map<String, TrendDetail> trendDetailMap = new HashMap<>();
-			subMap.forEach((itemId, elements) -> {
-				List<Integer> quantityList = new ArrayList<>(elements.size());
-				List<Integer> timesList = new ArrayList<>(elements.size());
-				elements.forEach(element -> {
-					quantityList.add(element != null ? element.getQuantity() : 0);
-					timesList.add(element != null ? element.getTimes() : 0);
-					Long start = element.getStart();
-					if (startTime[0] == null || start != null && start.compareTo(startTime[0]) < 0)
-						startTime[0] = start;
+			Map<String, StageTrend> stageTrendMap = new HashMap<>();
+			map.forEach((stageId, subMap) -> {
+				Long[] startTime = new Long[] {null};
+				Map<String, TrendDetail> trendDetailMap = new HashMap<>();
+				subMap.forEach((itemId, elements) -> {
+					List<Integer> quantityList = new ArrayList<>(elements.size());
+					List<Integer> timesList = new ArrayList<>(elements.size());
+					elements.forEach(element -> {
+						quantityList.add(element != null ? element.getQuantity() : 0);
+						timesList.add(element != null ? element.getTimes() : 0);
+						Long start = element.getStart();
+						if (startTime[0] == null || start != null && start.compareTo(startTime[0]) < 0)
+							startTime[0] = start;
+					});
+					TrendDetail trendDetail = new TrendDetail(timesList, quantityList);
+					trendDetailMap.put(itemId, trendDetail);
 				});
-				TrendDetail trendDetail = new TrendDetail(timesList, quantityList);
-				trendDetailMap.put(itemId, trendDetail);
+				StageTrend stageTrend = new StageTrend(startTime[0], trendDetailMap);
+				stageTrendMap.put(stageId, stageTrend);
 			});
-			StageTrend stageTrend = new StageTrend(startTime[0], trendDetailMap);
-			stageTrendMap.put(stageId, stageTrend);
-		});
-		TrendResponse result = new TrendResponse(stageTrendMap);
+			TrendResponse result = new TrendResponse(stageTrendMap);
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("LAST-UPDATE-TIME",
-				LastUpdateTimeUtil
-						.getLastUpdateTime(
-								LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range)
-						.toString());
-		return new ResponseEntity<TrendResponse>(result, headers, HttpStatus.OK);
+			String lastModified = DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(
+					LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range)));
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+			return new ResponseEntity<TrendResponse>(result, headers, HttpStatus.OK);
+		} catch (Exception e) {
+			logger.error("Error in getAllSegmentedDropResults: ", e);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }

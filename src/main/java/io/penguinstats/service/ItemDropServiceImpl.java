@@ -262,18 +262,15 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Override
 	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
+		Long startTime = System.currentTimeMillis();
 		Map<String, List<TimeRange>> timeRangeMap =
 				dropInfoService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
 		List<DropMatrixElement> result =
 				generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
+		logger.info("generateGlobalDropMatrixElements done in {} ms", System.currentTimeMillis() - startTime);
 		return result;
-	}
-
-	@Override
-	public List<DropMatrixElement> updateGlobalDropMatrixElements(Server server) {
-		return generateGlobalDropMatrixElements(server, null);
 	}
 
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
@@ -283,9 +280,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Map<String, Map<String, List<Document>>> docsMapByStageIdAndTimeRange = new HashMap<>();
 		stagesMapByRange.forEach((key, stages) -> {
 			QueryConditions conditions = new QueryConditions();
-			// TODO: uncomment this
-			//			if (server != null)
-			// conditions.addServer(server);
+			if (server != null)
+				conditions.addServer(server);
 			if (userID != null)
 				conditions.addUserID(userID);
 			Long[] timestamps = timeRangeStrToLong(key);
@@ -413,6 +409,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				.setCurrentTimestamp(LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
 		Map<String, Map<String, List<DropMatrixElement>>> result =
 				generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
+		logger.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
 		return result;
 	}
 
@@ -429,8 +426,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		}
 
 		QueryConditions conditions = new QueryConditions();
-		// TODO: uncomment this
-		//		conditions.addServer(server);
+		conditions.addServer(server);
 		conditions.addStage(null, start, end);
 		conditions.setInterval(interval);
 		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
