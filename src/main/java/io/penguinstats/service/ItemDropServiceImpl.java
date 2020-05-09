@@ -273,6 +273,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return result;
 	}
 
+	@Override
+	public List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server) {
+		return generateGlobalDropMatrixElements(server, null);
+	}
+
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
 			Map<String, List<TimeRange>> timeRangeMap, Server server, String userID) {
 		Map<String, List<String>> stagesMapByRange = transferTimeRangeMapByStageIdToStagesMapByRange(timeRangeMap);
@@ -311,21 +316,21 @@ public class ItemDropServiceImpl implements ItemDropService {
 				Set<String> dropSet = dropInfoService.getDropSet(server, stageId, start);
 				docs.forEach(doc -> {
 					String itemId = doc.getString("itemId");
-					Integer quantity = doc.getInteger("quantity");
-					Integer times = doc.getInteger("times");
-					DropMatrixElement element = new DropMatrixElement(stageId, itemId, quantity, times, start, end);
-
-					Map<String, List<DropMatrixElement>> mapByItemId =
-							mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
-					List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
-					elements.add(element);
-					mapByItemId.put(itemId, elements);
-					mapByStageIdAndItemId.put(stageId, mapByItemId);
-
 					if (!dropSet.contains(itemId))
-						logger.error("Item " + itemId + " is invalid in stage " + stageId);
-					else
+						logger.warn("Item " + itemId + " is invalid in stage " + stageId);
+					else {
 						dropSet.remove(itemId);
+						Integer quantity = doc.getInteger("quantity");
+						Integer times = doc.getInteger("times");
+						DropMatrixElement element = new DropMatrixElement(stageId, itemId, quantity, times, start, end);
+
+						Map<String, List<DropMatrixElement>> mapByItemId =
+								mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
+						List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
+						elements.add(element);
+						mapByItemId.put(itemId, elements);
+						mapByStageIdAndItemId.put(stageId, mapByItemId);
+					}
 				});
 
 				if (!dropSet.isEmpty()) {
@@ -476,6 +481,12 @@ public class ItemDropServiceImpl implements ItemDropService {
 			});
 		});
 		return map;
+	}
+
+	@Override
+	public Map<String, Map<String, List<DropMatrixElement>>> refreshSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Integer range) {
+		return generateSegmentedGlobalDropMatrixElementMap(server, interval, range);
 	}
 
 }

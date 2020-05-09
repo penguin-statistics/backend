@@ -50,10 +50,20 @@ public interface ItemDropService {
 			condition = "#filter == null && #userID == null", sync = true)
 	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID);
 
+	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
+			condition = "#filter == null && #userID == null")
+	List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server);
+
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null", sync = true)
 	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
+			Integer interval, Integer range);
+
+	@CachePut(value = "all-segmented-drop-matrix-v2",
+			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
+			condition = "#filter == null")
+	Map<String, Map<String, List<DropMatrixElement>>> refreshSegmentedGlobalDropMatrixElementMap(Server server,
 			Integer interval, Integer range);
 
 }

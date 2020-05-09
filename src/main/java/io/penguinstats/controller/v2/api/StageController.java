@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v2.api;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.Stage;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.StageService;
+import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
@@ -53,9 +55,10 @@ public class StageController {
 
 		Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
-
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.LAST_MODIFIED, lastUpdateTime.toString());
+		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+
 		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 	}
 

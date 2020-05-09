@@ -29,7 +29,7 @@ public class UpdateDropMatrixTask implements Task {
 
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> itemDropService.generateGlobalDropMatrixElements(server, null));
+			singleThreadExecutor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server));
 		}
 	}
 

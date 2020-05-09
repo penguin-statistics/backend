@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v2.api;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
+import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
 
@@ -31,8 +33,9 @@ public class ItemController {
 	public ResponseEntity<List<Item>> getAllItems() {
 		List<Item> items = itemService.getAllItems();
 		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.LAST_MODIFIED,
-				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST).toString());
+		String lastModified =
+				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST)));
+		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
