@@ -2,6 +2,7 @@ package io.penguinstats.service;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
@@ -42,6 +43,32 @@ public class DropInfoServiceImpl implements DropInfoService {
 		List<DropInfo> result = dropInfoDao.findDropInfosByServer(server);
 		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server);
 		return result;
+	}
+
+	/** 
+	 * @Title: getLatestDropInfosMapByServer 
+	 * @Description: Get lists of the latest drop info in every stage. Key is stageId.
+	 * @param server
+	 * @return Map<String, List<DropInfo>>
+	 */
+	@Override
+	public Map<String, List<DropInfo>> getLatestDropInfosMapByServer(Server server) {
+		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
+		List<DropInfo> infos = dropInfoDao.findDropInfosByServer(server);
+		Map<String, List<DropInfo>> infosByStageId = infos.stream().collect(groupingBy(DropInfo::getStageId));
+
+		infosByStageId.forEach((stageId, infosForOneStage) -> {
+			infosForOneStage.sort((info1, info2) -> {
+				TimeRange range1 = timeRangeMap.get(info1.getTimeRangeID());
+				TimeRange range2 = timeRangeMap.get(info2.getTimeRangeID());
+				return range2.getStart().compareTo(range1.getStart());
+			});
+			String targetTimeRangeID = infosForOneStage.get(0).getTimeRangeID();
+			List<DropInfo> filteredInfosForOneStage = infosForOneStage.stream()
+					.filter(info -> targetTimeRangeID.equals(info.getTimeRangeID())).collect(toList());
+			infosByStageId.put(stageId, filteredInfosForOneStage);
+		});
+		return infosByStageId;
 	}
 
 	/** 

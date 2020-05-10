@@ -19,8 +19,11 @@ import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.Stage;
+import io.penguinstats.model.StageExistence;
+import io.penguinstats.model.TimeRange;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.StageService;
+import io.penguinstats.service.TimeRangeService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
@@ -33,23 +36,26 @@ public class StageController {
 	private StageService stageService;
 	@Autowired
 	private DropInfoService dropInfoService;
+	@Autowired
+	private TimeRangeService timeRangeService;
 
 	@ApiOperation("Get all stages")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Stage>>
 			getAllStages(@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
 		List<Stage> stages = stageService.getAllStages();
-		Map<String, List<DropInfo>> dropInfosMap =
-				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
+		Map<String, List<DropInfo>> dropInfosMap = dropInfoService.getLatestDropInfosMapByServer(server);
+		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		Iterator<Stage> iter = stages.iterator();
 		while (iter.hasNext()) {
 			Stage stage = iter.next();
 			List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
 			if (infos != null && !infos.isEmpty()) {
+				TimeRange range = timeRangeMap.get(infos.get(0).getTimeRangeID());
 				infos.forEach(info -> info.toStageView());
 				stage.setDropInfos(infos);
-			} else
-				iter.remove();
+				stage.setExistence(new StageExistence(range.getStart(), range.getEnd()));
+			}
 		}
 		stages.forEach(stage -> stage.toNewView());
 
@@ -74,8 +80,10 @@ public class StageController {
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		List<DropInfo> infos = dropInfosMap.get(stageId);
 		if (infos != null && !infos.isEmpty()) {
+			TimeRange range = timeRangeService.getTimeRangeByRangeID(infos.get(0).getTimeRangeID());
 			infos.forEach(info -> info.toStageView());
 			stage.setDropInfos(infos);
+			stage.setExistence(new StageExistence(range.getStart(), range.getEnd()));
 		}
 		stage.toNewView();
 		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);

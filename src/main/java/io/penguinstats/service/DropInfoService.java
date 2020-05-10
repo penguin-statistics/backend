@@ -22,6 +22,9 @@ public interface DropInfoService {
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server", condition = "#filter == null")
 	List<DropInfo> getDropInfosByServer(Server server);
 
+	@Cacheable(value = "maps", key = "'latestDropInfosMap_' + #server", condition = "#filter == null")
+	public Map<String, List<DropInfo>> getLatestDropInfosMapByServer(Server server);
+
 	@Cacheable(value = "maps", key = "'latestTimeRangeMap_' + #server", condition = "#filter == null")
 	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
