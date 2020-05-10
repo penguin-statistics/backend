@@ -1,5 +1,7 @@
 package io.penguinstats.service;
 
+import static java.util.stream.Collectors.groupingBy;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -280,41 +282,43 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
 			Map<String, List<TimeRange>> timeRangeMap, Server server, String userID) {
-		Map<String, List<String>> stagesMapByRange = transferTimeRangeMapByStageIdToStagesMapByRange(timeRangeMap);
+		Integer maxSize = null;
+		for (String stageId : timeRangeMap.keySet()) {
+			List<TimeRange> ranges = timeRangeMap.get(stageId);
+			if (maxSize == null || maxSize < ranges.size())
+				maxSize = ranges.size();
+		}
 
-		Map<String, Map<String, List<Document>>> docsMapByStageIdAndTimeRange = new HashMap<>();
-		stagesMapByRange.forEach((key, stages) -> {
+		Map<String, Map<String, List<DropMatrixElement>>> mapByStageIdAndItemId = new HashMap<>();
+		for (int i = 0; i < maxSize; i++) {
 			QueryConditions conditions = new QueryConditions();
 			if (server != null)
 				conditions.addServer(server);
 			if (userID != null)
 				conditions.addUserID(userID);
-			Long[] timestamps = timeRangeStrToLong(key);
-			Long start = timestamps[0];
-			Long end = timestamps[1];
-			stages.forEach(stageId -> conditions.addStage(stageId, start, end));
+
+			Map<String, TimeRange> currentRangesByStageId = new HashMap<>();
+			for (String stageId : timeRangeMap.keySet()) {
+				List<TimeRange> ranges = timeRangeMap.get(stageId);
+				if (i < ranges.size()) {
+					TimeRange range = ranges.get(i);
+					conditions.addStage(stageId, range.getStart(), range.getEnd());
+					currentRangesByStageId.put(stageId, range);
+				}
+			}
 
 			List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
-			docs.forEach(doc -> {
-				String stageId = doc.getString("stageId");
-				Map<String, List<Document>> docsMapByStart =
-						docsMapByStageIdAndTimeRange.getOrDefault(stageId, new HashMap<>());
-				List<Document> subDocs = docsMapByStart.getOrDefault(key, new ArrayList<>());
-				subDocs.add(doc);
-				docsMapByStart.put(key, subDocs);
-				docsMapByStageIdAndTimeRange.put(stageId, docsMapByStart);
-			});
-		});
+			Map<String, List<Document>> docsGroupByStageId =
+					docs.stream().collect(groupingBy(doc -> doc.getString("stageId")));
+			for (String stageId : docsGroupByStageId.keySet()) {
+				List<Document> docsForOneStage = docsGroupByStageId.get(stageId);
+				TimeRange currentRange = currentRangesByStageId.get(stageId);
+				Integer timesForStage = docsForOneStage.get(0).getInteger("times");
+				Set<String> dropSet = dropInfoService.getDropSet(server, stageId, currentRange.getStart());
+				Map<String, List<DropMatrixElement>> mapByItemId =
+						mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
 
-		Map<String, Map<String, List<DropMatrixElement>>> mapByStageIdAndItemId = new HashMap<>();
-		docsMapByStageIdAndTimeRange.forEach((stageId, docsMapByStart) -> {
-			docsMapByStart.forEach((key, docs) -> {
-				Long[] timestamps = timeRangeStrToLong(key);
-				Long start = timestamps[0];
-				Long end = timestamps[1];
-				Integer timesForStage = docs.get(0).getInteger("times");
-				Set<String> dropSet = dropInfoService.getDropSet(server, stageId, start);
-				docs.forEach(doc -> {
+				docsForOneStage.forEach(doc -> {
 					String itemId = doc.getString("itemId");
 					if (!dropSet.contains(itemId))
 						logger.warn("Item " + itemId + " is invalid in stage " + stageId);
@@ -322,31 +326,26 @@ public class ItemDropServiceImpl implements ItemDropService {
 						dropSet.remove(itemId);
 						Integer quantity = doc.getInteger("quantity");
 						Integer times = doc.getInteger("times");
-						DropMatrixElement element = new DropMatrixElement(stageId, itemId, quantity, times, start, end);
-
-						Map<String, List<DropMatrixElement>> mapByItemId =
-								mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
+						DropMatrixElement element = new DropMatrixElement(stageId, itemId, quantity, times,
+								currentRange.getStart(), currentRange.getEnd());
 						List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
 						elements.add(element);
 						mapByItemId.put(itemId, elements);
-						mapByStageIdAndItemId.put(stageId, mapByItemId);
 					}
 				});
 
 				if (!dropSet.isEmpty()) {
 					dropSet.forEach(itemId -> {
-						DropMatrixElement element =
-								new DropMatrixElement(stageId, itemId, 0, timesForStage, start, end);
-						Map<String, List<DropMatrixElement>> mapByItemId =
-								mapByStageIdAndItemId.getOrDefault(stageId, new HashMap<>());
+						DropMatrixElement element = new DropMatrixElement(stageId, itemId, 0, timesForStage,
+								currentRange.getStart(), currentRange.getEnd());
 						List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
 						elements.add(element);
 						mapByItemId.put(itemId, elements);
-						mapByStageIdAndItemId.put(stageId, mapByItemId);
 					});
 				}
-			});
-		});
+				mapByStageIdAndItemId.put(stageId, mapByItemId);
+			}
+		}
 
 		List<DropMatrixElement> result = new ArrayList<>();
 		mapByStageIdAndItemId.forEach((stageId, mapByItemId) -> {
@@ -356,31 +355,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 			});
 		});
 		return result;
-	}
-
-	private Map<String, List<String>>
-			transferTimeRangeMapByStageIdToStagesMapByRange(Map<String, List<TimeRange>> timeRangeMap) {
-		Map<String, List<String>> stagesMapByRange = new HashMap<>();
-		timeRangeMap.forEach((stageId, ranges) -> {
-			ranges.forEach(range -> {
-				String key = timeRangeLongToStr(range.getStart(), range.getEnd());
-				List<String> stages = stagesMapByRange.getOrDefault(key, new ArrayList<>());
-				stages.add(stageId);
-				stagesMapByRange.put(key, stages);
-			});
-		});
-		return stagesMapByRange;
-	}
-
-	private Long[] timeRangeStrToLong(String str) {
-		String[] strs = str.split("_");
-		Long start = "null".equals(strs[0]) ? null : Long.parseLong(strs[0]);
-		Long end = "null".equals(strs[1]) ? null : Long.parseLong(strs[1]);
-		return new Long[] {start, end};
-	}
-
-	private String timeRangeLongToStr(Long start, Long end) {
-		return start + "_" + end;
 	}
 
 	private DropMatrixElement combineElements(List<DropMatrixElement> elements) {
