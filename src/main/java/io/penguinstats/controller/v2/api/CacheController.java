@@ -38,4 +38,10 @@ public class CacheController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
+	@DeleteMapping(path = "/notice")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'noticeList'")})
+	public ResponseEntity<String> evictNoticeCache() {
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 }

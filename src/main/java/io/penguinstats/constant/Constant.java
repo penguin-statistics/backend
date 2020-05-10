@@ -14,6 +14,7 @@ public class Constant {
 		public static final String ZONE_LIST = "zone_list";
 		public static final String STAGE_LIST = "stage_list";
 		public static final String DROP_INFO_LIST = "drop_info_list";
+		public static final String NOTICE_LIST = "notice_list";
 	}
 
 }
