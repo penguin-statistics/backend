@@ -34,7 +34,7 @@ public class Item implements Serializable {
 	private String itemId;
 	private String name;
 	@JsonProperty("name_i18n")
-	private Map<Server, String> nameMap;
+	private Map<String, String> nameMap;
 	private Integer sortId;
 	private Integer rarity;
 	private Map<Server, ItemExistence> existence;

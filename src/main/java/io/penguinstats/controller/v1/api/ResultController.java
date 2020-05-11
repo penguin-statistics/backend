@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.Stage;
@@ -93,6 +95,7 @@ public class ResultController {
 							.getLastUpdateTime(
 									isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
 							.toString());
+			headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 			return new ResponseEntity<>(obj.toString(), headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);

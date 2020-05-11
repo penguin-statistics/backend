@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -37,6 +39,7 @@ public class ItemController {
 			items.forEach(item -> item.toNonI18nView());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("itemList").toString());
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
@@ -45,11 +48,13 @@ public class ItemController {
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId,
 			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
 		Item item = itemService.getItemByItemId(itemId);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 		if (item == null)
-			return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Item>(headers, HttpStatus.NOT_FOUND);
 		if (!i18n)
 			item.toNonI18nView();
-		return new ResponseEntity<Item>(item, HttpStatus.OK);
+		return new ResponseEntity<Item>(item, headers, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")

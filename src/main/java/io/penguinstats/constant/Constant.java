@@ -7,6 +7,8 @@ public class Constant {
 
 	public static final int MAX_SECTION_NUM = 90;
 
+	public static final String API_V2 = "/api/v2";
+
 	public static class LastUpdateMapKeyName {
 		public static final String MATRIX_RESULT = "matrix_result";
 		public static final String TREND_RESULT = "trend_result";
@@ -15,6 +17,10 @@ public class Constant {
 		public static final String STAGE_LIST = "stage_list";
 		public static final String DROP_INFO_LIST = "drop_info_list";
 		public static final String NOTICE_LIST = "notice_list";
+	}
+
+	public static class CustomHeader {
+		public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
 	}
 
 }

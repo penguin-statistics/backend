@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.penguinstats.enums.Server;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,7 +38,7 @@ public class Stage implements Serializable {
 	private String zoneId;
 	private String code;
 	@JsonProperty("code_i18n")
-	private Map<Server, String> codeMap;
+	private Map<String, String> codeMap;
 	private Integer apCost;
 	private Boolean isGacha;
 	@Transient

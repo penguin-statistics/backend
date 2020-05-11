@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.penguinstats.model.Stage;
 import io.penguinstats.service.StageService;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -34,6 +36,7 @@ public class StageController {
 		if (zoneId == null) {
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("stageList").toString());
+			headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 			return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 		} else {
 			return new ResponseEntity<List<Stage>>(stages, HttpStatus.OK);
@@ -46,7 +49,9 @@ public class StageController {
 	public ResponseEntity<Stage> getStageByStageId(@PathVariable("stageId") String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
 		stage.toLegacyView();
-		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
+		return new ResponseEntity<Stage>(stage, headers, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 
 	@GetMapping(path = "/cache")

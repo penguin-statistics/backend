@@ -9,12 +9,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("formulaController_v1")
@@ -37,7 +40,10 @@ public class FormulaController {
 				currentLine = reader.readLine();
 			}
 			reader.close();
-			return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
+			return new ResponseEntity<>(builder.toString(), headers, HttpStatus.OK);
 		} catch (IOException e) {
 			logger.error("Error in getFormula: ", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

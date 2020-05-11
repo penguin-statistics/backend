@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.penguinstats.model.User;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
@@ -42,17 +45,19 @@ public class UserController {
 				userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
 			}
 			User user = userService.getUserByUserID(userID);
+			HttpHeaders headers = new HttpHeaders();
+			headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 			if (user == null) {
 				if (isInternal) {
 					userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
 					if (userID == null) {
 						logger.error("Failed to create new user.");
-						return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+						return new ResponseEntity<>(headers, HttpStatus.INTERNAL_SERVER_ERROR);
 					} else {
 						userService.addTag(userID, "internal");
 					}
 				} else {
-					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+					return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
 				}
 			}
 			CookieUtil.setUserIDCookie(response, userID);

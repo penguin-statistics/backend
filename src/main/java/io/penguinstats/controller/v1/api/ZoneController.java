@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
 import io.penguinstats.model.Zone;
 import io.penguinstats.service.ZoneService;
 import io.penguinstats.util.LastUpdateTimeUtil;
@@ -34,6 +36,7 @@ public class ZoneController {
 		zones.forEach(zone -> zone = i18n ? zone.toLegacyI18nView() : zone.toLegacyNonI18nView());
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("LAST-UPDATE-TIME", LastUpdateTimeUtil.getLastUpdateTime("zoneList").toString());
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
 	}
 
@@ -45,7 +48,9 @@ public class ZoneController {
 		if (zone == null)
 			return new ResponseEntity<Zone>(HttpStatus.NOT_FOUND);
 		zone = i18n ? zone.toLegacyI18nView() : zone.toLegacyNonI18nView();
-		return new ResponseEntity<Zone>(zone, HttpStatus.OK);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
+		return new ResponseEntity<Zone>(zone, headers, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")

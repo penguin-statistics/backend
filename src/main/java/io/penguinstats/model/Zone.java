@@ -36,14 +36,13 @@ public class Zone implements Serializable {
 	private String type;
 	private String zoneName;
 	@JsonProperty("zoneName_i18n")
-	private Map<Server, String> zoneNameMap;
+	private Map<String, String> zoneNameMap;
 	private Map<Server, ZoneExistence> existence;
 	private List<String> stages;
 	private Long openTime;
 	private Long closeTime;
 
 	@JsonIgnore
-	@Deprecated
 	public boolean isInTimeRange(long timestamp) {
 		if (this.openTime != null && this.openTime.compareTo(timestamp) > 0)
 			return false;
