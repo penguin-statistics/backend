@@ -10,7 +10,6 @@ import org.springframework.cache.annotation.Caching;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
-import io.penguinstats.model.TimeRange;
 
 public interface DropInfoService {
 
@@ -22,11 +21,11 @@ public interface DropInfoService {
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server", condition = "#filter == null")
 	List<DropInfo> getDropInfosByServer(Server server);
 
+	@Cacheable(value = "lists", key = "'dropInfoList_' + #server + '_' + #stageId", condition = "#filter == null")
+	List<DropInfo> getDropInfosByServerAndStageId(Server server, String stageId);
+
 	@Cacheable(value = "maps", key = "'latestDropInfosMap_' + #server", condition = "#filter == null")
 	public Map<String, List<DropInfo>> getLatestDropInfosMapByServer(Server server);
-
-	@Cacheable(value = "maps", key = "'latestTimeRangeMap_' + #server", condition = "#filter == null")
-	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
 	Map<String, Set<String>> getDropSetMap(Server server, Long time);
 

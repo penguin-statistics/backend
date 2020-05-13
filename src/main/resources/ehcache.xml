@@ -152,7 +152,7 @@
     
     <cache alias="all-segmented-drop-matrix-v2" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
-        <value-type>java.util.Map</value-type>
+        <value-type>java.util.List</value-type>
         <expiry>
             <none/>
         </expiry>

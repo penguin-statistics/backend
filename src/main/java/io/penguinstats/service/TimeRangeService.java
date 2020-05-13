@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.TimeRange;
 
 public interface TimeRangeService {
@@ -22,5 +23,10 @@ public interface TimeRangeService {
 
 	@Cacheable(value = "maps", key = "'timeRangeMap'")
 	Map<String, TimeRange> getTimeRangeMap();
+
+	@Cacheable(value = "maps", key = "'latestTimeRangeMap_' + #server", condition = "#filter == null")
+	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
+
+	List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
 
 }

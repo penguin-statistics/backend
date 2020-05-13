@@ -10,8 +10,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,6 +55,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Autowired
 	private DropInfoService dropInfoService;
+
+	@Autowired
+	private TimeRangeService timeRangeService;
 
 	@Override
 	public void saveItemDrop(ItemDrop itemDrop) {
@@ -96,6 +101,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@Override
 	public List<ItemDrop> getAllItemDrops() {
 		return itemDropDao.findAll();
+	}
+
+	@Override
+	public Page<ItemDrop> getAllItemDrops(Pageable pageable) {
+		return itemDropDao.findAll(pageable);
 	}
 
 	@Override
@@ -266,9 +276,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
 		Long startTime = System.currentTimeMillis();
 		Map<String, List<TimeRange>> timeRangeMap =
-				dropInfoService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
+				timeRangeService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
+		List<String> userIDs = userID != null ? Arrays.asList(userID) : new ArrayList<>();
 		List<DropMatrixElement> result =
-				generateDropMatrixElementsFromTimeRangeMapByStageId(timeRangeMap, server, userID);
+				generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap, new ArrayList<>(), userIDs);
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 		logger.info("generateGlobalDropMatrixElements done in {} ms", System.currentTimeMillis() - startTime);
@@ -280,8 +291,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return generateGlobalDropMatrixElements(server, null);
 	}
 
-	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(
-			Map<String, List<TimeRange>> timeRangeMap, Server server, String userID) {
+	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(Server server,
+			Map<String, List<TimeRange>> timeRangeMap, List<String> itemIds, List<String> userIDs) {
 		Integer maxSize = null;
 		for (String stageId : timeRangeMap.keySet()) {
 			List<TimeRange> ranges = timeRangeMap.get(stageId);
@@ -294,8 +305,12 @@ public class ItemDropServiceImpl implements ItemDropService {
 			QueryConditions conditions = new QueryConditions();
 			if (server != null)
 				conditions.addServer(server);
-			if (userID != null)
-				conditions.addUserID(userID);
+			if (Optional.ofNullable(userIDs).map(list -> !list.isEmpty()).orElse(false)) {
+				userIDs.forEach(userID -> conditions.addUserID(userID));
+			}
+			if (Optional.ofNullable(itemIds).map(list -> !list.isEmpty()).orElse(false)) {
+				itemIds.forEach(itemId -> conditions.addItemId(itemId));
+			}
 
 			Map<String, TimeRange> currentRangesByStageId = new HashMap<>();
 			for (String stageId : timeRangeMap.keySet()) {
@@ -336,11 +351,13 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 				if (!dropSet.isEmpty()) {
 					dropSet.forEach(itemId -> {
-						DropMatrixElement element = new DropMatrixElement(stageId, itemId, 0, timesForStage,
-								currentRange.getStart(), currentRange.getEnd());
-						List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
-						elements.add(element);
-						mapByItemId.put(itemId, elements);
+						if (itemIds == null || itemId.isEmpty() || itemIds.contains(itemId)) {
+							DropMatrixElement element = new DropMatrixElement(stageId, itemId, 0, timesForStage,
+									currentRange.getStart(), currentRange.getEnd());
+							List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());
+							elements.add(element);
+							mapByItemId.put(itemId, elements);
+						}
 					});
 				}
 				mapByStageIdAndItemId.put(stageId, mapByItemId);
@@ -380,61 +397,69 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	@Override
-	public Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Integer range) {
+	public List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Integer interval,
+			Integer range) {
 		Long end = System.currentTimeMillis();
 		Long start = end - TimeUnit.DAYS.toMillis(range);
+		List<DropMatrixElement> result =
+				generateSegmentedDropMatrixElementMap(server, null, null, start, end, null, interval);
 		LastUpdateTimeUtil
 				.setCurrentTimestamp(LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
-		Map<String, Map<String, List<DropMatrixElement>>> result =
-				generateSegmentedGlobalDropMatrixElementMap(server, interval, start, end);
 		logger.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
 		return result;
 	}
 
-	private Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Long start, Long end) {
+	private List<DropMatrixElement> generateSegmentedDropMatrixElementMap(Server server, String stageId,
+			List<String> itemIds, Long start, Long end, List<String> userIDs, Integer interval) {
 		if (start == null || end == null || start.compareTo(end) >= 0)
-			return new HashMap<>();
+			return new ArrayList<>();
 		Long intervalMillis = TimeUnit.DAYS.toMillis(interval);
 		int sectionNum =
 				new Double(Math.ceil(new Double((end - start) * 1.0 / intervalMillis).doubleValue())).intValue();
 		if (sectionNum > Constant.MAX_SECTION_NUM) {
 			logger.error("exceed max section num, now is " + sectionNum);
-			return new HashMap<>();
+			return new ArrayList<>();
 		}
 
 		QueryConditions conditions = new QueryConditions();
-		conditions.addServer(server);
-		conditions.addStage(null, start, end);
+		conditions.addStage(stageId, start, end);
 		conditions.setInterval(interval);
+		if (server != null)
+			conditions.addServer(server);
+		if (Optional.ofNullable(userIDs).map(list -> !list.isEmpty()).orElse(false)) {
+			userIDs.forEach(userID -> conditions.addUserID(userID));
+		}
+		if (Optional.ofNullable(itemIds).map(list -> !list.isEmpty()).orElse(false)) {
+			itemIds.forEach(itemId -> conditions.addItemId(itemId));
+		}
+
 		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
 
 		Map<String, Map<String, List<DropMatrixElement>>> map = new HashMap<>();
 		Map<String, Map<Integer, Integer>> timesMap = new HashMap<>();
 		docs.forEach(doc -> {
-			String stageId = doc.getString("stageId");
+			String stageIdInDoc = doc.getString("stageId");
 			String itemId = doc.getString("itemId");
 			Integer quantity = doc.getInteger("quantity");
 			Integer times = doc.getInteger("times");
 			Integer section = doc.getDouble("section").intValue();
 
 			DropMatrixElement element =
-					new DropMatrixElement(stageId, itemId, quantity, times, new Long(section), null);
+					new DropMatrixElement(stageIdInDoc, itemId, quantity, times, new Long(section), null);
 
-			Map<String, List<DropMatrixElement>> subMap = map.getOrDefault(stageId, new HashMap<>());
+			Map<String, List<DropMatrixElement>> subMap = map.getOrDefault(stageIdInDoc, new HashMap<>());
 			List<DropMatrixElement> elements = subMap.getOrDefault(itemId, new ArrayList<>());
 			elements.add(element);
 			subMap.put(itemId, elements);
-			map.put(stageId, subMap);
+			map.put(stageIdInDoc, subMap);
 
-			Map<Integer, Integer> timesMapSubMap = timesMap.getOrDefault(stageId, new HashMap<>());
+			Map<Integer, Integer> timesMapSubMap = timesMap.getOrDefault(stageIdInDoc, new HashMap<>());
 			timesMapSubMap.put(section, times);
-			timesMap.put(stageId, timesMapSubMap);
+			timesMap.put(stageIdInDoc, timesMapSubMap);
 		});
 
-		map.forEach((stageId, subMap) -> {
-			Map<Integer, Integer> timesSubMap = timesMap.get(stageId);
+		map.forEach((stageIdInDoc, subMap) -> {
+			Map<Integer, Integer> timesSubMap = timesMap.get(stageIdInDoc);
 			subMap.forEach((itemId, elements) -> {
 				Set<Integer> sectionSet = new HashSet<>();
 				for (int i = 0; i < sectionNum; i++)
@@ -444,7 +469,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 					Integer times =
 							timesSubMap == null || !timesSubMap.containsKey(section) ? 0 : timesSubMap.get(section);
 					DropMatrixElement newElement =
-							new DropMatrixElement(stageId, itemId, 0, times, new Long(section), null);
+							new DropMatrixElement(stageIdInDoc, itemId, 0, times, new Long(section), null);
 					elements.add(newElement);
 				});
 				elements.sort((e1, e2) -> e1.getStart().compareTo(e2.getStart()));
@@ -454,13 +479,26 @@ public class ItemDropServiceImpl implements ItemDropService {
 				});
 			});
 		});
-		return map;
+		return map.values().stream().flatMap(m -> m.values().stream().flatMap(List::stream))
+				.collect(Collectors.toList());
 	}
 
 	@Override
-	public Map<String, Map<String, List<DropMatrixElement>>> refreshSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Integer range) {
+	public List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Integer interval,
+			Integer range) {
 		return generateSegmentedGlobalDropMatrixElementMap(server, interval, range);
+	}
+
+	@Override
+	public List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
+			Long start, Long end, List<String> userIDs, Integer interval) {
+		List<TimeRange> splittedRanges = timeRangeService.getSplittedTimeRanges(server, stageId, start, end);
+		Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
+		timeRangeMap.put(stageId, splittedRanges);
+		if (interval == null)
+			return generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap, itemIds, userIDs);
+		else
+			return generateSegmentedDropMatrixElementMap(server, stageId, itemIds, start, end, userIDs, interval);
 	}
 
 }
