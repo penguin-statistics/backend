@@ -1,0 +1,6 @@
+spring:
+    data:
+        mongodb:
+            uri: mongodb://localhost:27017/penguin_stats_test
+    main:
+        allow-bean-definition-overriding: true
