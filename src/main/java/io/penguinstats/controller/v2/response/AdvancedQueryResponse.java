@@ -18,7 +18,17 @@ public class AdvancedQueryResponse implements Serializable, QueryResponse {
 
 	private static final long serialVersionUID = 1L;
 
+	public AdvancedQueryResponse(List<BasicQueryResponse> results) {
+		this.results = results;
+	}
+
+	public AdvancedQueryResponse(String error) {
+		this.error = error;
+	}
+
 	@JsonProperty("advanced_results")
 	private List<BasicQueryResponse> results;
+
+	private String error;
 
 }

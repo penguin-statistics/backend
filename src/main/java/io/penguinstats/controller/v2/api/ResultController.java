@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.controller.v2.mapper.QueryMapper;
 import io.penguinstats.controller.v2.request.AdvancedQueryRequest;
@@ -115,11 +117,18 @@ public class ResultController {
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
 			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
+		if (advancedQueryRequest.getQueries().size() > Constant.MAX_QUERY_NUM) {
+			AdvancedQueryResponse advancedQueryResponse =
+					new AdvancedQueryResponse("Too many quiries. Max num is " + Constant.MAX_QUERY_NUM);
+			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
+		}
 		try {
-			String userID = cookieUtil.readUserIDFromCookie(request);
+			final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
 				try {
+					String userID = Optional.ofNullable(singleQuery.getIsPersonal()).map(query -> userIDFromCookie)
+							.orElse(null);
 					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
 					List<DropMatrixElement> elements = query.execute();
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);

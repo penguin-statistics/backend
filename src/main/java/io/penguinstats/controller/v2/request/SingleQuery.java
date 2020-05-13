@@ -30,4 +30,6 @@ public class SingleQuery {
 
 	private Integer interval;
 
+	private Boolean isPersonal;
+
 }

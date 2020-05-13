@@ -6,6 +6,7 @@ public class Constant {
 			new Long[] {0L, 1558989300000L, 1560045456000L, 1577145600000L, 1581105600000L};
 
 	public static final int MAX_SECTION_NUM = 90;
+	public static final int MAX_QUERY_NUM = 5;
 
 	public static final String API_V2 = "/api/v2";
 
