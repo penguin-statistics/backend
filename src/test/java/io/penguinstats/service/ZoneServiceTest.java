@@ -31,8 +31,10 @@ public class ZoneServiceTest {
 
 	@Before
 	public void setUp() {
-		//		this.newZones.add(zoneDao.save(new Zone(TEST_ZONE_ID_1, 0, "TEST", "test1", null, null, new ArrayList<>())));
-		//		this.newZones.add(zoneDao.save(new Zone(TEST_ZONE_ID_2, 1, "TEST", "test2", null, null, new ArrayList<>())));
+		this.newZones
+				.add(zoneDao.save(new Zone(TEST_ZONE_ID_1, 0, "TEST", "test1", null, null, null, new ArrayList<>())));
+		this.newZones
+				.add(zoneDao.save(new Zone(TEST_ZONE_ID_2, 1, "TEST", "test2", null, null, null, new ArrayList<>())));
 	}
 
 	@After
