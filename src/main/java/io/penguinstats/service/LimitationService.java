@@ -12,14 +12,14 @@ import io.penguinstats.model.Limitation;
 public interface LimitationService {
 
 	@Caching(evict = {@CacheEvict(value = "maps", key = "'extendedLimitationMap'"),
-			@CacheEvict(value = "limitation", key = "#limitation.name")})
+			@CacheEvict(value = "limitation", key = "'limitation_' + #limitation.name")})
 	void saveLimitation(Limitation limitation);
 
 	List<Limitation> getAllLimitations();
 
 	Map<String, Limitation> getLimitationMap();
 
-	@Cacheable(value = "limitation", key = "#stageId", unless = "#result == null")
+	@Cacheable(value = "limitation", key = "'limitation_' + #stageId", unless = "#result == null")
 	Limitation getExtendedLimitation(String stageId);
 
 	@Cacheable(value = "maps", key = "'extendedLimitationMap'")

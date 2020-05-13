@@ -1,6 +1,6 @@
 # Penguin Statistics
 
-<img src="https://penguin-stats.s3-ap-southeast-1.amazonaws.com/penguin_stats_logo.png" width="150" height="150">
+<img src="https://penguin-stats.s3-ap-southeast-1.amazonaws.com/logos/penguin_stats_logo.png" width="150" height="150">
 
 ## 企鹅物流数据统计
 - [https://penguin-stats.io/](https://penguin-stats.io/)

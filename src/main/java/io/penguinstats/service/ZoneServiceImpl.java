@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.ZoneDao;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
@@ -46,7 +47,7 @@ public class ZoneServiceImpl implements ZoneService {
 	@Override
 	public List<Zone> getAllZones() {
 		List<Zone> zones = zoneDao.findAll();
-		LastUpdateTimeUtil.setCurrentTimestamp("zoneList");
+		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.ZONE_LIST);
 		return zones;
 	}
 
