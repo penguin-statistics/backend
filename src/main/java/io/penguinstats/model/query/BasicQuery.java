@@ -1,5 +1,11 @@
 package io.penguinstats.model.query;
 
-public interface BasicQuery extends Query {
+import java.util.List;
+
+import io.penguinstats.model.DropMatrixElement;
+
+public interface BasicQuery {
+
+	List<DropMatrixElement> execute() throws Exception;
 
 }

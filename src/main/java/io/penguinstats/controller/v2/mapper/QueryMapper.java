@@ -13,8 +13,8 @@ import io.penguinstats.controller.v2.response.MatrixQueryResponse;
 import io.penguinstats.controller.v2.response.TrendQueryResponse;
 import io.penguinstats.enums.QueryType;
 import io.penguinstats.model.DropMatrixElement;
+import io.penguinstats.model.query.BasicQuery;
 import io.penguinstats.model.query.MatrixQuery;
-import io.penguinstats.model.query.Query;
 import io.penguinstats.model.query.QueryFactory;
 import io.penguinstats.model.query.TrendQuery;
 
@@ -26,7 +26,7 @@ public class QueryMapper {
 	@Autowired
 	private QueryFactory queryFactory;
 
-	public Query queryRequestToQueryModel(SingleQuery singleQuery, String userID, Integer timeout) {
+	public BasicQuery queryRequestToQueryModel(SingleQuery singleQuery, String userID, Integer timeout) {
 		try {
 			if (singleQuery.getInterval() == null) {
 				MatrixQuery query = (MatrixQuery)queryFactory.getQuery(QueryType.MATRIX);

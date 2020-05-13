@@ -12,7 +12,7 @@ public class QueryFactory {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	public Query getQuery(QueryType type) throws Exception {
+	public BasicQuery getQuery(QueryType type) throws Exception {
 		switch (type) {
 			case MATRIX:
 				return new MatrixQuery(itemDropService);
@@ -22,8 +22,6 @@ public class QueryFactory {
 				return new GlobalMatrixQuery(itemDropService);
 			case GLOBAL_TREND:
 				return new GlobalTrendQuery(itemDropService);
-			case ADVANCED:
-				return new AdvancedQuery();
 			default:
 				throw new Exception("Failed to create query for " + type);
 		}

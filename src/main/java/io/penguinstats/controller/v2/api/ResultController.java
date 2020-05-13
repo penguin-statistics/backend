@@ -34,9 +34,9 @@ import io.penguinstats.controller.v2.response.TrendQueryResponse;
 import io.penguinstats.enums.QueryType;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
+import io.penguinstats.model.query.BasicQuery;
 import io.penguinstats.model.query.GlobalMatrixQuery;
 import io.penguinstats.model.query.GlobalTrendQuery;
-import io.penguinstats.model.query.Query;
 import io.penguinstats.model.query.QueryFactory;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.util.CookieUtil;
@@ -120,7 +120,7 @@ public class ResultController {
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
 				try {
-					Query query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
+					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
 					List<DropMatrixElement> elements = query.execute();
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
 					results.add(queryResponse);
