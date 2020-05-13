@@ -26,6 +26,8 @@ public interface ItemDropService {
 
 	List<ItemDrop> getAllItemDrops();
 
+	Page<ItemDrop> getAllItemDrops(Pageable pageable);
+
 	List<ItemDrop> getAllReliableItemDrops();
 
 	Page<ItemDrop> getVisibleItemDropsByUserID(String userID, Pageable pageable);
@@ -57,13 +59,14 @@ public interface ItemDropService {
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null", sync = true)
-	Map<String, Map<String, List<DropMatrixElement>>> generateSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Integer range);
+	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
 
 	@CachePut(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null")
-	Map<String, Map<String, List<DropMatrixElement>>> refreshSegmentedGlobalDropMatrixElementMap(Server server,
-			Integer interval, Integer range);
+	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
+
+	List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
+			Long start, Long end, List<String> userIDs, Integer interval);
 
 }
