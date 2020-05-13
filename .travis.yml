@@ -1,0 +1,8 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+# skip tests for now
+script:
+  - mvn clean package -Dmaven.test.skip=true
