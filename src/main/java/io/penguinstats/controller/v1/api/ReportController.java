@@ -18,11 +18,10 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v1")
 @RequestMapping("/api/report")
-@Api(tags = {"@ Deprecated APIs"})
 @Deprecated
 public class ReportController {
 
-	@ApiOperation("Save single report")
+	@ApiOperation(value = "Save single report", hide = true)
 	@PostMapping
 	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
 			HttpServletResponse response) {
