@@ -3,6 +3,7 @@ package io.penguinstats.controller.v1.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.swagger.annotations.Api;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,8 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v1")
 @RequestMapping("/api/report")
+@Api(tags = {"@ Deprecated APIs"})
+@Deprecated
 public class ReportController {
 
 	@ApiOperation("Save single report")

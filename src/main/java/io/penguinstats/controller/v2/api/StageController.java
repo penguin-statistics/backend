@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("stageController_v2")
 @RequestMapping("/api/v2/stages")
+@Api(tags = {"Stage"})
 public class StageController {
 
 	@Autowired
@@ -39,7 +41,8 @@ public class StageController {
 	@Autowired
 	private TimeRangeService timeRangeService;
 
-	@ApiOperation("Get all stages")
+	@ApiOperation(value = "Get all Stages",
+			notes = "Get all available Stages, including those which might not exist in the preferred server.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Stage>>
 			getAllStages(@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
@@ -69,7 +72,8 @@ public class StageController {
 		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation("Get stage by stage ID")
+	@ApiOperation(value = "Get a Stage by Stage ID",
+			notes = "Get a Stage by the specified Stage ID.")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Stage> getStageByStageId(
 			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server,

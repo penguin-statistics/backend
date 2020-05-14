@@ -3,6 +3,7 @@ package io.penguinstats.controller.v2.api;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,13 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("noticeController_v2")
 @RequestMapping("/api/v2/notice")
+@Api(tags = {"Notice"})
 public class NoticeController {
 
 	@Autowired
 	private NoticeService noticeService;
 
-	@ApiOperation("Get current available notice list")
+	@ApiOperation(value = "Get current active Notices", notes = "Get current active Notices")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<Notice>> getAllItems() {

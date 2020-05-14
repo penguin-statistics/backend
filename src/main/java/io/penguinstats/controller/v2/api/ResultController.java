@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
+@Api(tags = {"Result"})
 public class ResultController {
 
 	private static Logger logger = LogManager.getLogger(ResultController.class);
@@ -61,7 +63,8 @@ public class ResultController {
 	@Autowired
 	private QueryFactory queryFactory;
 
-	@ApiOperation("Get matrix")
+	@ApiOperation(value = "Get the Result Matrix for all Stages and Items",
+			notes = "Returns the last accumulatable Matrix results, including all Stages and Items.")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<MatrixQueryResponse> getMatrix(HttpServletRequest request,
 			@RequestParam(name = "is_personal", required = false, defaultValue = "false") boolean isPersonal,
@@ -90,7 +93,9 @@ public class ResultController {
 		}
 	}
 
-	@ApiOperation("Get segmented drop data for all items in all stages")
+	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
+			notes = "Returns the segmented Matrix results of server `server` with granularity of " +
+					"`interval_day` days in the recent `range_day` days.")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(
 			@RequestParam(name = "interval_day", required = false, defaultValue = "1") int interval,
@@ -113,7 +118,8 @@ public class ResultController {
 		}
 	}
 
-	@ApiOperation("Execute advanced queries")
+	@ApiOperation(value = "Execute advanced queries",
+			notes = "Executes the advanced queries and return the query results.")
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
 			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {

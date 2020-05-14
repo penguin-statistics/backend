@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,7 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v2")
 @RequestMapping("/api/v2/report")
+@Api(tags = {"Report"})
 public class ReportController {
 
 	private static Logger logger = LogManager.getLogger(ReportController.class);
@@ -69,7 +71,9 @@ public class ReportController {
 	@Autowired
 	private ValidatorFactory validatorFactory;
 
-	@ApiOperation("Save single report")
+	@ApiOperation(value = "Submit a Report",
+			notes = "Submit a Drop Report. " +
+					"Notice that you are required to provide the current `server` you are submitting.")
 	@PostMapping
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
@@ -144,7 +148,10 @@ public class ReportController {
 		}
 	}
 
-	@ApiOperation("Recall the last report")
+	@ApiOperation(value = "Recall the last Report",
+			notes = "Recall the last Drop Report by providing its hash value. " +
+					"Notice that you can only recall the *last* report, " +
+					"which in addition will also expire after 24 hours.")
 	@PostMapping(path = "/recall")
 	public ResponseEntity<String> recallPersonalReport(
 			@Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) {

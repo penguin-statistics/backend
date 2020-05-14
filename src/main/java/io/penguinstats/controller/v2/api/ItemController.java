@@ -3,6 +3,7 @@ package io.penguinstats.controller.v2.api;
 import java.util.Date;
 import java.util.List;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,14 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("itemController_v2")
 @RequestMapping("/api/v2/items")
+@Api(tags = {"Item"})
 public class ItemController {
 
 	@Autowired
 	private ItemService itemService;
 
-	@ApiOperation("Get all items")
+	@ApiOperation(value = "Get all Items",
+			notes = "Get all available Items, including those which might not exist in the preferred server.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<Item>> getAllItems() {
@@ -39,7 +42,8 @@ public class ItemController {
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation("Get item by item ID")
+	@ApiOperation(value = "Get an Item by Item ID",
+			notes = "Get an Item by the specified Item ID.")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);
