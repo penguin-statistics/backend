@@ -3,6 +3,7 @@ package io.penguinstats.service;
 import java.util.List;
 import java.util.Map;
 
+import org.javatuples.Pair;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -25,7 +26,7 @@ public interface TimeRangeService {
 	Map<String, TimeRange> getTimeRangeMap();
 
 	@Cacheable(value = "maps", key = "'latestTimeRangeMap_' + #server", condition = "#filter == null")
-	Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
+	Map<String, List<Pair<String, List<TimeRange>>>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
 	List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
 

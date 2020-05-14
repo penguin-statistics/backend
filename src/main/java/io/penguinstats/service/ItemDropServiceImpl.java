@@ -1,6 +1,7 @@
 package io.penguinstats.service;
 
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -275,14 +277,78 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@Override
 	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
 		Long startTime = System.currentTimeMillis();
-		Map<String, List<TimeRange>> timeRangeMap =
+
+		Map<String, List<Pair<String, List<TimeRange>>>> latestMaxAccumulatableTimeRangesMap =
 				timeRangeService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
+
+		Map<String, List<Pair<TimeRange, List<String>>>> convertedMap = new HashMap<>();
+		latestMaxAccumulatableTimeRangesMap.forEach((stageId, pairs) -> {
+			List<Pair<TimeRange, List<String>>> subList = new ArrayList<>();
+			Map<TimeRange, List<String>> subMap = new HashMap<>();
+			pairs.forEach(pair -> {
+				String itemId = pair.getValue0();
+				List<TimeRange> ranges = pair.getValue1();
+				ranges.forEach(range -> {
+					List<String> itemIds = subMap.getOrDefault(range, new ArrayList<>());
+					itemIds.add(itemId);
+					subMap.put(range, itemIds);
+				});
+			});
+			subMap.forEach((range, itemIds) -> subList.add(Pair.with(range, itemIds)));
+			convertedMap.put(stageId, subList);
+		});
+
+		Integer maxSize = null;
+		for (String stageId : convertedMap.keySet()) {
+			List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
+			if (maxSize == null || maxSize < pairs.size())
+				maxSize = pairs.size();
+		}
+
 		List<String> userIDs = userID != null ? Arrays.asList(userID) : new ArrayList<>();
-		List<DropMatrixElement> result =
-				generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap, new ArrayList<>(), userIDs);
+		Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
+
+		for (int i = 0; i < maxSize; i++) {
+			Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
+			for (String stageId : convertedMap.keySet()) {
+				List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
+				if (i >= pairs.size())
+					continue;
+				Pair<TimeRange, List<String>> pair = pairs.get(i);
+				TimeRange range = pair.getValue0();
+				timeRangeMap.put(stageId, Arrays.asList(range));
+			}
+			List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
+					new ArrayList<>(), userIDs);
+
+			for (String stageId : convertedMap.keySet()) {
+				Map<String, List<DropMatrixElement>> subMap = allElementsMap.getOrDefault(stageId, new HashMap<>());
+				List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
+				if (i >= pairs.size())
+					continue;
+				Pair<TimeRange, List<String>> pair = pairs.get(i);
+				Set<String> itemIdSet = new HashSet<>(pair.getValue1());
+				List<DropMatrixElement> filteredElements = elements.stream()
+						.filter(el -> el.getStageId().equals(stageId) && itemIdSet.contains(el.getItemId()))
+						.collect(toList());
+				filteredElements.forEach(el -> {
+					String itemId = el.getItemId();
+					List<DropMatrixElement> subList = subMap.getOrDefault(itemId, new ArrayList<>());
+					subList.add(el);
+					subMap.put(itemId, subList);
+					itemIdSet.remove(itemId);
+				});
+				allElementsMap.put(stageId, subMap);
+			}
+		}
+
+		List<DropMatrixElement> result = allElementsMap.values().stream()
+				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
+
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 		logger.info("generateGlobalDropMatrixElements done in {} ms", System.currentTimeMillis() - startTime);
+
 		return result;
 	}
 
@@ -351,7 +417,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 				if (!dropSet.isEmpty()) {
 					dropSet.forEach(itemId -> {
-						if (itemIds == null || itemId.isEmpty() || itemIds.contains(itemId)) {
+						if (itemIds == null || itemIds.isEmpty() || itemIds.contains(itemId)) {
 							DropMatrixElement element = new DropMatrixElement(stageId, itemId, 0, timesForStage,
 									currentRange.getStart(), currentRange.getEnd());
 							List<DropMatrixElement> elements = mapByItemId.getOrDefault(itemId, new ArrayList<>());

@@ -1,11 +1,16 @@
 package io.penguinstats.service;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -59,6 +64,7 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 		return map;
 	}
 
+	// TOOD: fix comments
 	/** 
 	 * @Title: getLatestMaxAccumulatableTimeRangesMapByServer 
 	 * @Description: Latest max accumulatable time ranges map, key is stageId.
@@ -74,34 +80,40 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 	 *               D does not affect drop rates, so data from Range IV can be combined with II, III and V.
 	 *               So the longest, and accumulatable time ranges are: II, III, IV and V.
 	 * @param server
-	 * @return Map<String,List<TimeRange>>
+	 * @return Map<String, List<Pair<String, List<TimeRange>>>>
 	 */
 	@Override
-	public Map<String, List<TimeRange>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
-		Map<String, List<TimeRange>> result = new HashMap<>();
-		Map<String, Map<String, TimeRange>> helper = new HashMap<>();
+	public Map<String, List<Pair<String, List<TimeRange>>>>
+			getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
 		Map<String, TimeRange> timeRangeMap = getSpringProxy().getTimeRangeMap();
 		List<DropInfo> infos = dropInfoService.getDropInfosByServer(server);
 		infos.forEach(info -> {
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-			String stageId = info.getStageId();
-			Map<String, TimeRange> subMap = helper.getOrDefault(stageId, new HashMap<>());
-			subMap.putIfAbsent(range.getRangeID(), range);
-			helper.put(stageId, subMap);
+			info.setTimeRange(range);
 		});
-		helper.forEach((stageId, subMap) -> {
-			subMap.forEach((rangeID, range) -> {
-				List<TimeRange> ranges = result.getOrDefault(stageId, new ArrayList<>());
-				ranges.add(range);
-				result.put(stageId, ranges);
+		Map<String, List<DropInfo>> infosMapStageId = infos.stream().collect(groupingBy(DropInfo::getStageId));
+		Map<String, List<Pair<String, List<TimeRange>>>> result = new HashMap<>();
+		infosMapStageId.forEach((stageId, infosInOneStage) -> {
+			List<Pair<String, List<TimeRange>>> itemTimeRanges = result.getOrDefault(stageId, new ArrayList<>());
+			infosInOneStage = infosInOneStage.stream().filter(info -> info.getItemId() != null).collect(toList());
+			Map<String, List<DropInfo>> infosMapByItemId =
+					infosInOneStage.stream().collect(groupingBy(DropInfo::getItemId));
+			infosMapByItemId.forEach((itemId, infosForOneItem) -> {
+				infosForOneItem.sort(
+						(info1, info2) -> info1.getTimeRange().getStart().compareTo(info2.getTimeRange().getStart()));
+				int pointer = infosForOneItem.size() - 1;
+				while (pointer >= 0 && Optional.ofNullable(infosForOneItem.get(pointer).getAccumulatable()).map(b -> b)
+						.orElse(true))
+					pointer--;
+
+				List<DropInfo> accumulatableInfos = pointer >= infosForOneItem.size() ? new ArrayList<>()
+						: new ArrayList<>(infosForOneItem.subList(pointer + 1, infosForOneItem.size()));
+				List<TimeRange> rangesForOneItem =
+						accumulatableInfos.stream().map(DropInfo::getTimeRange).distinct().collect(toList());
+				Pair<String, List<TimeRange>> itemWithRange = Pair.with(itemId, rangesForOneItem);
+				itemTimeRanges.add(itemWithRange);
 			});
-		});
-		result.forEach((stageId, ranges) -> {
-			ranges.sort((r1, r2) -> r1.getStart().compareTo(r2.getStart()));
-			int pointer = ranges.size() - 1;
-			while (pointer > 0 && ranges.get(pointer).getAccumulatable())
-				pointer--;
-			result.put(stageId, new ArrayList<>(ranges.subList(pointer, ranges.size())));
+			result.put(stageId, itemTimeRanges);
 		});
 		return result;
 	}

@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -37,12 +38,17 @@ public class DropInfo implements Serializable {
 	private DropType dropType;
 	private String timeRangeID;
 	private Bounds bounds;
+	private Boolean accumulatable;
+	@Transient
+	private TimeRange timeRange;
 
 	@JsonIgnore
 	public DropInfo toStageView() {
 		this.server = null;
 		this.stageId = null;
 		this.timeRangeID = null;
+		this.accumulatable = null;
+		this.timeRange = null;
 		return this;
 	}
 
