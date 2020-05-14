@@ -44,7 +44,8 @@ public class StageController {
 	public ResponseEntity<List<Stage>>
 			getAllStages(@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
 		List<Stage> stages = stageService.getAllStages();
-		Map<String, List<DropInfo>> dropInfosMap = dropInfoService.getLatestDropInfosMapByServer(server);
+		Map<String, List<DropInfo>> dropInfosMap =
+				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		Iterator<Stage> iter = stages.iterator();
 		while (iter.hasNext()) {
