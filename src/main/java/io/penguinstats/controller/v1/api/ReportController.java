@@ -21,7 +21,7 @@ import io.swagger.annotations.ApiOperation;
 @Deprecated
 public class ReportController {
 
-	@ApiOperation(value = "Save single report", hide = true)
+	@ApiOperation(value = "Save single report", hidden = true)
 	@PostMapping
 	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
 			HttpServletResponse response) {
