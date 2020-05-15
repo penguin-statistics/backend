@@ -76,8 +76,7 @@ public class ReportController {
 	@PostMapping
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
-			HttpServletResponse response) {
-		try {
+			HttpServletResponse response) throws Exception {
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
 				userID = userService.createNewUser(IpUtil.getIpAddr(request));
@@ -141,10 +140,6 @@ public class ReportController {
 			logger.debug("Saving itemDrop: \n" + JSONUtil.convertObjectToJSONObject(itemDrop.toNoIDView()).toString(2));
 
 			return new ResponseEntity<SingleReportResponse>(new SingleReportResponse(reportHash), HttpStatus.CREATED);
-		} catch (Exception e) {
-			logger.error("Error in saveSingleReport", e);
-			return new ResponseEntity<SingleReportResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@ApiOperation(value = "Recall the last Report",
@@ -152,9 +147,8 @@ public class ReportController {
 					+ "Notice that you can only recall the *last* report, "
 					+ "which in addition will also expire after 24 hours.")
 	@PostMapping(path = "/recall")
-	public ResponseEntity<String> recallPersonalReport(
-			@Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) {
-		try {
+	public ResponseEntity<String> recallPersonalReport (
+			@Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) throws Exception{
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
 				logger.error("Error in recallPersonalReport: Cannot read user ID");
@@ -164,10 +158,6 @@ public class ReportController {
 			logger.info("user " + userID + " POST /report/recall\n");
 			itemDropService.recallItemDrop(userID, recallLastReportRequest.getReportHash());
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in recallPersonalReport", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 }

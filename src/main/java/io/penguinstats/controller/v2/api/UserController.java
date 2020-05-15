@@ -40,8 +40,7 @@ public class UserController {
 	@ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully logged the user in"),
 			@ApiResponse(code = 400, message = "User not found")})
 	public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
-			HttpServletResponse response) {
-		try {
+			HttpServletResponse response) throws Exception {
 			boolean isInternal = false;
 			if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
 				isInternal = true;
@@ -63,10 +62,6 @@ public class UserController {
 			}
 			CookieUtil.setUserIDCookie(response, userID);
 			return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in getUser", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 }

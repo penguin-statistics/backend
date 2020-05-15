@@ -79,9 +79,8 @@ public class ResultController {
 							defaultValue = "false") boolean showClosedZones,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
+							defaultValue = "CN") Server server) throws Exception {
 		logger.info("GET /matrix");
-		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
 
 			GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
@@ -101,10 +100,6 @@ public class ResultController {
 					: generateLastModifiedHeadersFromLastUpdateMap(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 
 			return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in getMatrix", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
@@ -119,16 +114,17 @@ public class ResultController {
 					required = false) @RequestParam(name = "range", required = false) Long range,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
-		try {
+							defaultValue = "CN") Server server) throws Exception {
 			if (interval == null)
-				interval = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
+				interval = systemPropertyService
+						.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
 			if (range == null)
-				range = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
-
-			GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
+				range = systemPropertyService
+						.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
+			GlobalTrendQuery query = (GlobalTrendQuery) queryFactory.getQuery(QueryType.GLOBAL_TREND);
 			Integer timeout =
-					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+					systemPropertyService
+							.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
 			query.setServer(server).setInterval(interval).setRange(range);
 			if (timeout != null)
 				query.setTimeout(timeout);
@@ -140,17 +136,13 @@ public class ResultController {
 					LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
 
 			return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in getAllSegmentedDropResults: ", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@ApiOperation(value = "Execute advanced queries",
 			notes = "Execute advanced queries in a batch and return the query results in an array.")
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
-			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
+			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) throws Exception {
 		Integer maxQueryNum =
 				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
 		if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
@@ -158,7 +150,6 @@ public class ResultController {
 					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
 			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
 		}
-		try {
 			final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
@@ -181,10 +172,6 @@ public class ResultController {
 			});
 			AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
 			return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in executeAdvancedQueries: ", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	private void removeClosedStages(List<DropMatrixElement> elements, Server server) {

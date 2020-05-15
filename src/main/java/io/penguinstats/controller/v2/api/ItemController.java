@@ -1,5 +1,7 @@
 package io.penguinstats.controller.v2.api;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.Date;
 import java.util.List;
 
@@ -43,10 +45,8 @@ public class ItemController {
 
 	@ApiOperation(value = "Get an Item by ItemId")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
+	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) throws NotFoundException {
 		Item item = itemService.getItemByItemId(itemId);
-		if (item == null)
-			return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
 		return new ResponseEntity<Item>(item, HttpStatus.OK);
 	}
 
