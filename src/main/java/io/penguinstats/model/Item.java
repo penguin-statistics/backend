@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.enums.Server;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +25,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Document(collection = "item")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "The model of an item.")
 public class Item implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,9 +40,11 @@ public class Item implements Serializable {
 	private Map<String, String> nameMap;
 	private Integer sortId;
 	private Integer rarity;
+	@ApiModelProperty(notes = "The existence of the item in each server.")
 	private Map<Server, ItemExistence> existence;
 	private String itemType;
 	private Integer addTimePoint;
+	@ApiModelProperty(notes = "The position in the sprite image.")
 	private List<Integer> spriteCoord;
 
 	@JsonIgnore
