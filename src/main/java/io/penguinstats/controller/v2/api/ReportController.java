@@ -71,7 +71,8 @@ public class ReportController {
 	@Autowired
 	private ValidatorFactory validatorFactory;
 
-	@ApiOperation(value = "Submit a drop report")
+	@ApiOperation(value = "Submit a drop report",
+			notes = "Detailed instructions can be found at: https://developer.penguin-stats.io/docs/report-api")
 	@PostMapping
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
