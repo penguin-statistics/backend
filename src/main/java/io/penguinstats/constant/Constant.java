@@ -5,9 +5,6 @@ public class Constant {
 	public static final Long[] ADD_TIME_POINTS =
 			new Long[] {0L, 1558989300000L, 1560045456000L, 1577145600000L, 1581105600000L};
 
-	public static final int MAX_SECTION_NUM = 90;
-	public static final int MAX_QUERY_NUM = 5;
-
 	public static final String API_V2 = "/api/v2";
 
 	public static class LastUpdateMapKeyName {
@@ -22,6 +19,16 @@ public class Constant {
 
 	public static class CustomHeader {
 		public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
+	}
+
+	public static class SystemPropertyKey {
+		public static final String ADVANCED_QUERY_REQUEST_NUM_MAX = "advanced_query_request_num_max";
+		public static final String DEFAULT_GLOBAL_TREND_INTERVAL = "default_global_trend_interval";
+		public static final String DEFAULT_GLOBAL_TREND_RANGE = "default_global_trend_range";
+		public static final String MAX_SECTION_NUM = "max_section_num";
+		public static final String GLOBAL_MATRIX_QUERY_TIMEOUT = "global_matrix_query_timeout";
+		public static final String GLOBAL_TREND_QUERY_TIMEOUT = "global_trend_query_timeout";
+		public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
 	}
 
 }

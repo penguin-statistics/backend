@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.constant.Constant;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
+import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.mapper.QueryMapper;
 import io.penguinstats.controller.v2.request.AdvancedQueryRequest;
 import io.penguinstats.controller.v2.response.AdvancedQueryResponse;
@@ -41,10 +41,12 @@ import io.penguinstats.model.query.GlobalMatrixQuery;
 import io.penguinstats.model.query.GlobalTrendQuery;
 import io.penguinstats.model.query.QueryFactory;
 import io.penguinstats.service.DropInfoService;
+import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
@@ -54,6 +56,8 @@ public class ResultController {
 
 	@Autowired
 	private DropInfoService dropInfoService;
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 	@Autowired
 	private CookieUtil cookieUtil;
 	@Autowired
@@ -72,7 +76,11 @@ public class ResultController {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
 
 			GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-			query.setServer(server).setUserID(userID).setTimeout(2);
+			Integer timeout =
+					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+			query.setServer(server).setUserID(userID);
+			if (timeout != null)
+				query.setTimeout(timeout);
 			List<DropMatrixElement> elements = query.execute();
 
 			if (!showClosedZones)
@@ -93,12 +101,27 @@ public class ResultController {
 	@ApiOperation("Get segmented drop data for all items in all stages")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(
-			@RequestParam(name = "interval_day", required = false, defaultValue = "1") int interval,
-			@RequestParam(name = "range_day", required = false, defaultValue = "30") int range,
-			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
+			@ApiParam(value = "The length of each section. Unit is \"day\".",
+					required = false) @RequestParam(name = "interval_day", required = false) Integer interval,
+			@ApiParam(
+					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"day\".",
+					required = false) @RequestParam(name = "range_day", required = false) Integer range,
+			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+					required = false) @RequestParam(name = "server", required = false,
+							defaultValue = "CN") Server server) {
 		try {
+			if (interval == null)
+				interval =
+						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
+			if (range == null)
+				range = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
+
 			GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
-			query.setServer(server).setInterval(interval).setRange(range).setTimeout(3);
+			Integer timeout =
+					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+			query.setServer(server).setInterval(interval).setRange(range);
+			if (timeout != null)
+				query.setTimeout(timeout);
 			List<DropMatrixElement> elements = query.execute();
 
 			TrendQueryResponse result = new TrendQueryResponse(elements);
@@ -117,9 +140,11 @@ public class ResultController {
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
 			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
-		if (advancedQueryRequest.getQueries().size() > Constant.MAX_QUERY_NUM) {
+		Integer maxQueryNum =
+				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
+		if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
 			AdvancedQueryResponse advancedQueryResponse =
-					new AdvancedQueryResponse("Too many quiries. Max num is " + Constant.MAX_QUERY_NUM);
+					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
 			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
 		}
 		try {
@@ -127,9 +152,11 @@ public class ResultController {
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
 				try {
-					String userID = Optional.ofNullable(singleQuery.getIsPersonal()).map(query -> userIDFromCookie)
-							.orElse(null);
-					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
+					Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
+					String userID = isPersonal ? userIDFromCookie : null;
+					Integer timeout =
+							systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
+					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
 					List<DropMatrixElement> elements = query.execute();
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
 					results.add(queryResponse);

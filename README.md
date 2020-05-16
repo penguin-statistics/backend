@@ -1,37 +1,49 @@
-# Penguin Statistics
+<img src="https://penguin.upyun.galvincdn.com/logos/penguin_stats_logo.png"
+     alt="Penguin Statistics - Logo"
+     width="96px" />
 
-<img src="https://penguin-stats.s3-ap-southeast-1.amazonaws.com/logos/penguin_stats_logo.png" width="150" height="150">
+# Penguin Statistics!
+[![License](https://img.shields.io/github/license/penguin-statistics/backend)](https://github.com/penguin-statistics/backend/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/travis/penguin-statistics/backend?logo=travis)](https://travis-ci.org/penguin-statistics/backend)
+[![Last Commit](https://img.shields.io/github/last-commit/penguin-statistics/backend)](https://github.com/penguin-statistics/backend/commits/dev)
+[![Docs](https://img.shields.io/badge/docs-GitBook-blue)](https://developer.penguin-stats.io)
 
-## 企鹅物流数据统计
-- [https://penguin-stats.io/](https://penguin-stats.io/)
-- 明日方舟素材掉落统计与分析
-- 根据人工汇报的掉落样本，生成各作战和各素材的统计结果，方便博士们对刷素材的效率进行参考
-- 更多功能敬请期待
+This is the **backend** project repository for the [Penguin Statistics](https://penguin-stats.io/?utm_source=github) website.
 
-## 如何食用本repo
-此repo包含网站后端，项目基于[Spring Boot 2.1.6](https://spring.io/projects/spring-boot)，数据库使用MongoDB。
+## Technologies
+- [Maven](https://maven.apache.org/)
+- [Spring Boot 2.1.6](https://spring.io/projects/spring-boot)
+- [MongoDB](https://www.mongodb.com/)
 
-### 准备工作
-1. 安装maven
-2. 安装IDE对应的[lombok](https://projectlombok.org/)插件
-3. 安装MongoDB（可选）
-4. 如果选择本地运行MongoDB，可以联系作者获取dump得到的BSON文件，并执行以下命令添加测试用数据（可选）
+## Maintainers
+This frontend project has mainly being maintained by the following contributors (in alphabetical order):
+- [AlvISsReimu](https://github.com/AlvISsReimu)
+- [ChaosNiku](https://github.com/ChaosNiku)
+- [YukiC](https://github.com/cyj5230)
+
+> The full list of active contributors of the *Penguin Statistics* project can be found at the [Team Members page](https://penguin-stats.io/about/members) of the website.
+
+## How to contribute?
+Our contribute guideline can be found at [Penguin Developers](https://developer.penguin-stats.io). PRs are always more than welcome!
+
+## API docs
+- [Introductions to API v2](https://developer.penguin-stats.io/docs/)
+- [Swagger API docs](https://penguin-stats.io/PenguinStats/swagger/swagger-ui.html)
+
+# Deployment
+## Preparations
+1. Install Maven
+2. Install [Lombok](https://projectlombok.org/) plugin for your IDE
+3. (Optional) Install MongoDB
+4. (Optional) If you choose to run MongoDB locally, feel free to contact our team for the dumped testing file, execute the following command to import them:
 ```
-mongorestore -h localhost:27017 -d penguin_stats <path of penguin_stats directory>
+mongorestore -h localhost:<your mongodb port> -d penguin_stats <path of penguin_stats directory>
 ```
+5. Edit `src/main/resources/application.yml`，change the value of `username` and `password` in `spring.data.mongodb.uri` according to your settings.
 
-5. 打开`src/main/resources/application.properties`，将`spring.data.mongodb.uri`中的`username`与`password`替换为相应的用户信息。若有自定义需求，也可改变本文件中的其他值
+## Run
+1. Execute `mvn spring-boot:run` in the root directory of this project. Or run the main method in `PenguinStatisticsApplication` class.
+2. If you see "PenguinStats is running" in the console, congrats!
 
-### 启动
-1. 在项目根目录下执行`mvn spring-boot:run`，或运行PenguinStatisticsApplication类中的main方法
-2. 提示PenguinStats is running后，即完成启动
-
-### Build
- 执行`mvn clean package`后，将`target/PenguinStats.war`部署至服务器上即可。
- 
- ## API文档
- 1. 已上线版本的API文档请见[这里](https://penguin-stats.io/PenguinStats/swagger/swagger-ui.html)
- 2. 本地调试版本可以访问`/PenguinStats/swagger/swagger-ui.html`
-
-## 意见和建议
-各种想法欢迎提Issue，也可以通过[网站介绍页面](https://penguin-stats.io/ "网站介绍页面")下方的联系方式找到我和Penguin Stats的其他团队成员。
+## Build
+Execute `mvn clean package`, then deploy `target/PenguinStats.war` to the server.

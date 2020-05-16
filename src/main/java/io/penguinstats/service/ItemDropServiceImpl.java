@@ -28,8 +28,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import io.penguinstats.constant.Constant;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
+import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
@@ -60,6 +60,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Autowired
 	private TimeRangeService timeRangeService;
+
+	@Autowired
+	private SystemPropertyService systemPropertyService;
 
 	@Override
 	public void saveItemDrop(ItemDrop itemDrop) {
@@ -482,7 +485,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Long intervalMillis = TimeUnit.DAYS.toMillis(interval);
 		int sectionNum =
 				new Double(Math.ceil(new Double((end - start) * 1.0 / intervalMillis).doubleValue())).intValue();
-		if (sectionNum > Constant.MAX_SECTION_NUM) {
+		if (sectionNum > systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.MAX_SECTION_NUM)) {
 			logger.error("exceed max section num, now is " + sectionNum);
 			return new ArrayList<>();
 		}
