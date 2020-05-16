@@ -44,13 +44,10 @@ import io.penguinstats.service.DropInfoService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
-@Api(tags = {"Result"})
 public class ResultController {
 
 	private static Logger logger = LogManager.getLogger(ResultController.class);
@@ -64,19 +61,12 @@ public class ResultController {
 	@Autowired
 	private QueryFactory queryFactory;
 
-	@ApiOperation(value = "Get the Result Matrix for all Stages and Items",
-			notes = "Return the Result Matrix in the \"lastest accumulatable time ranges\". Detailed instructions can be found at: https://developer.penguin-stats.io/docs/api-v2-instruction/matrix-api")
+	@ApiOperation("Get matrix")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<MatrixQueryResponse> getMatrix(HttpServletRequest request,
-			@ApiParam(value = "Whether to see personal drop matrix or not. Default to be false.",
-					required = false) @RequestParam(name = "is_personal", required = false,
-							defaultValue = "false") boolean isPersonal,
-			@ApiParam(value = "Whether showing closed stages or not. Default to be false.",
-					required = false) @RequestParam(name = "show_closed_zones", required = false,
-							defaultValue = "false") boolean showClosedZones,
-			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
+			@RequestParam(name = "is_personal", required = false, defaultValue = "false") boolean isPersonal,
+			@RequestParam(name = "show_closed_zones", required = false, defaultValue = "false") boolean showClosedZones,
+			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
 		logger.info("GET /matrix");
 		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
@@ -100,21 +90,12 @@ public class ResultController {
 		}
 	}
 
-	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
-			notes = "Return the segmented Matrix results of server `server` with granularity of "
-					+ "`interval_day` days in the recent `range_day` days.")
+	@ApiOperation("Get segmented drop data for all items in all stages")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(
-			@ApiParam(value = "The length of each section. Unit is \"day\". Default to be 1.",
-					required = false) @RequestParam(name = "interval_day", required = false,
-							defaultValue = "1") int interval,
-			@ApiParam(
-					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"day\". Default to be 30.",
-					required = false) @RequestParam(name = "range_day", required = false,
-							defaultValue = "30") int range,
-			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
+			@RequestParam(name = "interval_day", required = false, defaultValue = "1") int interval,
+			@RequestParam(name = "range_day", required = false, defaultValue = "30") int range,
+			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
 		try {
 			GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
 			query.setServer(server).setInterval(interval).setRange(range).setTimeout(3);
@@ -132,8 +113,7 @@ public class ResultController {
 		}
 	}
 
-	@ApiOperation(value = "Execute advanced queries",
-			notes = "Execute advanced queries in a batch and return the query results in an array.")
+	@ApiOperation("Execute advanced queries")
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
 			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
@@ -147,8 +127,8 @@ public class ResultController {
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
 				try {
-					Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
-					String userID = isPersonal ? userIDFromCookie : null;
+					String userID = Optional.ofNullable(singleQuery.getIsPersonal()).map(query -> userIDFromCookie)
+							.orElse(null);
 					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
 					List<DropMatrixElement> elements = query.execute();
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
