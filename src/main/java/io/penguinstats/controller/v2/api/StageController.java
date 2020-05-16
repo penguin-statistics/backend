@@ -20,10 +20,8 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.StageExistence;
-import io.penguinstats.model.TimeRange;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.StageService;
-import io.penguinstats.service.TimeRangeService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
@@ -39,8 +37,6 @@ public class StageController {
 	private StageService stageService;
 	@Autowired
 	private DropInfoService dropInfoService;
-	@Autowired
-	private TimeRangeService timeRangeService;
 
 	@ApiOperation(value = "Get all Stages",
 			notes = "Get all Stages in the DB, together with their current drop infos (if applicable).")
@@ -52,13 +48,11 @@ public class StageController {
 		List<Stage> stages = stageService.getAllStages();
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
-		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		Iterator<Stage> iter = stages.iterator();
 		while (iter.hasNext()) {
 			Stage stage = iter.next();
 			List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
 			if (infos != null && !infos.isEmpty()) {
-				TimeRange range = timeRangeMap.get(infos.get(0).getTimeRangeID());
 				infos.forEach(info -> info.toStageView());
 				stage.setDropInfos(infos);
 				stage.setExistence(new StageExistence(true));
@@ -90,7 +84,6 @@ public class StageController {
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		List<DropInfo> infos = dropInfosMap.get(stageId);
 		if (infos != null && !infos.isEmpty()) {
-			TimeRange range = timeRangeService.getTimeRangeByRangeID(infos.get(0).getTimeRangeID());
 			infos.forEach(info -> info.toStageView());
 			stage.setDropInfos(infos);
 			stage.setExistence(new StageExistence(true));

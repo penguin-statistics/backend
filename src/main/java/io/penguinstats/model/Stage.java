@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Document(collection = "stage_v2")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "The model of a stage.")
 public class Stage implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -110,7 +110,8 @@ public class ResultController {
 							defaultValue = "1") int interval,
 			@ApiParam(
 					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"day\". Default to be 30.",
-					required = false) @RequestParam(name = "range_day", required = false, defaultValue = "30") int range,
+					required = false) @RequestParam(name = "range_day", required = false,
+							defaultValue = "30") int range,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server) {
@@ -146,8 +147,8 @@ public class ResultController {
 			List<BasicQueryResponse> results = new ArrayList<>();
 			advancedQueryRequest.getQueries().forEach(singleQuery -> {
 				try {
-					String userID = Optional.ofNullable(singleQuery.getIsPersonal()).map(query -> userIDFromCookie)
-							.orElse(null);
+					Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
+					String userID = isPersonal ? userIDFromCookie : null;
 					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, 3);
 					List<DropMatrixElement> elements = query.execute();
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
