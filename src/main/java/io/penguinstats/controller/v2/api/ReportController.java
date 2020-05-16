@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +46,7 @@ import io.penguinstats.util.JSONUtil;
 import io.penguinstats.util.validator.Validator;
 import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFactory;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v2")
@@ -71,9 +71,7 @@ public class ReportController {
 	@Autowired
 	private ValidatorFactory validatorFactory;
 
-	@ApiOperation(value = "Submit a Report",
-			notes = "Submit a Drop Report. " +
-					"Notice that you are required to provide the current `server` you are submitting.")
+	@ApiOperation(value = "Submit a drop report")
 	@PostMapping
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
@@ -149,9 +147,9 @@ public class ReportController {
 	}
 
 	@ApiOperation(value = "Recall the last Report",
-			notes = "Recall the last Drop Report by providing its hash value. " +
-					"Notice that you can only recall the *last* report, " +
-					"which in addition will also expire after 24 hours.")
+			notes = "Recall the last Drop Report by providing its hash value. "
+					+ "Notice that you can only recall the *last* report, "
+					+ "which in addition will also expire after 24 hours.")
 	@PostMapping(path = "/recall")
 	public ResponseEntity<String> recallPersonalReport(
 			@Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) {

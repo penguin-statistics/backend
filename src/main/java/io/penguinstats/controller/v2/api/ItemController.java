@@ -3,7 +3,6 @@ package io.penguinstats.controller.v2.api;
 import java.util.Date;
 import java.util.List;
 
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -19,6 +18,7 @@ import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("itemController_v2")
@@ -29,8 +29,7 @@ public class ItemController {
 	@Autowired
 	private ItemService itemService;
 
-	@ApiOperation(value = "Get all Items",
-			notes = "Get all available Items, including those which might not exist in the preferred server.")
+	@ApiOperation(value = "Get all Items", notes = "Get all Items in the DB.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<Item>> getAllItems() {
@@ -42,8 +41,7 @@ public class ItemController {
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Get an Item by Item ID",
-			notes = "Get an Item by the specified Item ID.")
+	@ApiOperation(value = "Get an Item by ItemId")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);

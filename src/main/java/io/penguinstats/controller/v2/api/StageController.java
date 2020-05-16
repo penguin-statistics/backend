@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,7 +26,9 @@ import io.penguinstats.service.StageService;
 import io.penguinstats.service.TimeRangeService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController("stageController_v2")
 @RequestMapping("/api/v2/stages")
@@ -42,10 +43,12 @@ public class StageController {
 	private TimeRangeService timeRangeService;
 
 	@ApiOperation(value = "Get all Stages",
-			notes = "Get all available Stages, including those which might not exist in the preferred server.")
+			notes = "Get all Stages in the DB, together with their current drop infos (if applicable).")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Stage>>
-			getAllStages(@RequestParam(name = "server", required = false, defaultValue = "CN") Server server) {
+			getAllStages(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+					required = false) @RequestParam(name = "server", required = false,
+							defaultValue = "CN") Server server) {
 		List<Stage> stages = stageService.getAllStages();
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
@@ -58,8 +61,9 @@ public class StageController {
 				TimeRange range = timeRangeMap.get(infos.get(0).getTimeRangeID());
 				infos.forEach(info -> info.toStageView());
 				stage.setDropInfos(infos);
-				stage.setExistence(new StageExistence(range.getStart(), range.getEnd()));
-			}
+				stage.setExistence(new StageExistence(true));
+			} else
+				stage.setExistence(new StageExistence(false));
 		}
 		stages.forEach(stage -> stage.toNewView());
 
@@ -72,12 +76,13 @@ public class StageController {
 		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Get a Stage by Stage ID",
-			notes = "Get a Stage by the specified Stage ID.")
+	@ApiOperation(value = "Get Stage by StageId")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Stage> getStageByStageId(
-			@RequestParam(name = "server", required = false, defaultValue = "CN") Server server,
-			@PathVariable("stageId") String stageId) {
+	public ResponseEntity<Stage>
+			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+					required = false) @RequestParam(name = "server", required = false,
+							defaultValue = "CN") Server server,
+					@PathVariable("stageId") String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
 		if (stage == null)
 			return new ResponseEntity<Stage>(HttpStatus.NOT_FOUND);
@@ -88,8 +93,9 @@ public class StageController {
 			TimeRange range = timeRangeService.getTimeRangeByRangeID(infos.get(0).getTimeRangeID());
 			infos.forEach(info -> info.toStageView());
 			stage.setDropInfos(infos);
-			stage.setExistence(new StageExistence(range.getStart(), range.getEnd()));
-		}
+			stage.setExistence(new StageExistence(true));
+		} else
+			stage.setExistence(new StageExistence(false));
 		stage.toNewView();
 		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
