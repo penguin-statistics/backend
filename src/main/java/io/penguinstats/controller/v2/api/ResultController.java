@@ -46,6 +46,7 @@ import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
