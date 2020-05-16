@@ -46,12 +46,10 @@ import io.penguinstats.util.JSONUtil;
 import io.penguinstats.util.validator.Validator;
 import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFactory;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v2")
 @RequestMapping("/api/v2/report")
-@Api(tags = {"Report"})
 public class ReportController {
 
 	private static Logger logger = LogManager.getLogger(ReportController.class);
@@ -71,8 +69,7 @@ public class ReportController {
 	@Autowired
 	private ValidatorFactory validatorFactory;
 
-	@ApiOperation(value = "Submit a drop report",
-			notes = "Detailed instructions can be found at: https://developer.penguin-stats.io/docs/report-api")
+	@ApiOperation("Save single report")
 	@PostMapping
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
@@ -147,10 +144,7 @@ public class ReportController {
 		}
 	}
 
-	@ApiOperation(value = "Recall the last Report",
-			notes = "Recall the last Drop Report by providing its hash value. "
-					+ "Notice that you can only recall the *last* report, "
-					+ "which in addition will also expire after 24 hours.")
+	@ApiOperation("Recall the last report")
 	@PostMapping(path = "/recall")
 	public ResponseEntity<String> recallPersonalReport(
 			@Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) {

@@ -3,7 +3,6 @@ package io.penguinstats.controller.v1.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -26,8 +25,6 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("userController_v1")
 @RequestMapping("/api/users")
-@Api(tags = {"@ Deprecated APIs"})
-@Deprecated
 public class UserController {
 
 	public static final String INTERNAL_USER_ID_PREFIX = "internal_";

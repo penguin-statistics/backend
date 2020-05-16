@@ -13,16 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant;
 import io.penguinstats.constant.Constant.CustomHeader;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("reportController_v1")
 @RequestMapping("/api/report")
-@Api(tags = {"@ Deprecated APIs"})
-@Deprecated
 public class ReportController {
 
-	@ApiOperation(value = "Save single report", hidden = true)
+	@ApiOperation("Save single report")
 	@PostMapping
 	public ResponseEntity<String> saveSingleReport(@RequestBody String requestBody, HttpServletRequest request,
 			HttpServletResponse response) {

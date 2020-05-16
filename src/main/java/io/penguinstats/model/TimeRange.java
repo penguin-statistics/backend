@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +19,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Document(collection = "time_range")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "The model of a time range.")
 public class TimeRange implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -33,10 +31,12 @@ public class TimeRange implements Serializable {
 	private Long start;
 	private Long end;
 	private String comment;
+	private Boolean accumulatable;
 
 	public TimeRange(Long start, Long end) {
 		this.start = start;
 		this.end = end;
+		this.accumulatable = true;
 	}
 
 	@JsonIgnore

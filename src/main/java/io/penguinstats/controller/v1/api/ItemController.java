@@ -2,7 +2,6 @@ package io.penguinstats.controller.v1.api;
 
 import java.util.List;
 
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -25,8 +24,6 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("itemController_v1")
 @RequestMapping("/api/items")
-@Api(tags = {"@ Deprecated APIs"})
-@Deprecated
 public class ItemController {
 
 	@Autowired
