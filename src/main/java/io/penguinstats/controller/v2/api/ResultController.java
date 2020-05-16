@@ -65,7 +65,7 @@ public class ResultController {
 	private QueryFactory queryFactory;
 
 	@ApiOperation(value = "Get the Result Matrix for all Stages and Items",
-			notes = "Return the Result Matrix in the \"lastest accumulatable time ranges\".")
+			notes = "Return the Result Matrix in the \"lastest accumulatable time ranges\". Detailed instructions can be found at: https://developer.penguin-stats.io/docs/api-v2-instruction/matrix-api")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<MatrixQueryResponse> getMatrix(HttpServletRequest request,
 			@ApiParam(value = "Whether to see personal drop matrix or not. Default to be false.",
