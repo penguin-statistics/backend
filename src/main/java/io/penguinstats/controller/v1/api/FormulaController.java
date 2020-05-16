@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.core.io.ClassPathResource;
@@ -23,8 +22,6 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("formulaController_v1")
 @RequestMapping("/api/formula")
-@Api(tags = {"@ Deprecated APIs"}, description = "Deprecated v1 APIs. Please use the v2 APIs instead of those ones.")
-@Deprecated
 public class FormulaController {
 
 	private static Logger logger = LogManager.getLogger(FormulaController.class);

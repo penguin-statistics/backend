@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.model.DropMatrixElement;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,12 +20,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(description = "The response model for trend query.")
 public class TrendQueryResponse implements Serializable, BasicQueryResponse {
 
 	private static final long serialVersionUID = 1L;
 
-	@ApiModelProperty(notes = "All trend results in a map. Key is stageId.")
 	@JsonProperty("trend")
 	private Map<String, StageTrend> stageTrendMap;
 
