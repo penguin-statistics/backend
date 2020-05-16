@@ -44,4 +44,10 @@ public class CacheController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
+	@DeleteMapping(path = "/property")
+	@Caching(evict = {@CacheEvict(value = "maps", key = "'propertiesMap'")})
+	public ResponseEntity<String> evictSystemPropertiesCache() {
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 }
