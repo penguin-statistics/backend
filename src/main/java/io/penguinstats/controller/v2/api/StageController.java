@@ -19,7 +19,6 @@ import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.Stage;
-import io.penguinstats.model.StageExistence;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.util.DateUtil;
@@ -55,9 +54,7 @@ public class StageController {
 			if (infos != null && !infos.isEmpty()) {
 				infos.forEach(info -> info.toStageView());
 				stage.setDropInfos(infos);
-				stage.setExistence(new StageExistence(true));
-			} else
-				stage.setExistence(new StageExistence(false));
+			}
 		}
 		stages.forEach(stage -> stage.toNewView());
 
@@ -86,9 +83,7 @@ public class StageController {
 		if (infos != null && !infos.isEmpty()) {
 			infos.forEach(info -> info.toStageView());
 			stage.setDropInfos(infos);
-			stage.setExistence(new StageExistence(true));
-		} else
-			stage.setExistence(new StageExistence(false));
+		}
 		stage.toNewView();
 		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}

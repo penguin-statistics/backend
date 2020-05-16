@@ -45,8 +45,6 @@ public class Stage implements Serializable {
 	private Boolean isGacha;
 	@Transient
 	private List<DropInfo> dropInfos;
-	@Transient
-	private StageExistence existence;
 	private List<String> normalDrop;
 	private List<String> specialDrop;
 	private List<String> extraDrop;
@@ -67,7 +65,6 @@ public class Stage implements Serializable {
 	@JsonIgnore
 	public Stage toLegacyView() {
 		this.dropInfos = null;
-		this.existence = null;
 		return this;
 	}
 
