@@ -31,7 +31,7 @@ public class NoticeController {
 	@ApiOperation(value = "Get current active Notices")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<Notice>> getAllItems() {
+	public ResponseEntity<List<Notice>> getAllNotice() {
 		List<Notice> items = noticeService.getAvailableNotice(System.currentTimeMillis());
 		HttpHeaders headers = new HttpHeaders();
 		String lastModified =
