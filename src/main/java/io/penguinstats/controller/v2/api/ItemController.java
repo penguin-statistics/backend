@@ -18,16 +18,18 @@ import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("itemController_v2")
 @RequestMapping("/api/v2/items")
+@Api(tags = {"Item"})
 public class ItemController {
 
 	@Autowired
 	private ItemService itemService;
 
-	@ApiOperation("Get all items")
+	@ApiOperation(value = "Get all Items", notes = "Get all Items in the DB.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<List<Item>> getAllItems() {
@@ -39,7 +41,7 @@ public class ItemController {
 		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation("Get item by item ID")
+	@ApiOperation(value = "Get an Item by ItemId")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
 		Item item = itemService.getItemByItemId(itemId);

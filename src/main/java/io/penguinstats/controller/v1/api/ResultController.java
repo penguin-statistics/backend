@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -36,6 +37,8 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("resultController_v1")
 @RequestMapping("/api/result")
+@Api(tags = {"@ Deprecated APIs"})
+@Deprecated
 public class ResultController {
 
 	private static Logger logger = LogManager.getLogger(ResultController.class);
