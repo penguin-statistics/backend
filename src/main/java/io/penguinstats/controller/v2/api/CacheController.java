@@ -50,4 +50,10 @@ public class CacheController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
+	@DeleteMapping(path = "/event-period")
+	@Caching(evict = {@CacheEvict(value = "lists", key = "'eventPeriodList'")})
+	public ResponseEntity<String> evictEventPeriodCache() {
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
 }

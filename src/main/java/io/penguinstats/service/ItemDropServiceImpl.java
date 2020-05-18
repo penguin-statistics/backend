@@ -350,7 +350,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
-		logger.info("generateGlobalDropMatrixElements done in {} ms", System.currentTimeMillis() - startTime);
+		logger.info("generateGlobalDropMatrixElements done in {} ms for server {}",
+				System.currentTimeMillis() - startTime, server);
 
 		return result;
 	}

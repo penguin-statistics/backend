@@ -17,16 +17,18 @@ import io.penguinstats.model.Zone;
 import io.penguinstats.service.ZoneService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
 @RestController("zoneController_v2")
 @RequestMapping("/api/v2/zones")
+@Api(tags = {"Zone"})
 public class ZoneController {
 
 	@Autowired
 	private ZoneService zoneService;
 
-	@ApiOperation("Get all zones")
+	@ApiOperation(value = "Get all Zones", notes = "Get all Zones in the DB.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Zone>> getAllZones() {
 		List<Zone> zones = zoneService.getAllZones();
@@ -38,7 +40,7 @@ public class ZoneController {
 		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation("Get zone by zone ID")
+	@ApiOperation(value = "Get a Zone by ZoneId")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);

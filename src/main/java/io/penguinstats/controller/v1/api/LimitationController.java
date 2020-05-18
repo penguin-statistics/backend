@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
@@ -22,6 +23,8 @@ import io.swagger.annotations.ApiOperation;
 
 @RestController("limitationController_v1")
 @RequestMapping("/api/limitations")
+@Api(tags = {"@ Deprecated APIs"})
+@Deprecated
 public class LimitationController {
 
 	@Autowired

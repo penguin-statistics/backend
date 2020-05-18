@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.penguinstats.enums.Server;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +14,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class NoticeCondition implements Serializable {
+public class ExistConditions implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private List<String> locale;
-	private Long start;
-	private Long end;
+	private List<Server> servers;
 
 }

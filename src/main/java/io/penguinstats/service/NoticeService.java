@@ -14,10 +14,6 @@ public interface NoticeService {
 	public void saveNotice(Notice notice);
 
 	@Cacheable(value = "lists", key = "'noticeList'")
-	public List<Notice> getAllSortedNotice();
-
-	public List<Notice> getAvailableNotice(Long time);
-
-	public Notice getLatestNotice();
+	public List<Notice> getAllNotice();
 
 }

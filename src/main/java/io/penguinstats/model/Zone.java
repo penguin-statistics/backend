@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.enums.Server;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Document(collection = "zone")
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@ApiModel(description = "The model of a zone.")
 public class Zone implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -37,7 +39,7 @@ public class Zone implements Serializable {
 	private String zoneName;
 	@JsonProperty("zoneName_i18n")
 	private Map<String, String> zoneNameMap;
-	private Map<Server, ZoneExistence> existence;
+	private Map<Server, Existence> existence;
 	private List<String> stages;
 	private Long openTime;
 	private Long closeTime;
@@ -53,8 +55,8 @@ public class Zone implements Serializable {
 
 	@JsonIgnore
 	public Zone toLegacyNonI18nView() {
-		this.existence = null;
 		this.zoneNameMap = null;
+		this.existence = null;
 		return this;
 	}
 
