@@ -29,7 +29,7 @@ public class Notice implements Serializable {
 	@Id
 	@JsonIgnore
 	private ObjectId id;
-	private NoticeCondition conditions;
+	private ExistConditions conditions;
 	private Integer severity;
 	@JsonProperty("content_i18n")
 	private Map<String, String> contentMap;

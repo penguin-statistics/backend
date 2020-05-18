@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.penguinstats.enums.Server;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,7 +38,7 @@ public class Zone implements Serializable {
 	private String zoneName;
 	@JsonProperty("zoneName_i18n")
 	private Map<String, String> zoneNameMap;
-	private Map<Server, ZoneExistence> existence;
+	private ExistConditions conditions;
 	private List<String> stages;
 	private Long openTime;
 	private Long closeTime;
@@ -55,14 +54,14 @@ public class Zone implements Serializable {
 
 	@JsonIgnore
 	public Zone toLegacyNonI18nView() {
-		this.existence = null;
+		this.conditions = null;
 		this.zoneNameMap = null;
 		return this;
 	}
 
 	@JsonIgnore
 	public Zone toLegacyI18nView() {
-		this.existence = null;
+		this.conditions = null;
 		return this;
 	}
 

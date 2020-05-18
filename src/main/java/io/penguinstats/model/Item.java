@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.penguinstats.enums.Server;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -40,8 +39,7 @@ public class Item implements Serializable {
 	private Map<String, String> nameMap;
 	private Integer sortId;
 	private Integer rarity;
-	@ApiModelProperty(notes = "The existence of the item in each server.")
-	private Map<Server, ItemExistence> existence;
+	private ExistConditions conditions;
 	private String itemType;
 	private Integer addTimePoint;
 	@ApiModelProperty(notes = "The position in the sprite image.")
