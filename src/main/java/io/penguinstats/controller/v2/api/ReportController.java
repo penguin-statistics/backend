@@ -8,25 +8,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.SingleReportRequest;
 import io.penguinstats.controller.v2.response.SingleReportResponse;
@@ -48,6 +29,22 @@ import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController("reportController_v2")
 @RequestMapping("/api/v2/report")

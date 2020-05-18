@@ -21,6 +21,7 @@ import io.penguinstats.util.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -309,40 +310,42 @@ public class ItemDropServiceImpl implements ItemDropService {
 				maxSize = pairs.size();
 		}
 
-		List<String> userIDs = userID != null ? Arrays.asList(userID) : new ArrayList<>();
+		List<String> userIDs = userID != null ? Collections.singletonList(userID) : new ArrayList<>();
 		Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
 
-		for (int i = 0; i < maxSize; i++) {
-			Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
-			for (String stageId : convertedMap.keySet()) {
-				List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
-				if (i >= pairs.size())
-					continue;
-				Pair<TimeRange, List<String>> pair = pairs.get(i);
-				TimeRange range = pair.getValue0();
-				timeRangeMap.put(stageId, Arrays.asList(range));
-			}
-			List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
-					new ArrayList<>(), userIDs);
+		if (maxSize != null) {
+			for (int i = 0; i < maxSize; i++) {
+				Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
+				for (String stageId : convertedMap.keySet()) {
+					List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
+					if (i >= pairs.size())
+						continue;
+					Pair<TimeRange, List<String>> pair = pairs.get(i);
+					TimeRange range = pair.getValue0();
+					timeRangeMap.put(stageId, Collections.singletonList(range));
+				}
+				List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
+						new ArrayList<>(), userIDs);
 
-			for (String stageId : convertedMap.keySet()) {
-				Map<String, List<DropMatrixElement>> subMap = allElementsMap.getOrDefault(stageId, new HashMap<>());
-				List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
-				if (i >= pairs.size())
-					continue;
-				Pair<TimeRange, List<String>> pair = pairs.get(i);
-				Set<String> itemIdSet = new HashSet<>(pair.getValue1());
-				List<DropMatrixElement> filteredElements = elements.stream()
-						.filter(el -> el.getStageId().equals(stageId) && itemIdSet.contains(el.getItemId()))
-						.collect(toList());
-				filteredElements.forEach(el -> {
-					String itemId = el.getItemId();
-					List<DropMatrixElement> subList = subMap.getOrDefault(itemId, new ArrayList<>());
-					subList.add(el);
-					subMap.put(itemId, subList);
-					itemIdSet.remove(itemId);
-				});
-				allElementsMap.put(stageId, subMap);
+				for (String stageId : convertedMap.keySet()) {
+					Map<String, List<DropMatrixElement>> subMap = allElementsMap.getOrDefault(stageId, new HashMap<>());
+					List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
+					if (i >= pairs.size())
+						continue;
+					Pair<TimeRange, List<String>> pair = pairs.get(i);
+					Set<String> itemIdSet = new HashSet<>(pair.getValue1());
+					List<DropMatrixElement> filteredElements = elements.stream()
+							.filter(el -> el.getStageId().equals(stageId) && itemIdSet.contains(el.getItemId()))
+							.collect(toList());
+					filteredElements.forEach(el -> {
+						String itemId = el.getItemId();
+						List<DropMatrixElement> subList = subMap.getOrDefault(itemId, new ArrayList<>());
+						subList.add(el);
+						subMap.put(itemId, subList);
+						itemIdSet.remove(itemId);
+					});
+					allElementsMap.put(stageId, subMap);
+				}
 			}
 		}
 

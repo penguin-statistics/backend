@@ -1,9 +1,14 @@
 package io.penguinstats.controller.v1.api;
 
-import java.io.UnsupportedEncodingException;
+import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.CustomHeader;
+import io.penguinstats.model.User;
+import io.penguinstats.service.UserService;
+import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.IpUtil;
+import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import io.swagger.annotations.Api;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,14 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.penguinstats.constant.Constant;
-import io.penguinstats.constant.Constant.CustomHeader;
-import io.penguinstats.model.User;
-import io.penguinstats.service.UserService;
-import io.penguinstats.util.CookieUtil;
-import io.penguinstats.util.IpUtil;
-import io.swagger.annotations.ApiOperation;
 
 @RestController("userController_v1")
 @RequestMapping("/api/users")

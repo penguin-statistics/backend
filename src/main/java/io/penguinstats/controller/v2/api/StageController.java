@@ -9,6 +9,7 @@ import io.penguinstats.service.StageService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
+import io.penguinstats.util.exception.NotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import java.util.Date;
@@ -71,7 +72,7 @@ public class StageController {
 			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server,
-					@PathVariable("stageId") String stageId) {
+					@PathVariable("stageId") String stageId) throws NotFoundException {
 		Stage stage = stageService.getStageByStageId(stageId);
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());

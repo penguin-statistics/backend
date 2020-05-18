@@ -142,7 +142,7 @@ public class ResultController {
 			notes = "Execute advanced queries in a batch and return the query results in an array.")
 	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
-			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) throws Exception {
+			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
 		Integer maxQueryNum =
 				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
 		if (advancedQueryRequest.getQueries().size() > maxQueryNum) {

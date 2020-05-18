@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v1.api;
 
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -49,7 +50,7 @@ public class ItemController {
 	@ApiOperation("Get item by item ID")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId,
-			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) throws NotFoundException {
 		Item item = itemService.getItemByItemId(itemId);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
