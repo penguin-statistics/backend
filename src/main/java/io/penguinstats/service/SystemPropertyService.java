@@ -21,6 +21,8 @@ public interface SystemPropertyService {
 
 	Integer getPropertyIntegerValue(String key);
 
+	Long getPropertyLongValue(String key);
+
 	@Cacheable(value = "maps", key = "'propertiesMap'")
 	Map<String, String> getPropertiesMap();
 

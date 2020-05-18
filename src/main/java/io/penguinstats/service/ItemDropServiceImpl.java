@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -467,10 +466,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	@Override
-	public List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Integer interval,
-			Integer range) {
+	public List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Long interval,
+			Long range) {
 		Long end = System.currentTimeMillis();
-		Long start = end - TimeUnit.DAYS.toMillis(range);
+		Long start = end - range;
 		List<DropMatrixElement> result =
 				generateSegmentedDropMatrixElementMap(server, null, null, start, end, null, interval);
 		LastUpdateTimeUtil
@@ -480,12 +479,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	private List<DropMatrixElement> generateSegmentedDropMatrixElementMap(Server server, String stageId,
-			List<String> itemIds, Long start, Long end, List<String> userIDs, Integer interval) {
+			List<String> itemIds, Long start, Long end, List<String> userIDs, Long interval) {
 		if (start == null || end == null || start.compareTo(end) >= 0)
 			return new ArrayList<>();
-		Long intervalMillis = TimeUnit.DAYS.toMillis(interval);
-		int sectionNum =
-				new Double(Math.ceil(new Double((end - start) * 1.0 / intervalMillis).doubleValue())).intValue();
+		int sectionNum = new Double(Math.ceil(new Double((end - start) * 1.0 / interval).doubleValue())).intValue();
 		if (sectionNum > systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.MAX_SECTION_NUM)) {
 			logger.error("exceed max section num, now is " + sectionNum);
 			return new ArrayList<>();
@@ -544,8 +541,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 				});
 				elements.sort((e1, e2) -> e1.getStart().compareTo(e2.getStart()));
 				elements.forEach(el -> {
-					el.setStart(el.getStart() * intervalMillis + start);
-					el.setEnd(el.getStart() + intervalMillis);
+					el.setStart(el.getStart() * interval + start);
+					el.setEnd(el.getStart() + interval);
 				});
 			});
 		});
@@ -554,14 +551,14 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	@Override
-	public List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Integer interval,
-			Integer range) {
+	public List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Long interval,
+			Long range) {
 		return generateSegmentedGlobalDropMatrixElementMap(server, interval, range);
 	}
 
 	@Override
 	public List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
-			Long start, Long end, List<String> userIDs, Integer interval) {
+			Long start, Long end, List<String> userIDs, Long interval) {
 		List<TimeRange> splittedRanges = timeRangeService.getSplittedTimeRanges(server, stageId, start, end);
 		Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
 		timeRangeMap.put(stageId, splittedRanges);

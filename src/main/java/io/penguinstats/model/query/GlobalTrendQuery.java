@@ -31,9 +31,9 @@ public class GlobalTrendQuery implements Serializable, BasicQuery {
 
 	private Server server;
 
-	private Integer interval;
+	private Long interval;
 
-	private Integer range;
+	private Long range;
 
 	private Integer timeout;
 

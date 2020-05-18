@@ -2,7 +2,6 @@ package io.penguinstats.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -49,8 +48,8 @@ public class QueryConditions {
 		return this;
 	}
 
-	public QueryConditions setInterval(int days) {
-		this.interval = TimeUnit.DAYS.toMillis(days);
+	public QueryConditions setInterval(Long interval) {
+		this.interval = interval;
 		return this;
 	}
 

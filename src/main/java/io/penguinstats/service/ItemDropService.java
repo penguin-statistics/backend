@@ -59,14 +59,14 @@ public interface ItemDropService {
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null", sync = true)
-	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
+	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Long interval, Long range);
 
 	@CachePut(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null")
-	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
+	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Long interval, Long range);
 
 	List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
-			Long start, Long end, List<String> userIDs, Integer interval);
+			Long start, Long end, List<String> userIDs, Long interval);
 
 }
