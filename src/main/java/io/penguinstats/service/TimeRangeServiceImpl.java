@@ -3,6 +3,8 @@ package io.penguinstats.service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +39,9 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 
 	@Override
 	public TimeRange getTimeRangeByRangeID(String rangeID) {
-		return timeRangeDao.findByRangeID(rangeID);
+		return timeRangeDao.findByRangeID(rangeID).orElseThrow(
+				() -> new NotFoundException(ErrorCode.NOT_FOUND, "TimeRange[" + rangeID + "] is not found",
+						Optional.of(rangeID)));
 	}
 
 	/**

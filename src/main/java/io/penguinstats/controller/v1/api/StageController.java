@@ -54,7 +54,7 @@ public class StageController {
 		stage.toLegacyView();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
-		return new ResponseEntity<Stage>(stage, headers, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Stage>(stage, headers, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")

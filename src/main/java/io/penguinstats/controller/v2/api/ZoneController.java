@@ -44,8 +44,6 @@ public class ZoneController {
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
-		if (zone == null)
-			return new ResponseEntity<Zone>(HttpStatus.NOT_FOUND);
 		zone.toNewView();
 		return new ResponseEntity<Zone>(zone, HttpStatus.OK);
 	}

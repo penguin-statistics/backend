@@ -53,8 +53,6 @@ public class ItemController {
 		Item item = itemService.getItemByItemId(itemId);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
-		if (item == null)
-			return new ResponseEntity<Item>(headers, HttpStatus.NOT_FOUND);
 		if (!i18n)
 			item.toNonI18nView();
 		return new ResponseEntity<Item>(item, headers, HttpStatus.OK);

@@ -1,5 +1,7 @@
 package io.penguinstats.service;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.DatabaseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -60,8 +62,11 @@ public class UserServiceImpl implements UserService {
 				break;
 			times++;
 		}
-		if (times == MAX_RETRY_TIME)
-			return null;
+		if (times == MAX_RETRY_TIME) {
+			logger.error("Failed to create new user.");
+			throw new DatabaseException(ErrorCode.CANNOT_CREATE_USER, "Failed to create new user.", null);
+		}
+
 		return createNewUser(userID, ip);
 	}
 

@@ -65,45 +65,40 @@ public class ResultController {
 			@RequestParam(name = "show_closed_zones", required = false,
 					defaultValue = "false") boolean showClosedZones) {
 		logger.info("GET /matrix");
-		try {
-			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
-			Criteria criteria = isPersonal && userID != null ? Criteria.where("userID").is(userID) : null;
-			List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(criteria, isWeighted);
+		String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+		Criteria criteria = isPersonal && userID != null ? Criteria.where("userID").is(userID) : null;
+		List<DropMatrixElement> elements = itemDropService.generateDropMatrixElements(criteria, isWeighted);
 
-			JSONObject obj = new JSONObject();
-			JSONArray array = new JSONArray();
-			Map<String, Zone> zoneMap = showClosedZones ? null : zoneService.getZoneMap();
-			Map<String, Item> itemMap = !showItemDetails ? null : itemService.getItemMap();
-			Map<String, Stage> stageMap = !showStageDetails && showClosedZones ? null : stageService.getStageMap();
+		JSONObject obj = new JSONObject();
+		JSONArray array = new JSONArray();
+		Map<String, Zone> zoneMap = showClosedZones ? null : zoneService.getZoneMap();
+		Map<String, Item> itemMap = !showItemDetails ? null : itemService.getItemMap();
+		Map<String, Stage> stageMap = !showStageDetails && showClosedZones ? null : stageService.getStageMap();
 
-			for (DropMatrixElement element : elements) {
-				JSONObject subObj = JSONUtil.convertObjectToJSONObject(element);
-				if (!showClosedZones) {
-					Stage stage = stageMap.get(element.getStageId());
-					Zone zone = zoneMap.get(stage.getZoneId());
-					Long currentTime = System.currentTimeMillis();
-					if (!zone.isInTimeRange(currentTime))
-						continue;
-				}
-				if (showItemDetails)
-					subObj.put("item", JSONUtil.convertObjectToJSONObject(itemMap.get(element.getItemId())));
-				if (showStageDetails)
-					subObj.put("stage", JSONUtil.convertObjectToJSONObject(stageMap.get(element.getStageId())));
-				array.put(subObj);
+		for (DropMatrixElement element : elements) {
+			JSONObject subObj = JSONUtil.convertObjectToJSONObject(element);
+			if (!showClosedZones) {
+				Stage stage = stageMap.get(element.getStageId());
+				Zone zone = zoneMap.get(stage.getZoneId());
+				Long currentTime = System.currentTimeMillis();
+				if (!zone.isInTimeRange(currentTime))
+					continue;
 			}
-			obj.put("matrix", array);
-			HttpHeaders headers = new HttpHeaders();
-			headers.add("LAST-UPDATE-TIME",
-					LastUpdateTimeUtil
-							.getLastUpdateTime(
-									isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
-							.toString());
-			headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
-			return new ResponseEntity<>(obj.toString(), headers, HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in getMatrix", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			if (showItemDetails)
+				subObj.put("item", JSONUtil.convertObjectToJSONObject(itemMap.get(element.getItemId())));
+			if (showStageDetails)
+				subObj.put("stage", JSONUtil.convertObjectToJSONObject(stageMap.get(element.getStageId())));
+			array.put(subObj);
 		}
+		obj.put("matrix", array);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("LAST-UPDATE-TIME",
+				LastUpdateTimeUtil
+						.getLastUpdateTime(
+								isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements")
+						.toString());
+		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
+		return new ResponseEntity<>(obj.toString(), headers, HttpStatus.OK);
 	}
 
 }

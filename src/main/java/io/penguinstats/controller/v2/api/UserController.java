@@ -50,10 +50,7 @@ public class UserController {
 			if (user == null) {
 				if (isInternal) {
 					userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
-					if (userID == null) {
-						logger.error("Failed to create new user.");
-						return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-					} else {
+					if (userID != null) {
 						userService.addTag(userID, "internal");
 					}
 				} else {
