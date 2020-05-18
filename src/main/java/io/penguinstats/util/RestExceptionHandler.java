@@ -26,7 +26,7 @@ public class RestExceptionHandler {
   @ExceptionHandler({RuntimeException.class})
   public final ResponseEntity<ErrorResponseWrapper> handleException(PenguinException ex,
       WebRequest request) {
-    log.debug("encountered error", ex);
+    log.error("encountered error", ex);
     HttpHeaders headers = new HttpHeaders();
 
     HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
