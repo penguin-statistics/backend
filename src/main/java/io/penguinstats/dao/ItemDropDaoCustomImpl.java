@@ -3,12 +3,15 @@ package io.penguinstats.dao;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregationOptions;
 
+import io.penguinstats.constant.AggregationOperationConstants;
+import io.penguinstats.enums.Server;
+import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.QueryConditions;
+import io.penguinstats.model.QueryConditions.StageWithTimeRange;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,15 +22,8 @@ import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
 import org.springframework.data.mongodb.core.aggregation.LiteralOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-import io.penguinstats.constant.AggregationOperationConstants;
-import io.penguinstats.enums.Server;
-import io.penguinstats.model.ItemDrop;
-import io.penguinstats.model.QueryConditions;
-import io.penguinstats.model.QueryConditions.StageWithTimeRange;
-
+@Log4j2
 public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
-
-	private static Logger logger = LogManager.getLogger(ItemDropDaoCustomImpl.class);
 
 	@Autowired
 	MongoTemplate mongoTemplate;
@@ -144,7 +140,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 				for (int i = 1, size = stages.size(); i < size; i++) {
 					StageWithTimeRange stage = stages.get(i);
 					if (!stage.getStart().equals(firstStartTime)) {
-						logger.error("start time must be identical for all stages in the conditions");
+						log.error("start time must be identical for all stages in the conditions");
 						passCheck = false;
 						break;
 					}
@@ -235,7 +231,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 
-		logger.debug(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
+		log.debug(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
 
 		return results.getMappedResults();
 	}

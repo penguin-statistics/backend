@@ -30,8 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.bson.Document;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +41,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
+@Log4j2
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
-
-	private static Logger logger = LogManager.getLogger(ItemDropServiceImpl.class);
 
 	@Autowired
 	private ItemService itemService;
@@ -159,7 +157,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 			}
 			map.put(stageId, Arrays.asList(allTimesArray));
 		}
-		logger.debug("aggregateStageTimes " + (System.currentTimeMillis() - startTime) + "ms");
+		log.debug("aggregateStageTimes " + (System.currentTimeMillis() - startTime) + "ms");
 		return map;
 	}
 
@@ -188,7 +186,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				map.put(stageId, subMap);
 			}
 		}
-		logger.debug("aggregateItemDropQuantities " + (System.currentTimeMillis() - startTime) + "ms");
+		log.debug("aggregateItemDropQuantities " + (System.currentTimeMillis() - startTime) + "ms");
 		return map;
 	}
 
@@ -210,12 +208,12 @@ public class ItemDropServiceImpl implements ItemDropService {
 			for (String stageId : quantitiesMap.keySet()) {
 				Stage stage = stageMap.get(stageId);
 				if (stage == null) {
-					logger.error("cannot find stage " + stageId);
+					log.error("cannot find stage " + stageId);
 					continue;
 				}
 				List<Double> allTimes = stageTimesMap.get(stageId);
 				if (allTimes == null) {
-					logger.error("cannot find allTimes for " + stageId);
+					log.error("cannot find allTimes for " + stageId);
 					continue;
 				}
 				Map<String, Double> subMap = quantitiesMap.get(stageId);
@@ -225,14 +223,14 @@ public class ItemDropServiceImpl implements ItemDropService {
 					Item item = itemMap.get(itemId);
 					if (item == null) {
 						// Sometimes item may be null because it has been removed from dropSet 
-						logger.warn("cannot find item " + itemId);
+						log.warn("cannot find item " + itemId);
 						continue;
 					}
 					Integer addTimePoint = item.getAddTimePoint();
 					if (addTimePoint == null)
 						addTimePoint = 0;
 					if (addTimePoint >= allTimes.size()) {
-						logger.error("addTimePoint for " + itemId + " is too large");
+						log.error("addTimePoint for " + itemId + " is too large");
 						continue;
 					}
 					Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
@@ -240,9 +238,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times, null, null));
 				}
 			}
-			logger.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms");
+			log.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms");
 		} catch (Exception e) {
-			logger.error("Error in generateDropMatrixElements", e);
+			log.error("Error in generateDropMatrixElements", e);
 		}
 		LastUpdateTimeUtil
 				.setCurrentTimestamp(isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements");
@@ -354,7 +352,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
-		logger.info("generateGlobalDropMatrixElements done in {} ms for server {}",
+		log.info("generateGlobalDropMatrixElements done in {} ms for server {}",
 				System.currentTimeMillis() - startTime, server);
 
 		return result;
@@ -411,7 +409,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 					if (doc.containsKey("itemId")) {
 						String itemId = doc.getString("itemId");
 						if (!dropSet.contains(itemId))
-							logger.warn("Item " + itemId + " is invalid in stage " + stageId);
+							log.warn("Item " + itemId + " is invalid in stage " + stageId);
 						else {
 							dropSet.remove(itemId);
 							Integer quantity = doc.getInteger("quantity");
@@ -480,7 +478,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 				generateSegmentedDropMatrixElements(server, null, null, start, end, null, interval);
 		LastUpdateTimeUtil
 				.setCurrentTimestamp(LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
-		logger.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
+		log.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
 		return result;
 	}
 
@@ -492,7 +490,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 			return new ArrayList<>();
 		int sectionNum = new Double(Math.ceil(new Double((end - start) * 1.0 / interval).doubleValue())).intValue();
 		if (sectionNum > systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.MAX_SECTION_NUM)) {
-			logger.error("exceed max section num, now is " + sectionNum);
+			log.error("exceed max section num, now is " + sectionNum);
 			return new ArrayList<>();
 		}
 

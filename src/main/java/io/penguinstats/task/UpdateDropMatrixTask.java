@@ -1,21 +1,17 @@
 package io.penguinstats.task;
 
+import io.penguinstats.enums.Server;
+import io.penguinstats.service.ItemDropService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import io.penguinstats.enums.Server;
-import io.penguinstats.service.ItemDropService;
-
+@Log4j2
 @Component
 public class UpdateDropMatrixTask implements Task {
-
-	private static Logger logger = LogManager.getLogger(UpdateDropMatrixTask.class);
 
 	@Autowired
 	private ItemDropService itemDropService;
@@ -23,7 +19,7 @@ public class UpdateDropMatrixTask implements Task {
 	@Scheduled(fixedRate = 612345)
 	@Override
 	public void execute() {
-		logger.info("execute UpdateDropMatrixTask");
+		log.info("execute UpdateDropMatrixTask");
 
 		itemDropService.updateDropMatrixElements(null, false);
 

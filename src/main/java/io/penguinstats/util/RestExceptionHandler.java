@@ -44,7 +44,7 @@ public class RestExceptionHandler {
     return handleExceptionInternal(ex, errorResponse, headers, status, request);
   }
 
-  protected ResponseEntity<ErrorResponseWrapper> handleExceptionInternal(Exception ex,
+  private ResponseEntity<ErrorResponseWrapper> handleExceptionInternal(Exception ex,
       ErrorResponseWrapper body,
       HttpHeaders headers, HttpStatus status, WebRequest request) {
     if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
@@ -87,7 +87,7 @@ public class RestExceptionHandler {
 
   @ExceptionHandler({IllegalArgumentException.class})
   public final ResponseEntity<? extends ErrorResponseWrapper> handleBadRequestException(
-      IllegalArgumentException ex, WebRequest request) throws IOException {
+      IllegalArgumentException ex, WebRequest request) {
     log.debug("encountered error", ex);
     HttpHeaders headers = new HttpHeaders();
     HttpStatus status = HttpStatus.BAD_REQUEST;

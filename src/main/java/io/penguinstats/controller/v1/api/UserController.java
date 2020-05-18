@@ -6,12 +6,11 @@ import io.penguinstats.model.User;
 import io.penguinstats.service.UserService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import io.swagger.annotations.Api;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Log4j2
 @RestController("userController_v1")
 @RequestMapping("/api/users")
 @Api(tags = {"@ Deprecated APIs"})
@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
 	public static final String INTERNAL_USER_ID_PREFIX = "internal_";
-
-	private static Logger logger = LogManager.getLogger(UserController.class);
 
 	@Autowired
 	private UserService userService;

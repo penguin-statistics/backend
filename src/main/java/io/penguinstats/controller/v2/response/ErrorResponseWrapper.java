@@ -11,14 +11,14 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @ApiIgnore
 @NoArgsConstructor
-public class ErrorResponseWrapper<T> {
-  @ApiModelProperty(name = "code", value = "status code", required = false, position = -2)
+public class ErrorResponseWrapper {
+  @ApiModelProperty(name = "code", value = "status code", position = -2)
   @JsonInclude(Include.NON_NULL)
   @Getter
   @Setter
   private Integer code;
 
-  @ApiModelProperty(name = "message", value = "response message", required = false, position = -1)
+  @ApiModelProperty(name = "message", value = "response message", position = -1)
   @JsonInclude(Include.NON_NULL)
   @Getter
   @Setter

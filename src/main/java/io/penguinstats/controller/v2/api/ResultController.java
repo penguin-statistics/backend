@@ -1,30 +1,5 @@
 package io.penguinstats.controller.v2.api;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.mapper.QueryMapper;
@@ -48,13 +23,33 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+@Log4j2
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
 @Api(tags = {"Result"})
 public class ResultController {
-
-	private static Logger logger = LogManager.getLogger(ResultController.class);
 
 	@Autowired
 	private DropInfoService dropInfoService;
@@ -80,7 +75,7 @@ public class ResultController {
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server) throws Exception {
-		logger.info("GET /matrix");
+		log.info("GET /matrix");
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
 
 			GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
@@ -163,11 +158,11 @@ public class ResultController {
 					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
 					results.add(queryResponse);
 				} catch (TimeoutException toEx) {
-					logger.error("TimeoutException in executeAdvancedQueries: ", toEx);
+					log.error("TimeoutException in executeAdvancedQueries: ", toEx);
 				} catch (ExecutionException exeEx) {
-					logger.error("ExecutionException in executeAdvancedQueries: ", exeEx);
+					log.error("ExecutionException in executeAdvancedQueries: ", exeEx);
 				} catch (Exception ex) {
-					logger.error("Error in executeAdvancedQueries: ", ex);
+					log.error("Error in executeAdvancedQueries: ", ex);
 				}
 			});
 			AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
