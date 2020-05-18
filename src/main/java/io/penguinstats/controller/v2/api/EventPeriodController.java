@@ -13,31 +13,31 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
-import io.penguinstats.model.Notice;
-import io.penguinstats.service.NoticeService;
+import io.penguinstats.model.EventPeriod;
+import io.penguinstats.service.EventPeriodService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@RestController("noticeController_v2")
-@RequestMapping("/api/v2/notice")
-@Api(tags = {"Notice"})
-public class NoticeController {
+@RestController("eventPeriodController_v2")
+@RequestMapping("/api/v2/period")
+@Api(tags = {"Period"})
+public class EventPeriodController {
 
 	@Autowired
-	private NoticeService noticeService;
+	private EventPeriodService eventPeriodService;
 
-	@ApiOperation(value = "Get all notice")
+	@ApiOperation("Get all event periods sorted with starting time by ascending order")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<Notice>> getAllNotice() {
-		List<Notice> items = noticeService.getAllNotice();
+	public ResponseEntity<List<EventPeriod>> getAllSortedEventPeriod() {
+		List<EventPeriod> periods = eventPeriodService.getAllSortedEventPeriod();
 		HttpHeaders headers = new HttpHeaders();
-		String lastModified =
-				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.NOTICE_LIST)));
+		String lastModified = DateUtil
+				.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.EVENT_PERIOD_LIST)));
 		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
-		return new ResponseEntity<List<Notice>>(items, headers, HttpStatus.OK);
+		return new ResponseEntity<List<EventPeriod>>(periods, headers, HttpStatus.OK);
 	}
 
 }
