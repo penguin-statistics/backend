@@ -32,9 +32,11 @@ public class Limitation implements Serializable {
 	@Id
 	@JsonIgnore
 	private ObjectId id;
+	// 'name' can be 'all', a stageId, or any identifier.
 	@Indexed
-	private String name; // 'name' can be 'all', a stageId, or any identifier.
-	private Bounds itemTypeBounds; // EXCLUDE furniture.
+	private String name;
+	// EXCLUDE furniture
+	private Bounds itemTypeBounds;
 	private List<ItemQuantityBounds> itemQuantityBounds;
 	private List<String> inheritance;
 
@@ -47,8 +49,9 @@ public class Limitation implements Serializable {
 	public Map<String, ItemQuantityBounds> getItemQuantityBoundsMap() {
 		Map<String, ItemQuantityBounds> itemQuantityBoundsMap = new HashMap<>();
 		if (this.itemQuantityBounds != null) {
-			for (ItemQuantityBounds bounds : this.itemQuantityBounds)
+			for (ItemQuantityBounds bounds : this.itemQuantityBounds) {
 				itemQuantityBoundsMap.put(bounds.getItemId(), bounds);
+			}
 		}
 		return itemQuantityBoundsMap;
 	}
@@ -61,20 +64,24 @@ public class Limitation implements Serializable {
 	 * @return void
 	 */
 	public void merge(Limitation otherLimitation) {
-		if (otherLimitation == null)
+		if (otherLimitation == null) {
 			return;
-		if (this.itemTypeBounds == null && otherLimitation.itemTypeBounds != null)
+		}
+		if (this.itemTypeBounds == null && otherLimitation.itemTypeBounds != null) {
 			this.itemTypeBounds = otherLimitation.itemTypeBounds;
+		}
 
 		Map<String, ItemQuantityBounds> mapThis = this.getItemQuantityBoundsMap();
 		Map<String, ItemQuantityBounds> mapOther = otherLimitation.getItemQuantityBoundsMap();
 		for (String itemId : mapOther.keySet()) {
-			if (!mapThis.containsKey(itemId))
+			if (!mapThis.containsKey(itemId)) {
 				mapThis.put(itemId, mapOther.get(itemId));
+			}
 		}
 		List<ItemQuantityBounds> newItemQuantityBounds = new ArrayList<>();
-		for (String itemId : mapThis.keySet())
+		for (String itemId : mapThis.keySet()) {
 			newItemQuantityBounds.add(mapThis.get(itemId));
+		}
 		this.itemQuantityBounds = newItemQuantityBounds;
 	}
 
@@ -85,13 +92,15 @@ public class Limitation implements Serializable {
 	 * @return void
 	 */
 	public void filterItemQuantityBounds(Set<String> itemIds) {
-		if (this.itemQuantityBounds == null)
+		if (this.itemQuantityBounds == null) {
 			return;
+		}
 		Iterator<ItemQuantityBounds> iter = this.itemQuantityBounds.iterator();
 		while (iter.hasNext()) {
 			String itemId = iter.next().getItemId();
-			if (!itemIds.contains(itemId))
+			if (!itemIds.contains(itemId)) {
 				iter.remove();
+			}
 		}
 	}
 

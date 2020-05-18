@@ -7,6 +7,9 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * @author AlvISsReimu
+ */
 public class JSONUtil {
 
 	private static Logger logger = LogManager.getLogger(JSONUtil.class);

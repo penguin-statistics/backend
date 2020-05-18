@@ -1,32 +1,5 @@
 package io.penguinstats.controller.v2.api;
 
-import static io.penguinstats.enums.ValidatorType.DROPS;
-import static io.penguinstats.enums.ValidatorType.IP;
-import static io.penguinstats.enums.ValidatorType.STAGE_TIME;
-import static io.penguinstats.enums.ValidatorType.USER;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingInt;
-import static java.util.stream.Collectors.toList;
-
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.SingleReportRequest;
 import io.penguinstats.controller.v2.response.SingleReportResponse;
@@ -48,7 +21,33 @@ import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFactory;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Setter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static io.penguinstats.enums.ValidatorType.*;
+import static java.util.stream.Collectors.*;
+
+
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("reportController_v2")
 @RequestMapping("/api/v2/report")
 @Api(tags = {"Report"})
@@ -56,19 +55,14 @@ public class ReportController {
 
 	private static Logger logger = LogManager.getLogger(ReportController.class);
 
-	@Autowired
 	private ItemDropService itemDropService;
 
-	@Autowired
 	private UserService userService;
 
-	@Autowired
 	private StageService stageService;
 
-	@Autowired
 	private CookieUtil cookieUtil;
 
-	@Autowired
 	private ValidatorFactory validatorFactory;
 
 	@ApiOperation(value = "Submit a drop report",
@@ -77,16 +71,14 @@ public class ReportController {
 	public ResponseEntity<SingleReportResponse> saveSingleReport(
 			@Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
 			HttpServletResponse response) {
+		//TODO exception handler
 		try {
 			String userID = cookieUtil.readUserIDFromCookie(request);
 			if (userID == null) {
 				userID = userService.createNewUser(IpUtil.getIpAddr(request));
 			}
-			try {
-				CookieUtil.setUserIDCookie(response, userID);
-			} catch (UnsupportedEncodingException e) {
-				logger.error("Error in handleUserIDFromCookie: ", e);
-			}
+			CookieUtil.setUserIDCookie(response, userID);
+
 			logger.info("user " + userID + " POST /report\n"
 					+ Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(singleReportRequest)).toString(2));
 
@@ -96,8 +88,9 @@ public class ReportController {
 			Server server = singleReportRequest.getServer();
 			Long timestamp = System.currentTimeMillis();
 			String ip = IpUtil.getIpAddr(request);
+
 			Integer times = 1;
-			Boolean isReliable = true;
+			boolean isReliable = true;
 
 			// Validation
 			ValidatorType[] validatorTypes = new ValidatorType[] {STAGE_TIME, USER, IP, DROPS};
@@ -131,19 +124,20 @@ public class ReportController {
 					}
 				}
 			}
-
 			ItemDrop itemDrop = new ItemDrop().setStageId(stageId).setServer(server).setTimes(times).setDrops(drops)
 					.setTimestamp(timestamp).setIp(ip).setIsReliable(isReliable).setIsDeleted(false).setSource(source)
 					.setVersion(version).setUserID(userID);
 			itemDropService.saveItemDrop(itemDrop);
 			String reportHash = HashUtil.getHash(itemDrop.getId().toString());
-
-			logger.debug("Saving itemDrop: \n" + JSONUtil.convertObjectToJSONObject(itemDrop.toNoIDView()).toString(2));
-
-			return new ResponseEntity<SingleReportResponse>(new SingleReportResponse(reportHash), HttpStatus.CREATED);
+			logger.debug("Saving itemDrop: \n" + Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(itemDrop.toNoIDView())).toString(2));
+			return new ResponseEntity<>(new SingleReportResponse(reportHash), HttpStatus.CREATED);
 		} catch (Exception e) {
+			if (e instanceof UnsupportedEncodingException) {
+				logger.error("Error in handleUserIDFromCookie: ", e);
+				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 			logger.error("Error in saveSingleReport", e);
-			return new ResponseEntity<SingleReportResponse>(HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

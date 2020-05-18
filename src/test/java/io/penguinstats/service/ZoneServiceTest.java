@@ -27,6 +27,9 @@ public class ZoneServiceTest {
 	@Autowired
 	private ZoneService zoneService;
 
+	@Autowired
+	private  SystemPropertyService systemPropertyService;
+
 	private List<Zone> newZones = new ArrayList<>();
 
 	@Before
@@ -74,4 +77,11 @@ public class ZoneServiceTest {
 		assert (token == 0);
 	}
 
+	@Test
+	public void save(){
+		systemPropertyService.saveProperty("advanced_query_request_num_max",
+				"25");
+	}
+
 }
+

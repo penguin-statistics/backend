@@ -3,19 +3,11 @@ package io.penguinstats.service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -40,28 +32,25 @@ import io.penguinstats.model.Stage;
 import io.penguinstats.model.TimeRange;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
 
 	private static Logger logger = LogManager.getLogger(ItemDropServiceImpl.class);
 
-	@Autowired
 	private ItemService itemService;
 
-	@Autowired
 	private StageService stageService;
 
-	@Autowired
 	private ItemDropDao itemDropDao;
 
-	@Autowired
 	private DropInfoService dropInfoService;
 
-	@Autowired
 	private TimeRangeService timeRangeService;
 
-	@Autowired
 	private SystemPropertyService systemPropertyService;
 
 	@Override
@@ -84,18 +73,20 @@ public class ItemDropServiceImpl implements ItemDropService {
 		itemDrop.setIsDeleted(true);
 		itemDropDao.save(itemDrop);
 	}
-
 	@Override
 	public void recallItemDrop(String userID, String itemDropHashId) throws Exception {
 		Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
 		List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
 		if (itemDropList.size() == 0) {
+//			TODO specific exception
 			throw new Exception("Visible ItemDrop not found for user with ID[" + userID + "]");
 		}
 
 		ItemDrop lastItemDrop = itemDropList.get(0);
 		String lastItemDropHashId = HashUtil.getHash(lastItemDrop.getId().toString());
 		if (!lastItemDropHashId.equals(itemDropHashId)) {
+			//			TODO specific exception class instead of throw base
+			//			 exception class & this exception need handler
 			throw new Exception("ItemDropHashId doesn't match!");
 		}
 
@@ -138,7 +129,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, List<Double>> getStageTimesMap(Criteria filter, boolean isWeighted) {
-		Long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		List<Document> resultList =
 				isWeighted ? itemDropDao.aggregateWeightedStageTimes(filter) : itemDropDao.aggregateStageTimes(filter);
 		Iterator<Document> iter = resultList.iterator();
@@ -149,9 +140,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 			List<Document> allTimesDocs = (ArrayList<Document>)doc.get("allTimes");
 			int size = allTimesDocs.size();
 			Double[] allTimesArray = new Double[size];
-			for (int i = 0; i < size; i++) {
-				Document subDoc = allTimesDocs.get(i);
-				Integer timePoint = subDoc.getLong("timePoint").intValue();
+			for (Document subDoc : allTimesDocs) {
+				int timePoint = subDoc.getLong("timePoint").intValue();
 				allTimesArray[timePoint] =
 						isWeighted ? subDoc.getDouble("times") : new Double(subDoc.getInteger("times"));
 			}
@@ -170,7 +160,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	 */
 	@Override
 	public Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted) {
-		Long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 		List<Document> resultList = isWeighted ? itemDropDao.aggregateWeightedItemDropQuantities(filter)
 				: itemDropDao.aggregateItemDropQuantities(filter);
 		Iterator<Document> iter = resultList.iterator();
@@ -279,7 +269,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	@Override
 	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
-		Long startTime = System.currentTimeMillis();
+		long startTime = System.currentTimeMillis();
 
 		Map<String, List<Pair<String, List<TimeRange>>>> latestMaxAccumulatableTimeRangesMap =
 				timeRangeService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
@@ -300,15 +290,16 @@ public class ItemDropServiceImpl implements ItemDropService {
 			subMap.forEach((range, itemIds) -> subList.add(Pair.with(range, itemIds)));
 			convertedMap.put(stageId, subList);
 		});
-
-		Integer maxSize = null;
+//use primitive type to prevent NullPointerException
+		int maxSize = 0;
 		for (String stageId : convertedMap.keySet()) {
 			List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
-			if (maxSize == null || maxSize < pairs.size())
+			if (maxSize < pairs.size()) {
 				maxSize = pairs.size();
+			}
 		}
 
-		List<String> userIDs = userID != null ? Arrays.asList(userID) : new ArrayList<>();
+		List<String> userIDs = userID != null ? Collections.singletonList(userID) : new ArrayList<>();
 		Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
 
 		for (int i = 0; i < maxSize; i++) {
@@ -319,7 +310,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 					continue;
 				Pair<TimeRange, List<String>> pair = pairs.get(i);
 				TimeRange range = pair.getValue0();
-				timeRangeMap.put(stageId, Arrays.asList(range));
+				timeRangeMap.put(stageId, Collections.singletonList(range));
 			}
 			List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
 					new ArrayList<>(), userIDs);
@@ -346,7 +337,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		}
 
 		List<DropMatrixElement> result = allElementsMap.values().stream()
-				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
+				.flatMap(m -> m.values().stream().map(this::combineElements)).collect(toList());
 
 		if (userID == null)
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
@@ -362,11 +353,12 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(Server server,
 			Map<String, List<TimeRange>> timeRangeMap, List<String> itemIds, List<String> userIDs) {
-		Integer maxSize = null;
+		int maxSize = 0;
 		for (String stageId : timeRangeMap.keySet()) {
 			List<TimeRange> ranges = timeRangeMap.get(stageId);
-			if (maxSize == null || maxSize < ranges.size())
+			if ( maxSize < ranges.size()) {
 				maxSize = ranges.size();
+			}
 		}
 
 		Map<String, Map<String, List<DropMatrixElement>>> mapByStageIdAndItemId = new HashMap<>();
@@ -375,10 +367,10 @@ public class ItemDropServiceImpl implements ItemDropService {
 			if (server != null)
 				conditions.addServer(server);
 			if (Optional.ofNullable(userIDs).map(list -> !list.isEmpty()).orElse(false)) {
-				userIDs.forEach(userID -> conditions.addUserID(userID));
+				userIDs.forEach(conditions::addUserID);
 			}
 			if (Optional.ofNullable(itemIds).map(list -> !list.isEmpty()).orElse(false)) {
-				itemIds.forEach(itemId -> conditions.addItemId(itemId));
+				itemIds.forEach(conditions::addItemId);
 			}
 
 			Map<String, TimeRange> currentRangesByStageId = new HashMap<>();
@@ -434,16 +426,15 @@ public class ItemDropServiceImpl implements ItemDropService {
 		}
 
 		List<DropMatrixElement> result = new ArrayList<>();
-		mapByStageIdAndItemId.forEach((stageId, mapByItemId) -> {
-			mapByItemId.forEach((itemId, elements) -> {
-				DropMatrixElement newElement = combineElements(elements);
-				result.add(newElement);
-			});
-		});
+		mapByStageIdAndItemId.forEach((stageId, mapByItemId) -> mapByItemId.forEach((itemId, elements) -> {
+			DropMatrixElement newElement = combineElements(elements);
+			result.add(newElement);
+		}));
 		return result;
 	}
 
 	private DropMatrixElement combineElements(List<DropMatrixElement> elements) {
+//		TODO throw exception instead of return null
 		if (elements.isEmpty())
 			return null;
 		DropMatrixElement firstElement = elements.get(0);
@@ -453,8 +444,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Integer times = 0;
 		Long start = firstElement.getStart();
 		Long end = firstElement.getEnd();
-		for (int i = 0, l = elements.size(); i < l; i++) {
-			DropMatrixElement element = elements.get(i);
+		for (DropMatrixElement element : elements) {
 			quantity += element.getQuantity();
 			times += element.getTimes();
 			if (element.getStart().compareTo(start) < 0)
@@ -484,7 +474,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 			return new ArrayList<>();
 		Long intervalMillis = TimeUnit.DAYS.toMillis(interval);
 		int sectionNum =
-				new Double(Math.ceil(new Double((end - start) * 1.0 / intervalMillis).doubleValue())).intValue();
+				new Double(Math.ceil((end - start) * 1.0 / intervalMillis)).intValue();
 		if (sectionNum > systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.MAX_SECTION_NUM)) {
 			logger.error("exceed max section num, now is " + sectionNum);
 			return new ArrayList<>();
@@ -493,13 +483,14 @@ public class ItemDropServiceImpl implements ItemDropService {
 		QueryConditions conditions = new QueryConditions();
 		conditions.addStage(stageId, start, end);
 		conditions.setInterval(interval);
-		if (server != null)
+		if (server != null) {
 			conditions.addServer(server);
+		}
 		if (Optional.ofNullable(userIDs).map(list -> !list.isEmpty()).orElse(false)) {
-			userIDs.forEach(userID -> conditions.addUserID(userID));
+			userIDs.forEach(conditions::addUserID);
 		}
 		if (Optional.ofNullable(itemIds).map(list -> !list.isEmpty()).orElse(false)) {
-			itemIds.forEach(itemId -> conditions.addItemId(itemId));
+			itemIds.forEach(conditions::addItemId);
 		}
 
 		List<Document> docs = itemDropDao.aggregateItemDrops(conditions);
@@ -541,7 +532,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 							new DropMatrixElement(stageIdInDoc, itemId, 0, times, new Long(section), null);
 					elements.add(newElement);
 				});
-				elements.sort((e1, e2) -> e1.getStart().compareTo(e2.getStart()));
+				elements.sort(Comparator.comparing(DropMatrixElement::getStart));
 				elements.forEach(el -> {
 					el.setStart(el.getStart() * intervalMillis + start);
 					el.setEnd(el.getStart() + intervalMillis);

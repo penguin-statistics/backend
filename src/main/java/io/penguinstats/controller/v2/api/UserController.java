@@ -3,6 +3,7 @@ package io.penguinstats.controller.v2.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -23,6 +24,10 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("userController_v2")
 @RequestMapping("/api/v2/users")
 @Api(tags = {"Account"})
@@ -32,7 +37,6 @@ public class UserController {
 
 	private static Logger logger = LogManager.getLogger(UserController.class);
 
-	@Autowired
 	private UserService userService;
 
 	@ApiOperation(value = "Login with User ID", notes = "Login with the specified User ID.")

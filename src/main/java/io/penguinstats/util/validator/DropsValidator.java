@@ -32,15 +32,19 @@ public class DropsValidator extends BaseValidator {
 
 	@Override
 	public boolean validate() {
-		List<TypedDrop> drops = this.context.getDrops();
-		if (drops == null)
+		List<TypedDrop> drops = context.getDrops();
+		if (drops == null) {
 			return false;
+		}
 
 		Map<String, List<DropInfo>> openingDropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(context.getServer(), context.getTimestamp());
 
-		if (!openingDropInfosMap.containsKey(context.getStageId())) // the stage was not open at the given timestamp
+		if (!openingDropInfosMap.containsKey(context.getStageId()))
+			// the stage was not open at the given timestamp
+		{
 			return false;
+		}
 
 		List<DropInfo> allDropInfos = openingDropInfosMap.get(context.getStageId());
 		Map<DropType, List<DropInfo>> dropInfoMapByDropType =
@@ -62,8 +66,9 @@ public class DropsValidator extends BaseValidator {
 				if (ex.getMessage().contains("Duplicate key")) {
 					logger.debug("Found duplicated itemId in drops.");
 					return false;
-				} else
+				} else {
 					throw ex;
+				}
 			}
 
 			final int typesNum = typedDrops.size();
@@ -84,8 +89,9 @@ public class DropsValidator extends BaseValidator {
 					logger.debug("Bounds: " + dropInfo.getBounds().toString());
 					return false;
 				}
-				if (dropInfo.getItemId() != null)
+				if (dropInfo.getItemId() != null) {
 					uncheckedItemIds.remove(dropInfo.getItemId());
+				}
 			}
 			if (!uncheckedItemIds.isEmpty()) {
 				logger.debug("Found unexpected items in " + dropType + ": " + uncheckedItemIds.toString());

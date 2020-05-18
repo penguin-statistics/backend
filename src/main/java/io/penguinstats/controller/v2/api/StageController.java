@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,14 +28,16 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("stageController_v2")
 @RequestMapping("/api/v2/stages")
 @Api(tags = {"Stage"})
 public class StageController {
 
-	@Autowired
 	private StageService stageService;
-	@Autowired
 	private DropInfoService dropInfoService;
 
 	@ApiOperation(value = "Get all Stages",
@@ -47,24 +50,22 @@ public class StageController {
 		List<Stage> stages = stageService.getAllStages();
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
-		Iterator<Stage> iter = stages.iterator();
-		while (iter.hasNext()) {
-			Stage stage = iter.next();
+		for (Stage stage : stages) {
 			List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
 			if (infos != null && !infos.isEmpty()) {
-				infos.forEach(info -> info.toStageView());
+				infos.forEach(DropInfo::toStageView);
 				stage.setDropInfos(infos);
 			}
 		}
-		stages.forEach(stage -> stage.toNewView());
+		stages.forEach(Stage::toNewView);
 
-		Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
+		long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
 		HttpHeaders headers = new HttpHeaders();
 		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
 		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 
-		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
+		return new ResponseEntity<>(stages, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get Stage by StageId")
@@ -75,17 +76,18 @@ public class StageController {
 							defaultValue = "CN") Server server,
 					@PathVariable("stageId") String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
-		if (stage == null)
-			return new ResponseEntity<Stage>(HttpStatus.NOT_FOUND);
+		if (stage == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		List<DropInfo> infos = dropInfosMap.get(stageId);
 		if (infos != null && !infos.isEmpty()) {
-			infos.forEach(info -> info.toStageView());
+			infos.forEach(DropInfo::toStageView);
 			stage.setDropInfos(infos);
 		}
 		stage.toNewView();
-		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(stage, HttpStatus.OK);
 	}
 
 }

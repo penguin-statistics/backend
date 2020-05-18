@@ -5,10 +5,14 @@ import java.net.UnknownHostException;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author AlvISsReimu
+ */
 public class IpUtil {
 
 	public static String getIpAddr(HttpServletRequest request) {
-		String ipAddress = null;
+		String ipAddress;
+//		TODO exception handle & extract constant
 		try {
 			ipAddress = request.getHeader("x-forwarded-for");
 			if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
@@ -19,14 +23,14 @@ public class IpUtil {
 			}
 			if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
 				ipAddress = request.getRemoteAddr();
-				if (ipAddress.equals("127.0.0.1")) {
+				if ("127.0.0.1".equals(ipAddress)) {
 					InetAddress inet = null;
 					try {
 						inet = InetAddress.getLocalHost();
 					} catch (UnknownHostException e) {
 						e.printStackTrace();
 					}
-					ipAddress = inet.getHostAddress();
+					ipAddress = inet != null ? inet.getHostAddress() : null;
 				}
 			}
 			if (ipAddress != null && ipAddress.length() > 15) {

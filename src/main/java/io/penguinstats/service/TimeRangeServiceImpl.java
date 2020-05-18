@@ -3,13 +3,10 @@ package io.penguinstats.service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -19,15 +16,15 @@ import io.penguinstats.dao.TimeRangeDao;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.TimeRange;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("timeRangeService")
 public class TimeRangeServiceImpl implements TimeRangeService {
 
-	@Autowired
 	private TimeRangeDao timeRangeDao;
-	@Autowired
 	private DropInfoService dropInfoService;
-	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -47,8 +44,7 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 	 */
 	@Override
 	public List<TimeRange> getAllTimeRanges() {
-		List<TimeRange> ranges = timeRangeDao.findAll();
-		return ranges;
+		return timeRangeDao.findAll();
 	}
 
 	/**
@@ -64,7 +60,7 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 		return map;
 	}
 
-	// TOOD: fix comments
+	// TODO: fix comments
 	/** 
 	 * @Title: getLatestMaxAccumulatableTimeRangesMapByServer 
 	 * @Description: Latest max accumulatable time ranges map, key is stageId.
@@ -79,7 +75,7 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 	 *               Thus, data from Range I should not be calculated into the global matrix.
 	 *               D does not affect drop rates, so data from Range IV can be combined with II, III and V.
 	 *               So the longest, and accumulatable time ranges are: II, III, IV and V.
-	 * @param server
+	 * @param server the server uploader belongs to
 	 * @return Map<String, List<Pair<String, List<TimeRange>>>>
 	 */
 	@Override
@@ -100,11 +96,11 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 					infosInOneStage.stream().collect(groupingBy(DropInfo::getItemId));
 			infosMapByItemId.forEach((itemId, infosForOneItem) -> {
 				infosForOneItem.sort(
-						(info1, info2) -> info1.getTimeRange().getStart().compareTo(info2.getTimeRange().getStart()));
+						Comparator.comparing(info -> info.getTimeRange().getStart()));
 				int pointer = infosForOneItem.size() - 1;
-				while (pointer >= 0 && Optional.ofNullable(infosForOneItem.get(pointer).getAccumulatable()).map(b -> b)
-						.orElse(true))
+				while (pointer >= 0 && Optional.ofNullable(infosForOneItem.get(pointer).getAccumulatable()).orElse(true)) {
 					pointer--;
+				}
 
 				List<DropInfo> accumulatableInfos = pointer >= infosForOneItem.size() ? new ArrayList<>()
 						: new ArrayList<>(infosForOneItem.subList(pointer + 1, infosForOneItem.size()));
@@ -123,8 +119,8 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 		Map<String, TimeRange> timeRangeMap = getSpringProxy().getTimeRangeMap();
 		List<DropInfo> infos = dropInfoService.getDropInfosByServerAndStageId(server, stageId);
 		TimeRange givenTimeRange = new TimeRange(start, end);
-		return infos.stream().map(info -> timeRangeMap.get(info.getTimeRangeID())).filter(range -> range != null)
-				.distinct().map(range -> range.intersection(givenTimeRange)).filter(range -> range != null)
+		return infos.stream().map(info -> timeRangeMap.get(info.getTimeRangeID())).filter(Objects::nonNull)
+				.distinct().map(range -> range.intersection(givenTimeRange)).filter(Objects::nonNull)
 				.collect(Collectors.toList());
 	}
 

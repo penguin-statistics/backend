@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * @author AlvISsReimu
+ */
 @RestController("cacheController_v2")
 @RequestMapping("/api/v2/cache")
 public class CacheController {

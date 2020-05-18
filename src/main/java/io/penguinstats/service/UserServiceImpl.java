@@ -1,10 +1,6 @@
 package io.penguinstats.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,7 +14,9 @@ import org.springframework.stereotype.Service;
 import io.penguinstats.dao.UserDao;
 import io.penguinstats.enums.UploadCountType;
 import io.penguinstats.model.User;
-
+/**
+ * @author AlvISsReimu
+ */
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
@@ -56,12 +54,14 @@ public class UserServiceImpl implements UserService {
 		int times = 0;
 		while (times < MAX_RETRY_TIME) {
 			userID = generateUserID();
-			if (getUserByUserID(userID) == null)
+			if (getUserByUserID(userID) == null) {
 				break;
+			}
 			times++;
 		}
-		if (times == MAX_RETRY_TIME)
+		if (times == MAX_RETRY_TIME) {
 			return null;
+		}
 		return createNewUser(userID, ip);
 	}
 
@@ -69,12 +69,12 @@ public class UserServiceImpl implements UserService {
 	 * @Title: createNewUser 
 	 * @Description: Create a new user with indicated userID.
 	 * @param userID
-	 * @param ip
+	 * @param ip Initial IP
 	 * @return String
 	 */
 	@Override
 	public String createNewUser(String userID, String ip) {
-		saveUser(new User(null, userID, 1.0, new ArrayList<>(), ip != null ? Arrays.asList(ip) : new ArrayList<>(),
+		saveUser(new User(null, userID, 1.0, new ArrayList<>(), ip != null ? Collections.singletonList(ip) : new ArrayList<>(),
 				null, System.currentTimeMillis(), null, null));
 		logger.info("new user " + userID + " is created");
 		return userID;
@@ -123,8 +123,9 @@ public class UserServiceImpl implements UserService {
 		List<User> allUsers = userDao.findAll();
 		for (User user : allUsers) {
 			Integer count = map.get(user.getUserID());
-			if (count == null)
+			if (count == null) {
 				count = 0;
+			}
 			if (UploadCountType.TOTAL_UPLOAD.equals(type)) {
 				user.setTotalUpload(count);
 				usersToUpdate.add(user);

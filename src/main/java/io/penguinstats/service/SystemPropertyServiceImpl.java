@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -11,12 +12,14 @@ import org.springframework.stereotype.Service;
 import io.penguinstats.dao.SystemPropertyDao;
 import io.penguinstats.model.SystemProperty;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("systemPropertyService")
 public class SystemPropertyServiceImpl implements SystemPropertyService {
 
-	@Autowired
 	private SystemPropertyDao systemPropertyDao;
-	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -42,8 +45,9 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	@Override
 	public Integer getPropertyIntegerValue(String key) {
 		try {
-			return Integer.parseInt(getPropertyStringValue(key));
+				return Integer.parseInt(getPropertyStringValue(key));
 		} catch (NumberFormatException e) {
+//			TODO: handle exception
 			return null;
 		}
 	}

@@ -6,7 +6,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Server {
-	CN("cn"), US("us"), JP("jp"), KR("kr");
+//	china server
+	CN("cn"),
+//	the USA server
+	US("us"),
+// japan server
+	JP("jp"),
+//	korea server
+	KR("kr");
 
 	private String name;
 }

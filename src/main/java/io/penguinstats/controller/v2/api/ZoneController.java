@@ -3,6 +3,7 @@ package io.penguinstats.controller.v2.api;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,34 +21,38 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("zoneController_v2")
 @RequestMapping("/api/v2/zones")
 @Api(tags = {"Zone"})
 public class ZoneController {
 
-	@Autowired
 	private ZoneService zoneService;
 
 	@ApiOperation(value = "Get all Zones", notes = "Get all Zones in the DB.")
 	@GetMapping(produces = "application/json;charset=UTF-8")
 	public ResponseEntity<List<Zone>> getAllZones() {
 		List<Zone> zones = zoneService.getAllZones();
-		zones.forEach(zone -> zone.toNewView());
+		zones.forEach(Zone::toNewView);
 		HttpHeaders headers = new HttpHeaders();
 		String lastModified =
 				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ZONE_LIST)));
 		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
-		return new ResponseEntity<List<Zone>>(zones, headers, HttpStatus.OK);
+		return new ResponseEntity<>(zones, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get a Zone by ZoneId")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
-		if (zone == null)
-			return new ResponseEntity<Zone>(HttpStatus.NOT_FOUND);
+		if (zone == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		zone.toNewView();
-		return new ResponseEntity<Zone>(zone, HttpStatus.OK);
+		return new ResponseEntity<>(zone, HttpStatus.OK);
 	}
 
 }

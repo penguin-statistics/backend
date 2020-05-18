@@ -7,6 +7,9 @@ import org.springframework.data.mongodb.core.aggregation.AggregationOperationCon
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+/**
+ * @author AlvISsReimu
+ */
 @SuppressWarnings("deprecation")
 public class GenericAggregationOperation implements AggregationOperation {
 

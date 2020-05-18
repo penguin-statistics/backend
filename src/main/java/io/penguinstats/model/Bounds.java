@@ -38,17 +38,20 @@ public class Bounds implements Serializable {
 
 	@JsonIgnore
 	public boolean isValid(int num) {
-		if (this.lower != null && num < this.lower)
-			return false;
-		if (this.upper != null && num > this.upper)
-			return false;
+		if (this.lower != null && num < this.lower) {
+			return true;
+		}
+		if (this.upper != null && num > this.upper) {
+			return true;
+		}
 		if (this.exceptions != null) {
 			for (Integer ex : this.exceptions) {
-				if (num == ex)
-					return false;
+				if (num == ex) {
+					return true;
+				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	@JsonIgnore

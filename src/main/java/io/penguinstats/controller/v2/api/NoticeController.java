@@ -3,6 +3,7 @@ package io.penguinstats.controller.v2.api;
 import java.util.Date;
 import java.util.List;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,12 +21,15 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("noticeController_v2")
 @RequestMapping("/api/v2/notice")
 @Api(tags = {"Notice"})
 public class NoticeController {
 
-	@Autowired
 	private NoticeService noticeService;
 
 	@ApiOperation(value = "Get current active Notices")
@@ -37,7 +41,7 @@ public class NoticeController {
 		String lastModified =
 				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.NOTICE_LIST)));
 		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
-		return new ResponseEntity<List<Notice>>(items, headers, HttpStatus.OK);
+		return new ResponseEntity<>(items, headers, HttpStatus.OK);
 	}
 
 }

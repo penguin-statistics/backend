@@ -13,6 +13,10 @@ import io.penguinstats.model.DropInfo;
 
 public interface DropInfoService {
 
+	/**
+	 * @Description: save drop record
+	 * @param dropInfo drop info include itemid,server,stageid
+	 */
 	@Caching(evict = {@CacheEvict(value = "lists", key = "'dropInfoList_' + #dropInfo.server"),
 			@CacheEvict(value = "maps", key = "'latestTimeRangeMap_' + #dropInfo.server"),
 			@CacheEvict(value = "sets", allEntries = true)})

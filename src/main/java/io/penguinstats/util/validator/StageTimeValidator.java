@@ -26,8 +26,9 @@ public class StageTimeValidator extends BaseValidator {
 		String stageId = this.context.getStageId();
 		Long timestamp = this.context.getTimestamp();
 
-		if (server == null || StringUtils.isEmpty(stageId) || timestamp == null)
+		if (server == null || StringUtils.isEmpty(stageId) || timestamp == null) {
 			return false;
+		}
 
 		Map<String, List<DropInfo>> openingDropInfosMap = dropInfoService.getOpeningDropInfosMap(server, timestamp);
 		return openingDropInfosMap.containsKey(stageId);

@@ -2,6 +2,7 @@ package io.penguinstats.controller.v2.mapper;
 
 import java.util.List;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,15 @@ import io.penguinstats.model.query.BasicQuery;
 import io.penguinstats.model.query.MatrixQuery;
 import io.penguinstats.model.query.QueryFactory;
 import io.penguinstats.model.query.TrendQuery;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Component("queryMapper")
 public class QueryMapper {
 
 	private static Logger logger = LogManager.getLogger(QueryMapper.class);
 
-	@Autowired
 	private QueryFactory queryFactory;
 
 	public BasicQuery queryRequestToQueryModel(SingleQuery singleQuery, String userID, Integer timeout) {
@@ -40,6 +43,7 @@ public class QueryMapper {
 						.setEnd(singleQuery.getEnd()).setUserID(userID).setInterval(singleQuery.getInterval())
 						.setTimeout(timeout);
 			}
+//			TODO if unnecessary ,please throw exception instead of return null
 		} catch (Exception e) {
 			logger.error("Failed to map QueryRequest to Query", e);
 			return null;

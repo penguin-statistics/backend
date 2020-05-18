@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,15 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.TimeRange;
 import io.penguinstats.util.LastUpdateTimeUtil;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("dropInfoService")
 public class DropInfoServiceImpl implements DropInfoService {
 
-	@Autowired
 	private DropInfoDao dropInfoDao;
-	@Autowired
 	private TimeRangeService timeRangeService;
-	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -51,7 +52,7 @@ public class DropInfoServiceImpl implements DropInfoService {
 	/** 
 	 * @Title: getLatestDropInfosMapByServer 
 	 * @Description: Get lists of the latest drop info in every stage. Key is stageId.
-	 * @param server
+	 * @param server the server uploader belongs to
 	 * @return Map<String, List<DropInfo>>
 	 */
 	@Override
@@ -77,8 +78,8 @@ public class DropInfoServiceImpl implements DropInfoService {
 	/** 
 	 * @Title: getDropSetMap 
 	 * @Description: Get all dropsets in a map, key is stageId
-	 * @param server
-	 * @param time
+	 * @param server the server uploader belongs to
+	 * @param time current time
 	 * @return Map<String,Set<String>>
 	 */
 	@Override
@@ -86,20 +87,19 @@ public class DropInfoServiceImpl implements DropInfoService {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
 
-		Map<String, Set<String>> result = infos.stream().filter(info -> {
+		return infos.stream().filter(info -> {
 			String itemId = info.getItemId();
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
 			return itemId != null && range.isIn(time);
 		}).collect(groupingBy(DropInfo::getStageId, mapping(DropInfo::getItemId, toSet())));
-		return result;
 	}
 
 	/** 
 	 * @Title: getDropSet 
 	 * @Description: Get all dropped itemIds in a set, under given server, stage and time
-	 * @param server
-	 * @param stageId
-	 * @param time
+	 * @param server the server uploader belongs to
+	 * @param stageId the id of stage
+	 * @param time current time
 	 * @return Set<String>
 	 */
 	@Override
@@ -111,8 +111,8 @@ public class DropInfoServiceImpl implements DropInfoService {
 	/** 
 	 * @Title: getOpeningDropInfosMap 
 	 * @Description: Get lists of dropInfos whose stage are opening under the given time and server. key is stageId
-	 * @param server
-	 * @param time
+	 * @param server the server uploader belongs to
+	 * @param time current time
 	 * @return Map<String,List<DropInfo>>
 	 */
 	@Override
@@ -120,11 +120,10 @@ public class DropInfoServiceImpl implements DropInfoService {
 		Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
 		List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
 
-		Map<String, List<DropInfo>> result = infos.stream().filter(info -> {
+		return infos.stream().filter(info -> {
 			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
 			return range.isIn(time);
 		}).collect(groupingBy(DropInfo::getStageId));
-		return result;
 	}
 
 	/** 

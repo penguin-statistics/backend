@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import io.penguinstats.enums.Server;
@@ -20,16 +21,17 @@ public class UpdateDropMatrixTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
+	@Autowired
+	private ThreadPoolTaskExecutor executor;
+
 	@Scheduled(fixedRate = 600000)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateDropMatrixTask");
 
 		itemDropService.updateDropMatrixElements(null, false);
-
-		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server));
+			executor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server));
 		}
 	}
 

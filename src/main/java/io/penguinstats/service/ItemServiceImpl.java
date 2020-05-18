@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,13 @@ import io.penguinstats.dao.ItemDao;
 import io.penguinstats.model.Item;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
 
-	@Autowired
 	private ItemDao itemDao;
 
 	@Override

@@ -2,6 +2,7 @@ package io.penguinstats.controller.v1.api;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,13 +83,16 @@ public class ResultController {
 					Stage stage = stageMap.get(element.getStageId());
 					Zone zone = zoneMap.get(stage.getZoneId());
 					Long currentTime = System.currentTimeMillis();
-					if (!zone.isInTimeRange(currentTime))
+					if (zone.isInTimeRange(currentTime)) {
 						continue;
+					}
 				}
-				if (showItemDetails)
-					subObj.put("item", JSONUtil.convertObjectToJSONObject(itemMap.get(element.getItemId())));
-				if (showStageDetails)
+				if (showItemDetails) {
+					Objects.requireNonNull(subObj).put("item", JSONUtil.convertObjectToJSONObject(itemMap.get(element.getItemId())));
+				}
+				if (showStageDetails) {
 					subObj.put("stage", JSONUtil.convertObjectToJSONObject(stageMap.get(element.getStageId())));
+				}
 				array.put(subObj);
 			}
 			obj.put("matrix", array);

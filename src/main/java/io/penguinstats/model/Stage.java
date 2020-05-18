@@ -52,12 +52,15 @@ public class Stage implements Serializable {
 	@JsonIgnore
 	public Set<String> getDropsSet() {
 		Set<String> set = new HashSet<>();
-		if (this.normalDrop != null)
+		if (this.normalDrop != null) {
 			set.addAll(this.normalDrop);
-		if (this.specialDrop != null)
+		}
+		if (this.specialDrop != null) {
 			set.addAll(this.specialDrop);
-		if (this.extraDrop != null)
+		}
+		if (this.extraDrop != null) {
 			set.addAll(this.extraDrop);
+		}
 		set.add("furni");
 		return set;
 	}

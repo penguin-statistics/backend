@@ -6,7 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum UploadCountType {
+//    
     TOTAL_UPLOAD("total","totalUpload"),
+//    this upload record marked reliable
     RELIABLE_UPLOAD("reliable", "reliableUpload");
 
     private String type;

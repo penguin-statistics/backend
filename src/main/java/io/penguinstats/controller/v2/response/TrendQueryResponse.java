@@ -18,6 +18,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @author AlvISsReimu
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -45,9 +48,12 @@ public class TrendQueryResponse implements Serializable, BasicQueryResponse {
 				elements.forEach(element -> {
 					quantityList.add(element != null ? element.getQuantity() : 0);
 					timesList.add(element != null ? element.getTimes() : 0);
-					Long start = element.getStart();
-					if (startTime[0] == null || start != null && start.compareTo(startTime[0]) < 0)
+					long start = element != null ? element.getStart() : 0;
+					boolean ifStarted =
+							startTime[0] == null || start != 0 && Long.valueOf(start).compareTo(startTime[0]) < 0;
+					if (ifStarted) {
 						startTime[0] = start;
+					}
 				});
 				TrendDetail trendDetail = new TrendDetail(timesList, quantityList);
 				trendDetailMap.put(itemId, trendDetail);

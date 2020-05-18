@@ -23,9 +23,7 @@ public class ItemQuantityBounds implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.itemId).append(" [").append(this.bounds.toString()).append("]");
-		return sb.toString();
+		return this.itemId + " [" + this.bounds.toString() + "]";
 	}
 
 }

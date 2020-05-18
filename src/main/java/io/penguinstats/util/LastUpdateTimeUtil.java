@@ -3,6 +3,9 @@ package io.penguinstats.util;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author AlvISsReimu
+ */
 public class LastUpdateTimeUtil {
 
 	private static Map<String, Long> lastUpdateTimeMap = new HashMap<>();

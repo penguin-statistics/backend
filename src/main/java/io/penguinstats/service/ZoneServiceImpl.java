@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,14 @@ import io.penguinstats.model.Stage;
 import io.penguinstats.model.Zone;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("zoneService")
 public class ZoneServiceImpl implements ZoneService {
 
-	@Autowired
 	private ZoneDao zoneDao;
-	@Autowired
 	private StageService stageService;
 
 	@Override
@@ -34,8 +37,10 @@ public class ZoneServiceImpl implements ZoneService {
 	@Override
 	public Zone getZoneByStageId(String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
-		if (stage == null)
+//		TODO throw exception instead of return null
+		if (stage == null) {
 			return null;
+		}
 		return getZoneByZoneId(stage.getZoneId());
 	}
 

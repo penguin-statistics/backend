@@ -6,7 +6,9 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.newA
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bson.Document;
@@ -24,14 +26,15 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.model.ItemDrop;
 import io.penguinstats.model.QueryConditions;
 import io.penguinstats.model.QueryConditions.StageWithTimeRange;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 	private static Logger logger = LogManager.getLogger(ItemDropDaoCustomImpl.class);
 
-	@Autowired
 	MongoTemplate mongoTemplate;
-	@Autowired
 	AggregationOperationConstants aggregationOperationConstants;
 
 	/** 
@@ -80,14 +83,14 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
 
-		if (userIDs.isEmpty())
+		if (userIDs.isEmpty()) {
 			criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
-		else
+		} else {
 			criteriasInAndInPipe1.add(Criteria.where("userID").in(userIDs));
-
-		if (!servers.isEmpty())
+		}
+		if (!servers.isEmpty()) {
 			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
-
+		}
 		if (!stages.isEmpty()) {
 			if (1 == stages.size() && stages.get(0).getStageId() == null) {
 				StageWithTimeRange stage = stages.get(0);
@@ -136,9 +139,9 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		 */
 		if (interval != null) {
 			Long baseTime = null;
-			if (stages.isEmpty())
+			if (stages.isEmpty()) {
 				baseTime = 0L;
-			else {
+			} else {
 				final Long firstStartTime = stages.get(0).getStart();
 				boolean passCheck = true;
 				for (int i = 1, size = stages.size(); i < size; i++) {
@@ -149,13 +152,14 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 						break;
 					}
 				}
-				if (passCheck)
+				if (passCheck) {
 					baseTime = firstStartTime == null ? 0L : firstStartTime;
+				}
 			}
 
 			operations.add(Aggregation.project("drops", "stageId", "times")
 					.and(ArithmeticOperators.Trunc.truncValueOf(ArithmeticOperators.Divide
-							.valueOf(ArithmeticOperators.Subtract.valueOf("timestamp").subtract(baseTime))
+							.valueOf(ArithmeticOperators.Subtract.valueOf("timestamp").subtract(Objects.requireNonNull(baseTime)))
 							.divideBy(interval)))
 					.as("section"));
 		} else {
@@ -201,8 +205,9 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		operations.add(Aggregation.unwind("drops", false));
 
 		// Pipe 6 (Optional): filter on itemId
-		if (!itemIds.isEmpty())
+		if (!itemIds.isEmpty()) {
 			operations.add(Aggregation.match(Criteria.where("drops.itemId").in(itemIds)));
+		}
 
 		/* Pipe 7: project and group by itemId, sum up 'quantities' to calculate total quantities
 			{
@@ -273,15 +278,20 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		  }
 		]
 	 */
+	/**
+	 * should be removed when legacy matrix API is stopped to use
+	 * @param criteria
+	 * @return mappedresults
+	 */
 	@Override
 	@Deprecated
-	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
-		if (criteria == null)
+		if (criteria == null) {
 			operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
-		else
+		} else {
 			operations.add(aggregationOperationConstants.MATCH_NOT_DELETED);
+		}
 		operations.add(aggregationOperationConstants.UNWIND_DROPS);
 		operations.add(aggregationOperationConstants.GROUP_BY_STAGEID_AND_ITEMID);
 		operations.add(aggregationOperationConstants.MATCH_QUANTITY_NOT_ZERO);
@@ -354,13 +364,16 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 */
 	@Override
 	@Deprecated
-	// should be removed when legacy matrix API is stopped to use
+	/**
+	 * should be removed when legacy matrix API is stopped to use
+	 */
 	public List<Document> aggregateStageTimes(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
-		if (criteria == null)
+		if (criteria == null) {
 			operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
-		else
+		} else {
 			operations.add(aggregationOperationConstants.MATCH_NOT_DELETED);
+		}
 		operations.add(aggregationOperationConstants.PROJECT_ADD_TIME);
 		operations.add(aggregationOperationConstants.UNWIND_ADD_TIME);
 		operations.add(aggregationOperationConstants.PROJECT_TIMESTAMP_GT_ADD_TIME);
@@ -446,9 +459,13 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		    }
 		}]
 	 */
+	/**
+	 * should be removed when legacy matrix API is stopped to use
+	 * @param criteria
+	 * @return
+	 */
 	@Override
 	@Deprecated
-	// should be removed when legacy matrix API is stopped to use
 	public List<Document> aggregateWeightedItemDropQuantities(Criteria criteria) {
 		List<AggregationOperation> operations = new LinkedList<>();
 		operations.add(aggregationOperationConstants.MATCH_RELIEABLE_NOT_DELETED);
@@ -595,7 +612,8 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 	 * @Title: aggregateUploadCount
 	 * @Description: Use aggregation to get upload count of a user
 	 * @param criteria The filter used in the first 'match' stage.
-	 * @returnList<Document> In each document, _id is userID, and count is the total upload count.
+	 * @return List<Document> In each document, _id is userID, and count is
+	 * the total upload count.
 	 */
 	@Override
 	public List<Document> aggregateUploadCount(Criteria criteria) {

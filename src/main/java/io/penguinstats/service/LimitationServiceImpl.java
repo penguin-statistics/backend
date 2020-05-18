@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,13 +18,15 @@ import io.penguinstats.model.Limitation;
 import io.penguinstats.model.Stage;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("limitationService")
 public class LimitationServiceImpl implements LimitationService {
 
-	@Autowired
 	private StageService stageService;
 
-	@Autowired
 	private LimitationDao limitationDao;
 
 	@Override
@@ -66,8 +69,9 @@ public class LimitationServiceImpl implements LimitationService {
 	public Limitation getExtendedLimitation(String stageId) {
 		Map<String, Limitation> limitationMap = getLimitationMap();
 		Map<String, Stage> stageMap = stageService.getStageMap();
-		if (!stageMap.containsKey(stageId))
+		if (!stageMap.containsKey(stageId)) {
 			return limitationMap.get("all");
+		}
 		return iterateInheritance(stageId, limitationMap, stageMap);
 	}
 
@@ -107,13 +111,15 @@ public class LimitationServiceImpl implements LimitationService {
 		Limitation limitation = new Limitation(null, stageId, null, new ArrayList<>(), new ArrayList<>());
 		while (!stack.isEmpty()) {
 			String oneStageId = stack.pollFirst();
-			if (hasIterated.contains(oneStageId))
+			if (hasIterated.contains(oneStageId)) {
 				continue;
-			else
+			} else {
 				hasIterated.add(oneStageId);
+			}
 			Limitation oneLimitation = limitationMap.get(oneStageId);
-			if (oneLimitation == null)
+			if (oneLimitation == null) {
 				continue;
+			}
 			limitation.merge(oneLimitation);
 			int size = oneLimitation.getInheritance().size();
 			for (int i = size - 1; i >= 0; i--) {

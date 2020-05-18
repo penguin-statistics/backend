@@ -12,6 +12,7 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,10 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @RestController("resultController_v2")
 @RequestMapping("/api/v2/result")
 @Api(tags = {"Result"})
@@ -56,15 +60,10 @@ public class ResultController {
 
 	private static Logger logger = LogManager.getLogger(ResultController.class);
 
-	@Autowired
 	private DropInfoService dropInfoService;
-	@Autowired
 	private SystemPropertyService systemPropertyService;
-	@Autowired
 	private CookieUtil cookieUtil;
-	@Autowired
 	private QueryMapper queryMapper;
-	@Autowired
 	private QueryFactory queryFactory;
 
 	@ApiOperation(value = "Get the Result Matrix for all Stages and Items",
@@ -88,19 +87,19 @@ public class ResultController {
 			Integer timeout =
 					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
 			query.setServer(server).setUserID(userID);
-			if (timeout != null)
+			if (timeout != null) {
 				query.setTimeout(timeout);
+			}
 			List<DropMatrixElement> elements = query.execute();
-
-			if (!showClosedZones)
+			if (!showClosedZones) {
 				removeClosedStages(elements, server);
-
+			}
 			MatrixQueryResponse result = new MatrixQueryResponse(elements);
 
 			HttpHeaders headers = userID != null ? new HttpHeaders()
 					: generateLastModifiedHeadersFromLastUpdateMap(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 
-			return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
+			return new ResponseEntity<>(result, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getMatrix", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -121,18 +120,21 @@ public class ResultController {
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server) {
 		try {
-			if (interval == null)
+			if (interval == null) {
 				interval =
 						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
-			if (range == null)
+			}
+			if (range == null) {
 				range = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
+			}
 
 			GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
 			Integer timeout =
 					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
 			query.setServer(server).setInterval(interval).setRange(range);
-			if (timeout != null)
+			if (timeout != null) {
 				query.setTimeout(timeout);
+			}
 			List<DropMatrixElement> elements = query.execute();
 
 			TrendQueryResponse result = new TrendQueryResponse(elements);
@@ -140,7 +142,7 @@ public class ResultController {
 			HttpHeaders headers = generateLastModifiedHeadersFromLastUpdateMap(
 					LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
 
-			return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
+			return new ResponseEntity<>(result, headers, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in getAllSegmentedDropResults: ", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -159,6 +161,7 @@ public class ResultController {
 					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
 			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
 		}
+		//TODO exception handler
 		try {
 			final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
 			List<BasicQueryResponse> results = new ArrayList<>();
@@ -181,7 +184,7 @@ public class ResultController {
 				}
 			});
 			AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
-			return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
+			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.OK);
 		} catch (Exception e) {
 			logger.error("Error in executeAdvancedQueries: ", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -190,12 +193,7 @@ public class ResultController {
 
 	private void removeClosedStages(List<DropMatrixElement> elements, Server server) {
 		Set<String> openingStages = dropInfoService.getOpeningStages(server, System.currentTimeMillis());
-		Iterator<DropMatrixElement> iter = elements.iterator();
-		while (iter.hasNext()) {
-			DropMatrixElement element = iter.next();
-			if (!openingStages.contains(element.getStageId()))
-				iter.remove();
-		}
+		elements.removeIf(element -> !openingStages.contains(element.getStageId()));
 	}
 
 	private HttpHeaders generateLastModifiedHeadersFromLastUpdateMap(String key) {

@@ -12,6 +12,9 @@ import io.penguinstats.dao.StageDao;
 import io.penguinstats.model.Stage;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
+/**
+ * @author AlvISsReimu
+ */
 @Service("stageService")
 public class StageServiceImpl implements StageService {
 

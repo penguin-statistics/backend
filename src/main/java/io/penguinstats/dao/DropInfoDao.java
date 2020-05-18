@@ -12,6 +12,7 @@ import io.penguinstats.model.DropInfo;
 @Repository
 public interface DropInfoDao extends MongoRepository<DropInfo, String> {
 
+
 	List<DropInfo> findDropInfosByServer(Server server);
 
 	@Query("{'$and' : [{'server' : ?0}, {'stageId' : ?1}]}")

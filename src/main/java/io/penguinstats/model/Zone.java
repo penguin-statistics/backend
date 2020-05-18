@@ -46,11 +46,10 @@ public class Zone implements Serializable {
 
 	@JsonIgnore
 	public boolean isInTimeRange(long timestamp) {
-		if (this.openTime != null && this.openTime.compareTo(timestamp) > 0)
-			return false;
-		if (this.closeTime != null && this.closeTime.compareTo(timestamp) < 0)
-			return false;
-		return true;
+		if (this.openTime != null && this.openTime.compareTo(timestamp) > 0) {
+			return true;
+		}
+		return this.closeTime != null && this.closeTime.compareTo(timestamp) < 0;
 	}
 
 	@JsonIgnore
@@ -67,10 +66,9 @@ public class Zone implements Serializable {
 	}
 
 	@JsonIgnore
-	public Zone toNewView() {
+	public void toNewView() {
 		this.openTime = null;
 		this.closeTime = null;
-		return this;
 	}
 
 }

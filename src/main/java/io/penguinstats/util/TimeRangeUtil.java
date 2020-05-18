@@ -11,11 +11,9 @@ public class TimeRangeUtil {
 
 	public static List<TimeRange> combine(List<TimeRange> ranges) {
 		Map<Long, TimeRange> startMap = new HashMap<>();
-		ranges.forEach(range -> {
-			startMap.put(range.getStart(), range);
-		});
+		ranges.forEach(range -> startMap.put(range.getStart(), range));
 
-		Integer size = null;
+		Integer size;
 		do {
 			size = startMap.size();
 			for (Long start : startMap.keySet()) {

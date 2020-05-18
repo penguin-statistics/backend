@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Sort;
@@ -15,12 +16,14 @@ import io.penguinstats.dao.NoticeDao;
 import io.penguinstats.model.Notice;
 import io.penguinstats.util.LastUpdateTimeUtil;
 
+/**
+ * @author AlvISsReimu
+ */
+@Setter(onMethod =@__(@Autowired))
 @Service("noticeService")
 public class NoticeServiceImpl implements NoticeService {
 
-	@Autowired
 	private NoticeDao noticeDao;
-	@Autowired
 	private ApplicationContext applicationContext;
 
 	@Override
@@ -39,8 +42,9 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<Notice> getAvailableNotice(Long time) {
 		List<Notice> list = getSpringProxy().getAllSortedNotice();
 		return list.stream().filter(notice -> {
-			if (notice.getConditions() == null)
+			if (notice.getConditions() == null) {
 				return false;
+			}
 			return Optional.ofNullable(notice.getConditions().getStart()).map(start -> (start.compareTo(time) < 0))
 					.orElse(true)
 					&& Optional.ofNullable(notice.getConditions().getEnd()).map(end -> (end.compareTo(time) > 0))
