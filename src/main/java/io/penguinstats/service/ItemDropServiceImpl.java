@@ -568,4 +568,35 @@ public class ItemDropServiceImpl implements ItemDropService {
 			return generateSegmentedDropMatrixElementMap(server, stageId, itemIds, start, end, userIDs, interval);
 	}
 
+	@Override
+	public Map<String, Integer> getTotalStageTimesMap(Server server, Long range) {
+		QueryConditions conditions = new QueryConditions().addServer(server).setRange(range);
+		List<Document> docs = itemDropDao.aggregateStageTimes(conditions);
+		Map<String, Integer> result =
+				docs.stream().collect(Collectors.toMap(doc -> doc.getString("_id"), doc -> doc.getInteger("times")));
+		LastUpdateTimeUtil.setCurrentTimestamp(
+				LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server + (range == null ? "" : "_" + range));
+		return result;
+	}
+
+	@Override
+	public Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range) {
+		return getTotalStageTimesMap(server, range);
+	}
+
+	@Override
+	public Map<String, Integer> getTotalItemQuantitiesMap(Server server) {
+		QueryConditions conditions = new QueryConditions().addServer(server);
+		List<Document> docs = itemDropDao.aggregateItemQuantities(conditions);
+		Map<String, Integer> result =
+				docs.stream().collect(Collectors.toMap(doc -> doc.getString("_id"), doc -> doc.getInteger("quantity")));
+		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
+		return result;
+	}
+
+	@Override
+	public Map<String, Integer> refreshTotalItemQuantitiesMap(Server server) {
+		return getTotalItemQuantitiesMap(server);
+	}
+
 }

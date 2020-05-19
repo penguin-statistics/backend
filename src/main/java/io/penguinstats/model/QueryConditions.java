@@ -19,6 +19,7 @@ public class QueryConditions {
 	private List<Server> servers;
 	private List<String> userIDs;
 	private Long interval;
+	private Long range;
 
 	public QueryConditions() {
 		this.stages = new ArrayList<>();
@@ -26,6 +27,7 @@ public class QueryConditions {
 		this.servers = new ArrayList<>();
 		this.userIDs = new ArrayList<>();
 		this.interval = null;
+		this.range = null;
 	}
 
 	public QueryConditions addStage(String stageId, Long start, Long end) {
@@ -53,11 +55,16 @@ public class QueryConditions {
 		return this;
 	}
 
+	public QueryConditions setRange(Long range) {
+		this.range = range;
+		return this;
+	}
+
 	@JsonIgnore
 	@Override
 	public String toString() {
 		return "QueryConditions [stages=" + stages + ", itemIds=" + itemIds + ", servers=" + servers + ", userIDs="
-				+ userIDs + ", interval=" + interval + "]";
+				+ userIDs + ", interval=" + interval + ", range = " + range + "]";
 	}
 
 	@Getter

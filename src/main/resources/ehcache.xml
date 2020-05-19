@@ -161,4 +161,16 @@
             <offheap unit="MB">20</offheap>
         </resources>
     </cache>
+    
+    <cache alias="no-expiry-map" uses-template="heap-cache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.Map</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap unit="entries">50</heap>
+            <offheap unit="MB">20</offheap>
+        </resources>
+    </cache>
 </config>
