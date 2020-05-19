@@ -2,6 +2,7 @@ package io.penguinstats.task;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,23 +14,22 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.service.ItemDropService;
 
 @Component
-public class UpdateDropMatrixTask implements Task {
+public class UpdateLastDayStageTimesTask implements Task {
 
-	private static Logger logger = LogManager.getLogger(UpdateDropMatrixTask.class);
+	private static Logger logger = LogManager.getLogger(UpdateLastDayStageTimesTask.class);
 
 	@Autowired
 	private ItemDropService itemDropService;
 
-	@Scheduled(fixedRate = 612345)
+	@Scheduled(fixedRate = 900000, initialDelay = 300000)
 	@Override
 	public void execute() {
-		logger.info("execute UpdateDropMatrixTask");
-
-		itemDropService.updateDropMatrixElements(null, false);
+		logger.info("execute UpdateLastDayStageTimesTask");
 
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server));
+			singleThreadExecutor
+					.execute(() -> itemDropService.refreshTotalStageTimesMap(server, TimeUnit.DAYS.toMillis(1)));
 		}
 	}
 

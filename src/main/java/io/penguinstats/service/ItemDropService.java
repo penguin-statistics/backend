@@ -38,7 +38,8 @@ public interface ItemDropService {
 
 	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);
 
-	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
+	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null",
+			sync = true)
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
 	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
@@ -68,5 +69,20 @@ public interface ItemDropService {
 
 	List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
 			Long start, Long end, List<String> userIDs, Long interval);
+
+	@Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+			condition = "#filter == null", sync = true)
+	Map<String, Integer> getTotalStageTimesMap(Server server, Long range);
+
+	@CachePut(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+			condition = "#filter == null")
+	Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range);
+
+	@Cacheable(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null",
+			sync = true)
+	Map<String, Integer> getTotalItemQuantitiesMap(Server server);
+
+	@CachePut(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null")
+	Map<String, Integer> refreshTotalItemQuantitiesMap(Server server);
 
 }

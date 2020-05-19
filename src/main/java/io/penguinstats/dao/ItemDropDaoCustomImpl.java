@@ -233,6 +233,59 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		return results.getMappedResults();
 	}
 
+	@Override
+	public List<Document> aggregateStageTimes(QueryConditions conditions) {
+		List<Server> servers = conditions.getServers();
+		Long range = conditions.getRange();
+
+		List<AggregationOperation> operations = new LinkedList<>();
+
+		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
+		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
+		criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
+		if (!servers.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
+		if (range != null) {
+			Long max = System.currentTimeMillis();
+			Long min = max - range;
+			criteriasInAndInPipe1.add(Criteria.where("timestamp").gte(min).lt(max));
+		}
+		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
+
+		operations.add(Aggregation.group("stageId").sum("times").as("times"));
+
+		Aggregation aggregation =
+				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
+		return results.getMappedResults();
+	}
+
+	@Override
+	public List<Document> aggregateItemQuantities(QueryConditions conditions) {
+		List<Server> servers = conditions.getServers();
+
+		List<AggregationOperation> operations = new LinkedList<>();
+
+		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
+		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
+		criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
+		if (!servers.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
+		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
+
+		operations.add(Aggregation.unwind("drops", false));
+
+		operations.add(Aggregation.project().and("drops.itemId").as("itemId").and("drops.quantity").as("quantity"));
+		operations.add(Aggregation.group("itemId").sum("quantity").as("quantity"));
+
+		Aggregation aggregation =
+				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
+		return results.getMappedResults();
+	}
+
 	/**
 	 * @Title: aggregateItemDropQuantities
 	 * @Description: Use aggregation to get all item drop quantities under each stage.
