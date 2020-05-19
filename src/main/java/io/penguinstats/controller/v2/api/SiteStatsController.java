@@ -63,27 +63,32 @@ public class SiteStatsController {
 			totalStageTimesMap = itemDropService.getTotalStageTimesMap(server, null);
 			totalStageTimes = totalStageTimesMap.entrySet().stream().map(e -> new StageTimes(e.getKey(), e.getValue()))
 					.collect(Collectors.toList());
-		}
+		} else
+			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
 
 		List<StageTimes> totalStageTimes_24h = null;
 		if (cache.get(CacheKeyPrefix.TOTAL_STAGE_TIMES + "_" + server + "_" + mills_24h) != null) {
 			Map<String, Integer> totalStageTimesMap_24h = itemDropService.getTotalStageTimesMap(server, mills_24h);
 			totalStageTimes_24h = totalStageTimesMap_24h.entrySet().stream()
 					.map(e -> new StageTimes(e.getKey(), e.getValue())).collect(Collectors.toList());
-		}
+		} else
+			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
 
 		List<ItemQuantity> totalItemQuantities = null;
 		if (cache.get(CacheKeyPrefix.TOTAL_ITEM_QUANTITIES + "_" + server) != null) {
 			Map<String, Integer> totalItemQuantitiesMap = itemDropService.getTotalItemQuantitiesMap(server);
 			totalItemQuantities = totalItemQuantitiesMap.entrySet().stream()
 					.map(e -> new ItemQuantity(e.getKey(), e.getValue())).collect(Collectors.toList());
-		}
+		} else
+			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
 
 		Integer totalApCost = null;
 		if (totalStageTimesMap != null) {
 			Map<String, Stage> stageMap = stageService.getStageMap();
-			totalApCost = totalStageTimesMap.entrySet().stream().reduce(0, (a, b) -> a
-					+ Optional.ofNullable(stageMap.get(b.getKey())).map(Stage::getApCost).orElse(0) * b.getValue(),
+			totalApCost = totalStageTimesMap.entrySet().stream().reduce(0,
+					(a, b) -> a + Optional.ofNullable(stageMap.get(b.getKey()))
+							.map(stage -> (Boolean.TRUE.equals(stage.getIsGacha()) ? 0 : stage.getApCost())).orElse(0)
+							* b.getValue(),
 					(a, b) -> a + b);
 		}
 
@@ -92,14 +97,12 @@ public class SiteStatsController {
 				LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
 		Long lastUpdateTime = findMaxLastUpdateTime(keyNames);
 
-		System.out.println(lastUpdateTime);
-
 		HttpHeaders headers = new HttpHeaders();
 		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
 		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 
 		SiteStatsResponse response =
-				new SiteStatsResponse(totalStageTimes, totalStageTimes_24h, totalItemQuantities, totalApCost);
+				new SiteStatsResponse(totalStageTimes, totalStageTimes_24h, totalItemQuantities, totalApCost, null);
 		return new ResponseEntity<SiteStatsResponse>(response, headers, HttpStatus.OK);
 	}
 

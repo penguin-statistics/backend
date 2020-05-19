@@ -32,4 +32,11 @@ public class SiteStatsResponse implements Serializable {
 	@ApiModelProperty(notes = "The total AP cost for all stages that have been played")
 	private Integer totalApCost;
 
+	@ApiModelProperty(notes = "It will show up when there is something wrong with the website statistic query.")
+	private String error;
+
+	public SiteStatsResponse(String error) {
+		this.error = error;
+	}
+
 }
