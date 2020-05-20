@@ -36,7 +36,7 @@ public class UpdateTrendTask implements Task {
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
 			singleThreadExecutor
-					.execute(() -> itemDropService.refreshSegmentedGlobalDropMatrixElementMap(server, interval, range));
+					.execute(() -> itemDropService.refreshSegmentedGlobalDropMatrixElements(server, interval, range));
 		}
 	}
 

@@ -193,12 +193,15 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 			{
 			  $unwind:{
 			    path:"$drops",
-			    preserveNullAndEmptyArrays:false
+			    preserveNullAndEmptyArrays:true
 			  }
-			}		 * 
+			}
 		 */
+		// For the first unwind we can ignore those empty drops arrays (actually they will never be empty)
 		operations.add(Aggregation.unwind("drops", false));
-		operations.add(Aggregation.unwind("drops", false));
+		// For the second unwind we must not ignore empty arrays, because there may be no any drops in one stage,
+		// but we want to preserve its 'times'
+		operations.add(Aggregation.unwind("drops", true));
 
 		// Pipe 6 (Optional): filter on itemId
 		if (!itemIds.isEmpty())

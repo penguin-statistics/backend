@@ -40,7 +40,7 @@ public class GlobalTrendQuery implements Serializable, BasicQuery {
 	@Override
 	public List<DropMatrixElement> execute() throws Exception {
 		return QueryUtil.runQuery(
-				() -> itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, interval, range), timeout);
+				() -> itemDropService.generateSegmentedGlobalDropMatrixElements(server, interval, range), timeout);
 	}
 
 }
