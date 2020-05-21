@@ -204,8 +204,12 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		operations.add(Aggregation.unwind("drops", true));
 
 		// Pipe 6 (Optional): filter on itemId
-		if (!itemIds.isEmpty())
-			operations.add(Aggregation.match(Criteria.where("drops.itemId").in(itemIds)));
+		if (!itemIds.isEmpty()) {
+			List<Criteria> criteriasInOrInPipe6 = new ArrayList<>();
+			criteriasInOrInPipe6.add(Criteria.where("drops.itemId").in(itemIds));
+			criteriasInOrInPipe6.add(Criteria.where("drops.itemId").is(null));
+			operations.add(Aggregation.match(new Criteria().orOperator(criteriasInOrInPipe6.toArray(new Criteria[0]))));
+		}
 
 		/* Pipe 7: project and group by itemId, sum up 'quantities' to calculate total quantities
 			{
