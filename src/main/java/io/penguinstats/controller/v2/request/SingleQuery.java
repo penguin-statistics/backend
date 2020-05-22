@@ -38,8 +38,8 @@ public class SingleQuery {
 	private Long end;
 
 	@ApiModelProperty(
-			notes = "If null, then this query will be \"matrix query\"; Otherwise, it will be \"trend query\" based on the given interval (the length of each section, unit is DAY).")
-	private Integer interval;
+			notes = "If null, then this query will be \"matrix query\"; Otherwise, it will be \"trend query\" based on the given interval (the length of each section, unit is millisecond).")
+	private Long interval;
 
 	@ApiModelProperty(notes = "Indicate whether showing personal data.")
 	private Boolean isPersonal;

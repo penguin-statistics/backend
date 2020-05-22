@@ -2,7 +2,6 @@ package io.penguinstats.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -20,6 +19,7 @@ public class QueryConditions {
 	private List<Server> servers;
 	private List<String> userIDs;
 	private Long interval;
+	private Long range;
 
 	public QueryConditions() {
 		this.stages = new ArrayList<>();
@@ -27,6 +27,7 @@ public class QueryConditions {
 		this.servers = new ArrayList<>();
 		this.userIDs = new ArrayList<>();
 		this.interval = null;
+		this.range = null;
 	}
 
 	public QueryConditions addStage(String stageId, Long start, Long end) {
@@ -49,8 +50,13 @@ public class QueryConditions {
 		return this;
 	}
 
-	public QueryConditions setInterval(int days) {
-		this.interval = TimeUnit.DAYS.toMillis(days);
+	public QueryConditions setInterval(Long interval) {
+		this.interval = interval;
+		return this;
+	}
+
+	public QueryConditions setRange(Long range) {
+		this.range = range;
 		return this;
 	}
 
@@ -58,7 +64,7 @@ public class QueryConditions {
 	@Override
 	public String toString() {
 		return "QueryConditions [stages=" + stages + ", itemIds=" + itemIds + ", servers=" + servers + ", userIDs="
-				+ userIDs + ", interval=" + interval + "]";
+				+ userIDs + ", interval=" + interval + ", range = " + range + "]";
 	}
 
 	@Getter

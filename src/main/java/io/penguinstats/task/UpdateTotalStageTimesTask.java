@@ -13,23 +13,21 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.service.ItemDropService;
 
 @Component
-public class UpdateDropMatrixTask implements Task {
+public class UpdateTotalStageTimesTask implements Task {
 
-	private static Logger logger = LogManager.getLogger(UpdateDropMatrixTask.class);
+	private static Logger logger = LogManager.getLogger(UpdateTotalStageTimesTask.class);
 
 	@Autowired
 	private ItemDropService itemDropService;
 
-	@Scheduled(fixedRate = 612345)
+	@Scheduled(fixedRate = 3600000, initialDelay = 300000)
 	@Override
 	public void execute() {
-		logger.info("execute UpdateDropMatrixTask");
-
-		itemDropService.updateDropMatrixElements(null, false);
+		logger.info("execute UpdateTotalStageTimesTask");
 
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server));
+			singleThreadExecutor.execute(() -> itemDropService.refreshTotalStageTimesMap(server, null));
 		}
 	}
 

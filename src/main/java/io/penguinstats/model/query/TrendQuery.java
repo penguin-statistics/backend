@@ -43,7 +43,7 @@ public class TrendQuery implements Serializable, BasicQuery {
 
 	private String userID;
 
-	private Integer interval;
+	private Long interval;
 
 	private Integer timeout;
 

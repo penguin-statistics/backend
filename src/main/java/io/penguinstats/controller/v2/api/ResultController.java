@@ -112,20 +112,19 @@ public class ResultController {
 					+ "`interval_day` days in the recent `range_day` days.")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(
-			@ApiParam(value = "The length of each section. Unit is \"day\".",
-					required = false) @RequestParam(name = "interval_day", required = false) Integer interval,
+			@ApiParam(value = "The length of each section. Unit is \"millisecond\".",
+					required = false) @RequestParam(name = "interval", required = false) Long interval,
 			@ApiParam(
-					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"day\".",
-					required = false) @RequestParam(name = "range_day", required = false) Integer range,
+					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"millisecond\".",
+					required = false) @RequestParam(name = "range", required = false) Long range,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server) {
 		try {
 			if (interval == null)
-				interval =
-						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
+				interval = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
 			if (range == null)
-				range = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
+				range = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
 
 			GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
 			Integer timeout =

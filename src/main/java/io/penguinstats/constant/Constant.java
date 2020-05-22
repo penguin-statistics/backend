@@ -16,6 +16,8 @@ public class Constant {
 		public static final String DROP_INFO_LIST = "drop_info_list";
 		public static final String NOTICE_LIST = "notice_list";
 		public static final String EVENT_PERIOD_LIST = "event_period_list";
+		public static final String TOTAL_STAGE_TIMES_MAP = "total_stage_times_map";
+		public static final String TOTAL_ITEM_QUANTITIES_MAP = "total_item_quantities_map";
 	}
 
 	public static class CustomHeader {
@@ -30,6 +32,15 @@ public class Constant {
 		public static final String GLOBAL_MATRIX_QUERY_TIMEOUT = "global_matrix_query_timeout";
 		public static final String GLOBAL_TREND_QUERY_TIMEOUT = "global_trend_query_timeout";
 		public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
+	}
+
+	public static class CacheName {
+		public static final String NO_EXPIRY_MAP = "no-expiry-map";
+	}
+
+	public static class CacheKeyPrefix {
+		public static final String TOTAL_STAGE_TIMES = "total-stage-times";
+		public static final String TOTAL_ITEM_QUANTITIES = "total-item-quantities";
 	}
 
 }

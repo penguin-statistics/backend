@@ -193,16 +193,23 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 			{
 			  $unwind:{
 			    path:"$drops",
-			    preserveNullAndEmptyArrays:false
+			    preserveNullAndEmptyArrays:true
 			  }
-			}		 * 
+			}
 		 */
+		// For the first unwind we can ignore those empty drops arrays (actually they will never be empty)
 		operations.add(Aggregation.unwind("drops", false));
-		operations.add(Aggregation.unwind("drops", false));
+		// For the second unwind we must not ignore empty arrays, because there may be no any drops in one stage,
+		// but we want to preserve its 'times'
+		operations.add(Aggregation.unwind("drops", true));
 
 		// Pipe 6 (Optional): filter on itemId
-		if (!itemIds.isEmpty())
-			operations.add(Aggregation.match(Criteria.where("drops.itemId").in(itemIds)));
+		if (!itemIds.isEmpty()) {
+			List<Criteria> criteriasInOrInPipe6 = new ArrayList<>();
+			criteriasInOrInPipe6.add(Criteria.where("drops.itemId").in(itemIds));
+			criteriasInOrInPipe6.add(Criteria.where("drops.itemId").is(null));
+			operations.add(Aggregation.match(new Criteria().orOperator(criteriasInOrInPipe6.toArray(new Criteria[0]))));
+		}
 
 		/* Pipe 7: project and group by itemId, sum up 'quantities' to calculate total quantities
 			{
@@ -230,6 +237,59 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 
 		logger.debug(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
 
+		return results.getMappedResults();
+	}
+
+	@Override
+	public List<Document> aggregateStageTimes(QueryConditions conditions) {
+		List<Server> servers = conditions.getServers();
+		Long range = conditions.getRange();
+
+		List<AggregationOperation> operations = new LinkedList<>();
+
+		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
+		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
+		criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
+		if (!servers.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
+		if (range != null) {
+			Long max = System.currentTimeMillis();
+			Long min = max - range;
+			criteriasInAndInPipe1.add(Criteria.where("timestamp").gte(min).lt(max));
+		}
+		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
+
+		operations.add(Aggregation.group("stageId").sum("times").as("times"));
+
+		Aggregation aggregation =
+				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
+		return results.getMappedResults();
+	}
+
+	@Override
+	public List<Document> aggregateItemQuantities(QueryConditions conditions) {
+		List<Server> servers = conditions.getServers();
+
+		List<AggregationOperation> operations = new LinkedList<>();
+
+		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
+		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
+		criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
+		if (!servers.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
+		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
+
+		operations.add(Aggregation.unwind("drops", false));
+
+		operations.add(Aggregation.project().and("drops.itemId").as("itemId").and("drops.quantity").as("quantity"));
+		operations.add(Aggregation.group("itemId").sum("quantity").as("quantity"));
+
+		Aggregation aggregation =
+				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
 		return results.getMappedResults();
 	}
 

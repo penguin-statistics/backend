@@ -49,6 +49,15 @@ public class SystemPropertyServiceImpl implements SystemPropertyService {
 	}
 
 	@Override
+	public Long getPropertyLongValue(String key) {
+		try {
+			return Long.parseLong(getPropertyStringValue(key));
+		} catch (NumberFormatException e) {
+			return null;
+		}
+	}
+
+	@Override
 	public Map<String, String> getPropertiesMap() {
 		List<SystemProperty> properties = systemPropertyDao.findAll();
 		return properties.stream().collect(Collectors.toMap(SystemProperty::getKey, SystemProperty::getValue));

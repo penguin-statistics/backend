@@ -31,16 +31,16 @@ public class GlobalTrendQuery implements Serializable, BasicQuery {
 
 	private Server server;
 
-	private Integer interval;
+	private Long interval;
 
-	private Integer range;
+	private Long range;
 
 	private Integer timeout;
 
 	@Override
 	public List<DropMatrixElement> execute() throws Exception {
 		return QueryUtil.runQuery(
-				() -> itemDropService.generateSegmentedGlobalDropMatrixElementMap(server, interval, range), timeout);
+				() -> itemDropService.generateSegmentedGlobalDropMatrixElements(server, interval, range), timeout);
 	}
 
 }

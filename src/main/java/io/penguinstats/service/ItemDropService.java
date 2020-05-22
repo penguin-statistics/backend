@@ -38,7 +38,8 @@ public interface ItemDropService {
 
 	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);
 
-	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
+	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null",
+			sync = true)
 	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
 
 	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
@@ -59,14 +60,29 @@ public interface ItemDropService {
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null", sync = true)
-	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
+	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElements(Server server, Long interval, Long range);
 
 	@CachePut(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
 			condition = "#filter == null")
-	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElementMap(Server server, Integer interval, Integer range);
+	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElements(Server server, Long interval, Long range);
 
 	List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
-			Long start, Long end, List<String> userIDs, Integer interval);
+			Long start, Long end, List<String> userIDs, Long interval);
+
+	@Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+			condition = "#filter == null", sync = true)
+	Map<String, Integer> getTotalStageTimesMap(Server server, Long range);
+
+	@CachePut(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+			condition = "#filter == null")
+	Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range);
+
+	@Cacheable(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null",
+			sync = true)
+	Map<String, Integer> getTotalItemQuantitiesMap(Server server);
+
+	@CachePut(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null")
+	Map<String, Integer> refreshTotalItemQuantitiesMap(Server server);
 
 }
