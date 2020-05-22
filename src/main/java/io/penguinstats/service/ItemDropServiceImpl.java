@@ -481,7 +481,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 
 	private List<DropMatrixElement> generateSegmentedDropMatrixElements(Server server, String stageId,
 			List<String> itemIds, Long start, Long end, List<String> userIDs, Long interval) {
-		if (start == null || end == null || start.compareTo(end) >= 0)
+		if (end == null)
+			end = System.currentTimeMillis();
+		if (start == null || start.compareTo(end) >= 0)
 			return new ArrayList<>();
 		int sectionNum = new Double(Math.ceil(new Double((end - start) * 1.0 / interval).doubleValue())).intValue();
 		if (sectionNum > systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.MAX_SECTION_NUM)) {
