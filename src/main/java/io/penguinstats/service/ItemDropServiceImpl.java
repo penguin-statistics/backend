@@ -127,6 +127,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return itemDropDao.findByUserID(userID);
 	}
 
+	@Override
+	public Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable) {
+		return itemDropDao.findValidItemDropByStageId(stageId, pageable);
+	}
+
 	/** 
 	 * @Title: getStageTimesMap 
 	 * @Description: Get upload times for each stage under every time point.
