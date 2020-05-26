@@ -1107,7 +1107,7 @@ GET /PenguinStats/api/stage/{stageId}
 ### URI
 
 ```
-GET  PenguinStats/api/item
+GET  PenguinStats/api/items
 ```
 
 ### 响应消息
@@ -1134,7 +1134,7 @@ GET  PenguinStats/api/item
 - 请求示例
 
   ```
-  GET  PenguinStats/api/item
+  GET  PenguinStats/api/items
   ```
 
 - 返回示例
