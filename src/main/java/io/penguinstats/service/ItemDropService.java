@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.PatternMatrixElement;
 
 public interface ItemDropService {
 
@@ -56,6 +57,8 @@ public interface ItemDropService {
 	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
 			condition = "#filter == null && #userID == null")
 	List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server);
+
+	List<PatternMatrixElement> generateGlobalPatternMatrixElements(Server server);
 
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",

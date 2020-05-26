@@ -34,6 +34,7 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.PatternMatrixElement;
 import io.penguinstats.model.QueryConditions;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.TimeRange;
@@ -465,6 +466,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 				end = element.getEnd();
 		}
 		return new DropMatrixElement(stageId, itemId, quantity, times, start, end);
+	}
+
+	@Override
+	public List<PatternMatrixElement> generateGlobalPatternMatrixElements(Server server) {
+		return null;
 	}
 
 	@Override
