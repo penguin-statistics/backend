@@ -77,7 +77,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public void deleteItemDrop(String userID, String itemDropId) throws Exception {
 		ItemDrop itemDrop = itemDropDao.findById(itemDropId).orElse(null);
 		if (itemDrop == null || !itemDrop.getUserID().equals(userID)) {
-			throw new NotFoundException(ErrorCode.NOT_FOUND, "ItemDrop[" + itemDropId + "] not found for user with ID[" + userID + "]", null);
+			throw new NotFoundException(ErrorCode.NOT_FOUND, "ItemDrop[" + itemDropId + "] not found for user with ID[" + userID + "]", Optional.empty());
 		}
 
 		itemDrop.setIsDeleted(true);
@@ -89,7 +89,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
 		List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
 		if (itemDropList.size() == 0) {
-			throw new NotFoundException(ErrorCode.NOT_FOUND, "Visible ItemDrop not found for user with ID[" + userID + "]", null);
+			throw new NotFoundException(ErrorCode.NOT_FOUND, "Visible ItemDrop not found for user with ID[" + userID + "]", Optional.empty());
 		}
 
 		ItemDrop lastItemDrop = itemDropList.get(0);

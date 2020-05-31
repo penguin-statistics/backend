@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,8 @@ public class UserServiceImpl implements UserService {
 		}
 		if (times == MAX_RETRY_TIME) {
 			log.error("Failed to create new user.");
-			throw new DatabaseException(ErrorCode.CANNOT_CREATE_USER, "Failed to create new user.", null);
+			throw new DatabaseException(ErrorCode.CANNOT_CREATE_USER, "Failed to create new user.",
+					Optional.empty());
 		}
 
 		return createNewUser(userID, ip);
