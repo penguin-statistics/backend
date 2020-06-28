@@ -116,7 +116,7 @@ public class ResultController {
 					required = false) @RequestParam(name = "interval", required = false) Long interval,
 			@ApiParam(
 					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"millisecond\".",
-					required = false) @RequestParam(name = "range", required = false) Long range,
+					required = false) @RequestParam(name = "range_day", required = false) Long range,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server) {
