@@ -1,6 +1,7 @@
 package io.penguinstats.controller.v2.api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -79,7 +81,12 @@ public class ResultController {
 							defaultValue = "false") boolean showClosedZones,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
+							defaultValue = "CN") Server server,
+			@ApiParam(
+					value = "Do filter on final result by stage. It should be a list of stageIds separated by commas.",
+					required = false) @RequestParam(name = "stageFilter", required = false) String stageFilter,
+			@ApiParam(value = "Do filter on final result by item. It should be a list of itemIds separated by commas.",
+					required = false) @RequestParam(name = "itemFilter", required = false) String itemFilter) {
 		logger.info("GET /matrix");
 		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
@@ -94,6 +101,12 @@ public class ResultController {
 
 			if (!showClosedZones)
 				removeClosedStages(elements, server);
+
+			if (stageFilter != null)
+				filterStages(elements, stageFilter);
+
+			if (itemFilter != null)
+				filterItems(elements, itemFilter);
 
 			MatrixQueryResponse result = new MatrixQueryResponse(elements);
 
@@ -195,6 +208,35 @@ public class ResultController {
 			if (!openingStages.contains(element.getStageId()))
 				iter.remove();
 		}
+	}
+
+	private void filterStages(List<DropMatrixElement> elements, String stageFilter) {
+		Set<String> filters = extractFilters(stageFilter);
+		if (filters.isEmpty())
+			return;
+		Iterator<DropMatrixElement> iter = elements.iterator();
+		while (iter.hasNext()) {
+			DropMatrixElement element = iter.next();
+			if (!filters.contains(element.getStageId()))
+				iter.remove();
+		}
+	}
+
+	private void filterItems(List<DropMatrixElement> elements, String itemFilter) {
+		Set<String> filters = extractFilters(itemFilter);
+		if (filters.isEmpty())
+			return;
+		Iterator<DropMatrixElement> iter = elements.iterator();
+		while (iter.hasNext()) {
+			DropMatrixElement element = iter.next();
+			if (!filters.contains(element.getItemId()))
+				iter.remove();
+		}
+	}
+
+	private Set<String> extractFilters(String filterStr) {
+		String[] splitted = filterStr.split(",");
+		return Arrays.asList(splitted).stream().map(String::trim).collect(Collectors.toSet());
 	}
 
 	private HttpHeaders generateLastModifiedHeadersFromLastUpdateMap(String key) {
