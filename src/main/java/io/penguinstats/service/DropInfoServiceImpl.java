@@ -160,4 +160,9 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return applicationContext.getBean(DropInfoService.class);
 	}
 
+	@Override
+	public void batchSave(List<DropInfo> infos) {
+		dropInfoDao.saveAll(infos);
+	}
+
 }

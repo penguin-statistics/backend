@@ -18,6 +18,8 @@ public interface DropInfoService {
 			@CacheEvict(value = "sets", allEntries = true)})
 	void saveDropInfo(DropInfo dropInfo);
 
+	void batchSave(List<DropInfo> infos);
+
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server", condition = "#filter == null")
 	List<DropInfo> getDropInfosByServer(Server server);
 
