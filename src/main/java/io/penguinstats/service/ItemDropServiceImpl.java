@@ -352,10 +352,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		List<DropMatrixElement> result = allElementsMap.values().stream()
 				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
 
-		if (userID == null)
+		if (userID == null) {
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
-		logger.info("generateGlobalDropMatrixElements done in {} ms for server {}",
-				System.currentTimeMillis() - startTime, server);
+			logger.info("generateGlobalDropMatrixElements done in {} ms for server {}",
+					System.currentTimeMillis() - startTime, server);
+		}
 
 		return result;
 	}
