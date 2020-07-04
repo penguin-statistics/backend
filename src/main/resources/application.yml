@@ -9,3 +9,13 @@ spring:
     cache:
         jcache:
             config: classpath:ehcache.xml
+justauth:
+  enabled: true
+  type:
+    QQ:
+      client-id: <client-id>
+      client-secret: <client-secret>
+      redirect-uri: https://penguin-stats.cn/PenguinStats/api/v2/users/oauth/qq/callback
+      union-id: false
+  cache:
+    type: default
