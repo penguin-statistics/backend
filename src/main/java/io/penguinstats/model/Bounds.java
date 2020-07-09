@@ -1,7 +1,10 @@
 package io.penguinstats.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -53,8 +56,16 @@ public class Bounds implements Serializable {
 
 	@JsonIgnore
 	public Bounds simpleCombine(Bounds b) {
-		return new Bounds(this.getLower() == null ? null : this.getLower() + b.getLower(),
-				this.getUpper() == null ? null : this.getUpper() + b.getUpper());
+		Set<Integer> newExceptionsSet = new HashSet<>();
+		if (this.exceptions != null)
+			newExceptionsSet.addAll(this.exceptions);
+		if (b.getExceptions() != null)
+			newExceptionsSet.addAll(b.getExceptions());
+		if (newExceptionsSet.isEmpty())
+			newExceptionsSet = null;
+		return new Bounds(this.getLower() == null || b.getLower() == null ? null : this.getLower() + b.getLower(),
+				this.getUpper() == null || b.getUpper() == null ? null : this.getUpper() + b.getUpper(),
+				newExceptionsSet == null ? null : new ArrayList<>(newExceptionsSet));
 	}
 
 }
