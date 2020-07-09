@@ -90,6 +90,10 @@ public class ResultController {
 		logger.info("GET /matrix");
 		try {
 			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+			if (isPersonal && userID == null) {
+				return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()),
+						HttpStatus.OK);
+			}
 
 			GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
 			Integer timeout =
