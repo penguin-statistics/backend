@@ -14,8 +14,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -50,27 +48,7 @@ import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController("resultController_v2")
@@ -106,38 +84,36 @@ public class ResultController {
 					value = "Do filter on final result by stage. It should be a list of stageIds separated by commas.",
 					required = false) @RequestParam(name = "stageFilter", required = false) String stageFilter,
 			@ApiParam(value = "Do filter on final result by item. It should be a list of itemIds separated by commas.",
-					required = false) @RequestParam(name = "itemFilter", required = false) String itemFilter) throws Exception {
+					required = false) @RequestParam(name = "itemFilter", required = false) String itemFilter)
+			throws Exception {
 		log.info("GET /matrix");
-		try {
-			String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
-			if (isPersonal && userID == null) {
-				return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()),
-						HttpStatus.OK);
-			}
+		String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+		if (isPersonal && userID == null) {
+			return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()), HttpStatus.OK);
+		}
 
-			GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-			Integer timeout =
-					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
-			query.setServer(server).setUserID(userID);
-			if (timeout != null)
-				query.setTimeout(timeout);
-			List<DropMatrixElement> elements = query.execute();
+		GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+		query.setServer(server).setUserID(userID);
+		if (timeout != null)
+			query.setTimeout(timeout);
+		List<DropMatrixElement> elements = query.execute();
 
-			if (!showClosedZones)
-				removeClosedStages(elements, server);
+		if (!showClosedZones)
+			removeClosedStages(elements, server);
 
-			if (stageFilter != null)
-				filterStages(elements, stageFilter);
+		if (stageFilter != null)
+			filterStages(elements, stageFilter);
 
-			if (itemFilter != null)
-				filterItems(elements, itemFilter);
+		if (itemFilter != null)
+			filterItems(elements, itemFilter);
 
-			MatrixQueryResponse result = new MatrixQueryResponse(elements);
+		MatrixQueryResponse result = new MatrixQueryResponse(elements);
 
-			HttpHeaders headers = userID != null ? new HttpHeaders()
-					: generateLastModifiedHeadersFromLastUpdateMap(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
+		HttpHeaders headers = userID != null ? new HttpHeaders()
+				: generateLastModifiedHeadersFromLastUpdateMap(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
 
-			return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
+		return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
@@ -152,28 +128,25 @@ public class ResultController {
 					required = false) @RequestParam(name = "range", required = false) Long range,
 			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) throws Exception {
-			if (interval == null)
-				interval = systemPropertyService
-						.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
-			if (range == null)
-				range = systemPropertyService
-						.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
-			GlobalTrendQuery query = (GlobalTrendQuery) queryFactory.getQuery(QueryType.GLOBAL_TREND);
-			Integer timeout =
-					systemPropertyService
-							.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
-			query.setServer(server).setInterval(interval).setRange(range);
-			if (timeout != null)
-				query.setTimeout(timeout);
-			List<DropMatrixElement> elements = query.execute();
+							defaultValue = "CN") Server server)
+			throws Exception {
+		if (interval == null)
+			interval = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
+		if (range == null)
+			range = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
+		GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
+		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+		query.setServer(server).setInterval(interval).setRange(range);
+		if (timeout != null)
+			query.setTimeout(timeout);
+		List<DropMatrixElement> elements = query.execute();
 
-			TrendQueryResponse result = new TrendQueryResponse(elements);
+		TrendQueryResponse result = new TrendQueryResponse(elements);
 
-			HttpHeaders headers = generateLastModifiedHeadersFromLastUpdateMap(
-					LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
+		HttpHeaders headers = generateLastModifiedHeadersFromLastUpdateMap(
+				LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
 
-			return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
+		return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Execute advanced queries",
@@ -188,28 +161,28 @@ public class ResultController {
 					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
 			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
 		}
-			final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
-			List<BasicQueryResponse> results = new ArrayList<>();
-			advancedQueryRequest.getQueries().forEach(singleQuery -> {
-				try {
-					Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
-					String userID = isPersonal ? userIDFromCookie : null;
-					Integer timeout =
-							systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
-					BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
-					List<DropMatrixElement> elements = query.execute();
-					BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
-					results.add(queryResponse);
-				} catch (TimeoutException toEx) {
-					log.error("TimeoutException in executeAdvancedQueries: ", toEx);
-				} catch (ExecutionException exeEx) {
-					log.error("ExecutionException in executeAdvancedQueries: ", exeEx);
-				} catch (Exception ex) {
-					log.error("Error in executeAdvancedQueries: ", ex);
-				}
-			});
-			AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
-			return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
+		final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
+		List<BasicQueryResponse> results = new ArrayList<>();
+		advancedQueryRequest.getQueries().forEach(singleQuery -> {
+			try {
+				Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
+				String userID = isPersonal ? userIDFromCookie : null;
+				Integer timeout =
+						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
+				BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
+				List<DropMatrixElement> elements = query.execute();
+				BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
+				results.add(queryResponse);
+			} catch (TimeoutException toEx) {
+				log.error("TimeoutException in executeAdvancedQueries: ", toEx);
+			} catch (ExecutionException exeEx) {
+				log.error("ExecutionException in executeAdvancedQueries: ", exeEx);
+			} catch (Exception ex) {
+				log.error("Error in executeAdvancedQueries: ", ex);
+			}
+		});
+		AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
+		return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
 	}
 
 	private void removeClosedStages(List<DropMatrixElement> elements, Server server) {
