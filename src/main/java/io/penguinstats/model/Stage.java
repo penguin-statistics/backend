@@ -50,6 +50,7 @@ public class Stage implements Serializable {
 	private List<String> specialDrop;
 	private List<String> extraDrop;
 	private Map<Server, Existence> existence;
+	private Double minClearTime;
 
 	@JsonIgnore
 	public Set<String> getDropsSet() {
