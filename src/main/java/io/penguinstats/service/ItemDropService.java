@@ -34,6 +34,8 @@ public interface ItemDropService {
 
 	List<ItemDrop> getItemDropsByUserID(String userID);
 
+	Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable);
+
 	Map<String, List<Double>> getStageTimesMap(Criteria filter, boolean isWeighted);
 
 	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);

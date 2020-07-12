@@ -128,6 +128,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		return itemDropDao.findByUserID(userID);
 	}
 
+	@Override
+	public Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable) {
+		return itemDropDao.findValidItemDropByStageId(stageId, pageable);
+	}
+
 	/** 
 	 * @Title: getStageTimesMap 
 	 * @Description: Get upload times for each stage under every time point.
@@ -350,10 +355,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		List<DropMatrixElement> result = allElementsMap.values().stream()
 				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
 
-		if (userID == null)
+		if (userID == null) {
 			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
-		log.info("generateGlobalDropMatrixElements done in {} ms for server {}",
-				System.currentTimeMillis() - startTime, server);
+			log.info("generateGlobalDropMatrixElements done in {} ms for server {}",
+					System.currentTimeMillis() - startTime, server);
+		}
 
 		return result;
 	}
