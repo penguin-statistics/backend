@@ -1,16 +1,8 @@
 package io.penguinstats.controller.v2.api;
 
-import io.penguinstats.model.User;
-import io.penguinstats.service.UserService;
-import io.penguinstats.util.CookieUtil;
-import io.penguinstats.util.IpUtil;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.extern.log4j.Log4j2;
+
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +12,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Log4j2
+import io.penguinstats.model.User;
+import io.penguinstats.service.UserService;
+import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.IpUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @RestController("userController_v2")
 @RequestMapping("/api/v2/users")
 @Api(tags = {"Account"})
@@ -37,24 +37,24 @@ public class UserController {
 			@ApiResponse(code = 400, message = "User not found")})
 	public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-			boolean isInternal = false;
-			if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
-				isInternal = true;
-				userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
-			}
-			User user = userService.getUserByUserID(userID);
-			if (user == null) {
-				if (isInternal) {
-					userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
-					if (userID != null) {
-						userService.addTag(userID, "internal");
-					}
-				} else {
-					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		boolean isInternal = false;
+		if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
+			isInternal = true;
+			userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
+		}
+		User user = userService.getUserByUserID(userID);
+		if (user == null) {
+			if (isInternal) {
+				userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
+				if (userID != null) {
+					userService.addTag(userID, "internal");
 				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			CookieUtil.setUserIDCookie(response, userID);
-			return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
+		}
+		CookieUtil.setUserIDCookie(response, userID);
+		return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
 	}
 
 }
