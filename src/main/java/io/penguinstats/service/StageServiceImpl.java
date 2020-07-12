@@ -1,9 +1,12 @@
 package io.penguinstats.service;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +28,9 @@ public class StageServiceImpl implements StageService {
 
 	@Override
 	public Stage getStageByStageId(String stageId) {
-		return stageDao.findByStageId(stageId);
+		return stageDao.findByStageId(stageId).orElseThrow(
+				() -> new NotFoundException(ErrorCode.NOT_FOUND, "Stage[" + stageId + "] is not found",
+						Optional.of(stageId)));
 	}
 
 	/** 

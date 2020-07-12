@@ -1,13 +1,17 @@
 package io.penguinstats.service;
 
+import io.penguinstats.dao.UserDao;
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.enums.UploadCountType;
+import io.penguinstats.model.User;
+import io.penguinstats.util.exception.DatabaseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -15,17 +19,12 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import io.penguinstats.dao.UserDao;
-import io.penguinstats.enums.UploadCountType;
-import io.penguinstats.model.User;
-
+@Log4j2
 @Service("userService")
 public class UserServiceImpl implements UserService {
 
 	private static final int DIGITS = 8;
 	private static final int MAX_RETRY_TIME = 10;
-
-	private static Logger logger = LogManager.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	private UserDao userDao;
@@ -60,8 +59,12 @@ public class UserServiceImpl implements UserService {
 				break;
 			times++;
 		}
-		if (times == MAX_RETRY_TIME)
-			return null;
+		if (times == MAX_RETRY_TIME) {
+			log.error("Failed to create new user.");
+			throw new DatabaseException(ErrorCode.CANNOT_CREATE_USER, "Failed to create new user.",
+					Optional.empty());
+		}
+
 		return createNewUser(userID, ip);
 	}
 
@@ -76,7 +79,7 @@ public class UserServiceImpl implements UserService {
 	public String createNewUser(String userID, String ip) {
 		saveUser(new User(null, userID, 1.0, new ArrayList<>(), ip != null ? Arrays.asList(ip) : new ArrayList<>(),
 				null, System.currentTimeMillis(), null, null));
-		logger.info("new user " + userID + " is created");
+		log.info("new user " + userID + " is created");
 		return userID;
 	}
 

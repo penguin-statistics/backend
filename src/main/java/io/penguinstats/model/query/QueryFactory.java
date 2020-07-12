@@ -1,10 +1,9 @@
 package io.penguinstats.model.query;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import io.penguinstats.enums.QueryType;
 import io.penguinstats.service.ItemDropService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("queryFactory")
 public class QueryFactory {

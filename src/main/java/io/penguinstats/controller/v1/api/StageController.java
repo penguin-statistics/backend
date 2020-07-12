@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v1.api;
 
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -49,12 +50,12 @@ public class StageController {
 
 	@ApiOperation("Get stage by stage ID")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Stage> getStageByStageId(@PathVariable("stageId") String stageId) {
+	public ResponseEntity<Stage> getStageByStageId(@PathVariable("stageId") String stageId) throws NotFoundException {
 		Stage stage = stageService.getStageByStageId(stageId);
 		stage.toLegacyView();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
-		return new ResponseEntity<Stage>(stage, headers, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Stage>(stage, headers, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "/cache")

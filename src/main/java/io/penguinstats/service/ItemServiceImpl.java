@@ -1,16 +1,17 @@
 package io.penguinstats.service;
 
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
+import io.penguinstats.dao.ItemDao;
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.model.Item;
+import io.penguinstats.util.LastUpdateTimeUtil;
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
-import io.penguinstats.dao.ItemDao;
-import io.penguinstats.model.Item;
-import io.penguinstats.util.LastUpdateTimeUtil;
 
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
@@ -25,7 +26,9 @@ public class ItemServiceImpl implements ItemService {
 
 	@Override
 	public Item getItemByItemId(String itemId) {
-		return itemDao.findByItemId(itemId);
+		return itemDao.findByItemId(itemId).orElseThrow(
+				() -> new NotFoundException(ErrorCode.NOT_FOUND, "Item[" + itemId + "] is not found",
+						Optional.of(itemId)));
 	}
 
 	/**
