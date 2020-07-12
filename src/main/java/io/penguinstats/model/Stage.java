@@ -18,6 +18,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.penguinstats.enums.Server;
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,7 +51,8 @@ public class Stage implements Serializable {
 	private List<String> specialDrop;
 	private List<String> extraDrop;
 	private Map<Server, Existence> existence;
-	private Double minClearTime;
+	@ApiModelProperty(notes = "The shortest time that one stage can be finished. Time unit is millisecond.")
+	private Integer minClearTime;
 
 	@JsonIgnore
 	public Set<String> getDropsSet() {
