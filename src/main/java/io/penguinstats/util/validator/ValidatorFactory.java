@@ -1,11 +1,10 @@
 package io.penguinstats.util.validator;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import io.penguinstats.enums.ValidatorType;
 import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component("validatorFactory")
 public class ValidatorFactory {
