@@ -96,7 +96,7 @@ public class RestExceptionHandler {
 	public final ResponseEntity<? extends ErrorResponseWrapper> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
 		log.debug("validation error", ex);
 		HttpHeaders headers = new HttpHeaders();
-		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 		ErrorResponseWrapper apiResponse = new ErrorResponseWrapper(ErrorCode.INVALID_PARAMETER, ex.getMessage());
 
 		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex
@@ -110,7 +110,7 @@ public class RestExceptionHandler {
 	public final ResponseEntity<? extends ErrorResponseWrapper> handleBindException(BindException ex, WebRequest request) {
 		log.debug("validation error", ex);
 		HttpHeaders headers = new HttpHeaders();
-		HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 		ErrorResponseWrapper apiResponse = new ErrorResponseWrapper(ErrorCode.INVALID_PARAMETER, ex.getMessage());
 		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex
 				.getBindingResult()
