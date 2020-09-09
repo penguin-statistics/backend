@@ -95,7 +95,7 @@ public class SiteStatsController {
 		List<String> keyNames = Arrays.asList(LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server,
 				LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server + "_" + mills_24h,
 				LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
-		Long lastUpdateTime = findMaxLastUpdateTime(keyNames);
+		Long lastUpdateTime = LastUpdateTimeUtil.findMaxLastUpdateTime(keyNames);
 
 		HttpHeaders headers = new HttpHeaders();
 		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
@@ -104,14 +104,6 @@ public class SiteStatsController {
 		SiteStatsResponse response =
 				new SiteStatsResponse(totalStageTimes, totalStageTimes_24h, totalItemQuantities, totalApCost, null);
 		return new ResponseEntity<SiteStatsResponse>(response, headers, HttpStatus.OK);
-	}
-
-	private Long findMaxLastUpdateTime(List<String> keyNames) {
-		Long lastUpdateTime = keyNames.stream().map(s -> LastUpdateTimeUtil.getLastUpdateTime(s)).distinct()
-				.filter(l -> l != null).max(Long::compare).get();
-		if (lastUpdateTime == null || lastUpdateTime.compareTo(0L) < 0)
-			lastUpdateTime = System.currentTimeMillis();
-		return lastUpdateTime;
 	}
 
 }
