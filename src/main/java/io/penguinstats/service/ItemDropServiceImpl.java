@@ -3,6 +3,29 @@ package io.penguinstats.service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.bson.Document;
+import org.javatuples.Pair;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.stereotype.Service;
+
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.dao.ItemDropDao;
@@ -18,28 +41,7 @@ import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.penguinstats.util.exception.DatabaseException;
 import io.penguinstats.util.exception.NotFoundException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
-import org.bson.Document;
-import org.javatuples.Pair;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.stereotype.Service;
 
 @Log4j2
 @Service("itemDropService")
@@ -77,7 +79,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public void deleteItemDrop(String userID, String itemDropId) throws Exception {
 		ItemDrop itemDrop = itemDropDao.findById(itemDropId).orElse(null);
 		if (itemDrop == null || !itemDrop.getUserID().equals(userID)) {
-			throw new NotFoundException(ErrorCode.NOT_FOUND, "ItemDrop[" + itemDropId + "] not found for user with ID[" + userID + "]", Optional.empty());
+			throw new NotFoundException(ErrorCode.NOT_FOUND,
+					"ItemDrop[" + itemDropId + "] not found for user with ID[" + userID + "]", Optional.empty());
 		}
 
 		itemDrop.setIsDeleted(true);
@@ -89,7 +92,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
 		List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
 		if (itemDropList.size() == 0) {
-			throw new NotFoundException(ErrorCode.NOT_FOUND, "Visible ItemDrop not found for user with ID[" + userID + "]", Optional.empty());
+			throw new NotFoundException(ErrorCode.NOT_FOUND,
+					"Visible ItemDrop not found for user with ID[" + userID + "]", Optional.empty());
 		}
 
 		ItemDrop lastItemDrop = itemDropList.get(0);
@@ -283,7 +287,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 	}
 
 	@Override
-	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID) {
+	public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, boolean isPast) {
 		Long startTime = System.currentTimeMillis();
 
 		Map<String, List<Pair<String, List<TimeRange>>>> latestMaxAccumulatableTimeRangesMap =
@@ -296,11 +300,16 @@ public class ItemDropServiceImpl implements ItemDropService {
 			pairs.forEach(pair -> {
 				String itemId = pair.getValue0();
 				List<TimeRange> ranges = pair.getValue1();
-				ranges.forEach(range -> {
+				Iterator<TimeRange> iter = ranges.iterator();
+				while (iter.hasNext()) {
+					TimeRange range = iter.next();
+					boolean isCurrentTimeInRange = range.isIn(System.currentTimeMillis());
+					if (isPast && isCurrentTimeInRange || !isPast && !isCurrentTimeInRange)
+						continue;
 					List<String> itemIds = subMap.getOrDefault(range, new ArrayList<>());
 					itemIds.add(itemId);
 					subMap.put(range, itemIds);
-				});
+				}
 			});
 			subMap.forEach((range, itemIds) -> subList.add(Pair.with(range, itemIds)));
 			convertedMap.put(stageId, subList);
@@ -327,8 +336,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 					TimeRange range = pair.getValue0();
 					timeRangeMap.put(stageId, Collections.singletonList(range));
 				}
-				List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
-						new ArrayList<>(), userIDs);
+				List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server,
+						timeRangeMap, new ArrayList<>(), userIDs);
 
 				for (String stageId : convertedMap.keySet()) {
 					Map<String, List<DropMatrixElement>> subMap = allElementsMap.getOrDefault(stageId, new HashMap<>());
@@ -356,17 +365,19 @@ public class ItemDropServiceImpl implements ItemDropService {
 				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
 
 		if (userID == null) {
-			LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
-			log.info("generateGlobalDropMatrixElements done in {} ms for server {}",
-					System.currentTimeMillis() - startTime, server);
+			LastUpdateTimeUtil.setCurrentTimestamp(
+					(isPast ? LastUpdateMapKeyName.PAST_MATRIX_RESULT : LastUpdateMapKeyName.CURRENT_MATRIX_RESULT)
+							+ "_" + server);
+			log.info("generateGlobalDropMatrixElements done in {} ms for server {}, isPast = {}",
+					System.currentTimeMillis() - startTime, server, isPast);
 		}
 
 		return result;
 	}
 
 	@Override
-	public List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server) {
-		return generateGlobalDropMatrixElements(server, null);
+	public List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server, boolean isPast) {
+		return generateGlobalDropMatrixElements(server, null, isPast);
 	}
 
 	private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(Server server,

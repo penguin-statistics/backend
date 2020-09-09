@@ -35,9 +35,12 @@ public class GlobalMatrixQuery implements Serializable, BasicQuery {
 
 	private Integer timeout;
 
+	private Boolean isPast;
+
 	@Override
 	public List<DropMatrixElement> execute() throws Exception {
-		return QueryUtil.runQuery(() -> itemDropService.generateGlobalDropMatrixElements(server, userID), timeout);
+		return QueryUtil.runQuery(() -> itemDropService.generateGlobalDropMatrixElements(server, userID, isPast),
+				timeout);
 	}
 
 }

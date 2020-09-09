@@ -51,13 +51,13 @@ public interface ItemDropService {
 
 	// below is v2
 
-	@Cacheable(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
+	@Cacheable(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server + '_' + (#isPast ? 'past' : 'current')",
 			condition = "#filter == null && #userID == null", sync = true)
-	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID);
+	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, boolean isPast);
 
-	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server",
+	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server + '_' + (#isPast ? 'past' : 'current')",
 			condition = "#filter == null && #userID == null")
-	List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server);
+	List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server, boolean isPast);
 
 	@Cacheable(value = "all-segmented-drop-matrix-v2",
 			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",

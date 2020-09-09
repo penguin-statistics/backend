@@ -44,6 +44,7 @@ import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.DateUtil;
+import io.penguinstats.util.DropMatrixElementUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -92,12 +93,23 @@ public class ResultController {
 			return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()), HttpStatus.OK);
 		}
 
-		GlobalMatrixQuery query = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
-		query.setServer(server).setUserID(userID);
-		if (timeout != null)
-			query.setTimeout(timeout);
-		List<DropMatrixElement> elements = query.execute();
+		GlobalMatrixQuery pastQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+		Integer pastTimeout =
+				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
+		pastQuery.setServer(server).setUserID(userID).setIsPast(true);
+		if (pastTimeout != null)
+			pastQuery.setTimeout(pastTimeout);
+		List<DropMatrixElement> pastElements = pastQuery.execute();
+
+		GlobalMatrixQuery currentQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+		Integer currentTimeout =
+				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
+		currentQuery.setServer(server).setUserID(userID).setIsPast(false);
+		if (currentTimeout != null)
+			currentQuery.setTimeout(currentTimeout);
+		List<DropMatrixElement> currentElements = currentQuery.execute();
+
+		List<DropMatrixElement> elements = DropMatrixElementUtil.combineElementLists(pastElements, currentElements);
 
 		if (!showClosedZones)
 			removeClosedStages(elements, server);
@@ -110,8 +122,15 @@ public class ResultController {
 
 		MatrixQueryResponse result = new MatrixQueryResponse(elements);
 
-		HttpHeaders headers = userID != null ? new HttpHeaders()
-				: generateLastModifiedHeadersFromLastUpdateMap(LastUpdateMapKeyName.MATRIX_RESULT + "_" + server);
+		List<String> keyNames = Arrays.asList(LastUpdateMapKeyName.PAST_MATRIX_RESULT + "_" + server,
+				LastUpdateMapKeyName.CURRENT_MATRIX_RESULT + "_" + server);
+		Long lastUpdateTime = LastUpdateTimeUtil.findMaxLastUpdateTime(keyNames);
+
+		HttpHeaders headers = new HttpHeaders();
+		if (userID == null) {
+			String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+			headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+		}
 
 		return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
 	}
@@ -135,7 +154,7 @@ public class ResultController {
 		if (range == null)
 			range = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
 		GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
-		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_MATRIX_QUERY_TIMEOUT);
+		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_TREND_QUERY_TIMEOUT);
 		query.setServer(server).setInterval(interval).setRange(range);
 		if (timeout != null)
 			query.setTimeout(timeout);
