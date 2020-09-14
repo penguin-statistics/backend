@@ -37,6 +37,7 @@ import io.penguinstats.model.ItemDrop;
 import io.penguinstats.model.QueryConditions;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.TimeRange;
+import io.penguinstats.util.DropMatrixElementUtil;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.penguinstats.util.exception.DatabaseException;
@@ -362,7 +363,8 @@ public class ItemDropServiceImpl implements ItemDropService {
 		}
 
 		List<DropMatrixElement> result = allElementsMap.values().stream()
-				.flatMap(m -> m.values().stream().map(els -> combineElements(els))).collect(toList());
+				.flatMap(m -> m.values().stream().map(els -> DropMatrixElementUtil.combineElements(els)))
+				.collect(toList());
 
 		if (userID == null) {
 			LastUpdateTimeUtil.setCurrentTimestamp(
@@ -458,33 +460,11 @@ public class ItemDropServiceImpl implements ItemDropService {
 		List<DropMatrixElement> result = new ArrayList<>();
 		mapByStageIdAndItemId.forEach((stageId, mapByItemId) -> {
 			mapByItemId.forEach((itemId, elements) -> {
-				DropMatrixElement newElement = combineElements(elements);
+				DropMatrixElement newElement = DropMatrixElementUtil.combineElements(elements);
 				result.add(newElement);
 			});
 		});
 		return result;
-	}
-
-	private DropMatrixElement combineElements(List<DropMatrixElement> elements) {
-		if (elements.isEmpty())
-			return null;
-		DropMatrixElement firstElement = elements.get(0);
-		String stageId = firstElement.getStageId();
-		String itemId = firstElement.getItemId();
-		Integer quantity = 0;
-		Integer times = 0;
-		Long start = firstElement.getStart();
-		Long end = firstElement.getEnd();
-		for (int i = 0, l = elements.size(); i < l; i++) {
-			DropMatrixElement element = elements.get(i);
-			quantity += element.getQuantity();
-			times += element.getTimes();
-			if (element.getStart().compareTo(start) < 0)
-				start = element.getStart();
-			if (end != null && (element.getEnd() == null || element.getEnd().compareTo(end) > 0))
-				end = element.getEnd();
-		}
-		return new DropMatrixElement(stageId, itemId, quantity, times, start, end);
 	}
 
 	@Override
