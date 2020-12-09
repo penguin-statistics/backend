@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.penguinstats.enums.DropMatrixElementType;
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 
 public class DropMatrixElementUtil {
@@ -23,6 +25,10 @@ public class DropMatrixElementUtil {
 		Integer times = 0;
 		Long start = firstElement.getStart();
 		Long end = firstElement.getEnd();
+		Server server = firstElement.getServer();
+		Boolean isPast = firstElement.getIsPast();
+		Long updateTime = firstElement.getUpdateTime();
+		DropMatrixElementType type = firstElement.getType();
 		for (int i = 0, l = elements.size(); i < l; i++) {
 			DropMatrixElement element = elements.get(i);
 			quantity += element.getQuantity();
@@ -31,8 +37,10 @@ public class DropMatrixElementUtil {
 				start = element.getStart();
 			if (end != null && (element.getEnd() == null || element.getEnd().compareTo(end) > 0))
 				end = element.getEnd();
+			if (element.getUpdateTime().compareTo(updateTime) > 0)
+				updateTime = element.getUpdateTime();
 		}
-		return new DropMatrixElement(stageId, itemId, quantity, times, start, end);
+		return new DropMatrixElement(type, stageId, itemId, quantity, times, start, end, server, isPast, updateTime);
 	}
 
 	public static List<DropMatrixElement> combineElementLists(Collection<DropMatrixElement> elements1,

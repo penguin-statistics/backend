@@ -2,9 +2,11 @@ package io.penguinstats.controller.v2.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.mapper.QueryMapper;
 import io.penguinstats.controller.v2.request.AdvancedQueryRequest;
@@ -38,14 +39,13 @@ import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.query.BasicQuery;
 import io.penguinstats.model.query.GlobalMatrixQuery;
-import io.penguinstats.model.query.GlobalTrendQuery;
 import io.penguinstats.model.query.QueryFactory;
 import io.penguinstats.service.DropInfoService;
+import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.DropMatrixElementUtil;
-import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -59,6 +59,8 @@ public class ResultController {
 
 	@Autowired
 	private DropInfoService dropInfoService;
+	@Autowired
+	private DropMatrixElementService dropMatrixElementService;
 	@Autowired
 	private SystemPropertyService systemPropertyService;
 	@Autowired
@@ -93,22 +95,43 @@ public class ResultController {
 			return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()), HttpStatus.OK);
 		}
 
-		GlobalMatrixQuery pastQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-		Integer pastTimeout =
-				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
-		pastQuery.setServer(server).setUserID(userID).setIsPast(true);
-		if (pastTimeout != null)
-			pastQuery.setTimeout(pastTimeout);
-		List<DropMatrixElement> pastElements = pastQuery.execute();
+		List<DropMatrixElement> pastElements = null;
+		List<DropMatrixElement> currentElements = null;
+		if (userID != null) {
+			GlobalMatrixQuery pastQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+			Integer pastTimeout =
+					systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
+			pastQuery.setServer(server).setUserID(userID).setIsPast(true);
+			if (pastTimeout != null)
+				pastQuery.setTimeout(pastTimeout);
+			pastElements = pastQuery.execute();
 
-		GlobalMatrixQuery currentQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-		Integer currentTimeout =
-				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
-		currentQuery.setServer(server).setUserID(userID).setIsPast(false);
-		if (currentTimeout != null)
-			currentQuery.setTimeout(currentTimeout);
-		List<DropMatrixElement> currentElements = currentQuery.execute();
+			GlobalMatrixQuery currentQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+			Integer currentTimeout = systemPropertyService
+					.getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
+			currentQuery.setServer(server).setUserID(userID).setIsPast(false);
+			if (currentTimeout != null)
+				currentQuery.setTimeout(currentTimeout);
+			currentElements = currentQuery.execute();
+		} else {
+			pastElements = dropMatrixElementService.getGlobalDropMatrixElements(server, true);
+			if (pastElements.isEmpty()) {
+				Thread.sleep(1000L);
+				pastElements = dropMatrixElementService.getGlobalDropMatrixElements(server, true);
+				if (pastElements.isEmpty()) {
+					log.error("past global drop matrix elements shouldn't be empty");
+				}
+			}
 
+			currentElements = dropMatrixElementService.getGlobalDropMatrixElements(server, false);
+			if (currentElements.isEmpty()) {
+				Thread.sleep(1000L);
+				currentElements = dropMatrixElementService.getGlobalDropMatrixElements(server, false);
+				if (currentElements.isEmpty()) {
+					log.error("current global drop matrix elements shouldn't be empty");
+				}
+			}
+		}
 		List<DropMatrixElement> elements = DropMatrixElementUtil.combineElementLists(pastElements, currentElements);
 
 		if (!showClosedZones)
@@ -120,50 +143,47 @@ public class ResultController {
 		if (itemFilter != null)
 			filterItems(elements, itemFilter);
 
-		MatrixQueryResponse result = new MatrixQueryResponse(elements);
-
-		List<String> keyNames = Arrays.asList(LastUpdateMapKeyName.PAST_MATRIX_RESULT + "_" + server,
-				LastUpdateMapKeyName.CURRENT_MATRIX_RESULT + "_" + server);
-		Long lastUpdateTime = LastUpdateTimeUtil.findMaxLastUpdateTime(keyNames);
-
+		DropMatrixElement maxLastUpdateTimeElement = elements.stream()
+				.max(Comparator.comparing(DropMatrixElement::getUpdateTime)).orElseThrow(NoSuchElementException::new);
+		Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
 		HttpHeaders headers = new HttpHeaders();
 		if (userID == null) {
 			String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
 			headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 		}
 
+		elements.forEach(DropMatrixElement::toResultView);
+		MatrixQueryResponse result = new MatrixQueryResponse(elements);
+
 		return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
-			notes = "Return the segmented Matrix results of server `server` with granularity of "
-					+ "`interval_day` days in the recent `range_day` days.")
+			notes = "Return the segmented Matrix results of server `server`.")
 	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(
-			@ApiParam(value = "The length of each section. Unit is \"millisecond\".",
-					required = false) @RequestParam(name = "interval", required = false) Long interval,
-			@ApiParam(
-					value = "The total length of the time range used this query. The start time will be calculated using current time minus this value. Unit is \"millisecond\".",
-					required = false) @RequestParam(name = "range", required = false) Long range,
-			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+	public ResponseEntity<TrendQueryResponse>
+			getAllSegmentedDropResults(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server)
-			throws Exception {
-		if (interval == null)
-			interval = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_INTERVAL);
-		if (range == null)
-			range = systemPropertyService.getPropertyLongValue(SystemPropertyKey.DEFAULT_GLOBAL_TREND_RANGE);
-		GlobalTrendQuery query = (GlobalTrendQuery)queryFactory.getQuery(QueryType.GLOBAL_TREND);
-		Integer timeout = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_TREND_QUERY_TIMEOUT);
-		query.setServer(server).setInterval(interval).setRange(range);
-		if (timeout != null)
-			query.setTimeout(timeout);
-		List<DropMatrixElement> elements = query.execute();
+					throws Exception {
+		List<DropMatrixElement> elements = dropMatrixElementService.getGlobalTrendElements(server);
+		if (elements.isEmpty()) {
+			Thread.sleep(1000L);
+			elements = dropMatrixElementService.getGlobalTrendElements(server);
+			if (elements.isEmpty()) {
+				log.error("global trend shouldn't be empty");
+			}
+		}
 
+		DropMatrixElement maxLastUpdateTimeElement = elements.stream()
+				.max(Comparator.comparing(DropMatrixElement::getUpdateTime)).orElseThrow(NoSuchElementException::new);
+		Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
+		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+
+		elements.forEach(DropMatrixElement::toResultView);
 		TrendQueryResponse result = new TrendQueryResponse(elements);
-
-		HttpHeaders headers = generateLastModifiedHeadersFromLastUpdateMap(
-				LastUpdateMapKeyName.TREND_RESULT + "_" + server + "_" + interval + "_" + range);
 
 		return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
 	}
@@ -190,6 +210,7 @@ public class ResultController {
 						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
 				BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
 				List<DropMatrixElement> elements = query.execute();
+				elements.forEach(DropMatrixElement::toResultView);
 				BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
 				results.add(queryResponse);
 			} catch (TimeoutException toEx) {
@@ -241,13 +262,6 @@ public class ResultController {
 	private Set<String> extractFilters(String filterStr) {
 		String[] splitted = filterStr.split(",");
 		return Arrays.asList(splitted).stream().map(String::trim).collect(Collectors.toSet());
-	}
-
-	private HttpHeaders generateLastModifiedHeadersFromLastUpdateMap(String key) {
-		String lastModified = DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(key)));
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
-		return headers;
 	}
 
 }
