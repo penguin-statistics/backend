@@ -1,11 +1,8 @@
 package io.penguinstats.util;
 
-import io.penguinstats.controller.v2.response.ErrorResponseWrapper;
-import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.exception.DatabaseException;
-import io.penguinstats.util.exception.NotFoundException;
-import io.penguinstats.util.exception.PenguinException;
-import lombok.extern.log4j.Log4j2;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,9 +15,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Locale;
+import io.penguinstats.controller.v2.response.ErrorResponseWrapper;
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.DatabaseException;
+import io.penguinstats.util.exception.NotFoundException;
+import io.penguinstats.util.exception.PenguinException;
+import lombok.extern.log4j.Log4j2;
 
 @ControllerAdvice
 @Log4j2
@@ -47,7 +47,7 @@ public class RestExceptionHandler {
 	}
 
 	private ResponseEntity<ErrorResponseWrapper> handleExceptionInternal(Exception ex, ErrorResponseWrapper body,
-																		 HttpHeaders headers, HttpStatus status, WebRequest request) {
+			HttpHeaders headers, HttpStatus status, WebRequest request) {
 		if (HttpStatus.INTERNAL_SERVER_ERROR.equals(status)) {
 			request.setAttribute(WebUtils.ERROR_EXCEPTION_ATTRIBUTE, ex, WebRequest.SCOPE_REQUEST);
 		}
@@ -65,7 +65,7 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler({DatabaseException.class})
 	public final ResponseEntity<ErrorResponseWrapper> handleDatabaseException(DatabaseException ex,
-																			  WebRequest request) {
+			WebRequest request) {
 		log.debug("encountered error", ex);
 		HttpHeaders headers = new HttpHeaders();
 
@@ -81,7 +81,7 @@ public class RestExceptionHandler {
 
 	@ExceptionHandler({IllegalArgumentException.class})
 	public final ResponseEntity<? extends ErrorResponseWrapper> handleBadRequestException(IllegalArgumentException ex,
-																						  WebRequest request) {
+			WebRequest request) {
 		log.debug("encountered error", ex);
 		HttpHeaders headers = new HttpHeaders();
 		HttpStatus status = HttpStatus.BAD_REQUEST;
@@ -93,28 +93,26 @@ public class RestExceptionHandler {
 	}
 
 	@ExceptionHandler({MethodArgumentNotValidException.class})
-	public final ResponseEntity<? extends ErrorResponseWrapper> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+	public final ResponseEntity<? extends ErrorResponseWrapper>
+			handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
 		log.debug("validation error", ex);
 		HttpHeaders headers = new HttpHeaders();
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		ErrorResponseWrapper apiResponse = new ErrorResponseWrapper(ErrorCode.INVALID_PARAMETER, ex.getMessage());
 
-		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex
-				.getBindingResult()
-				.getFieldErrors()));
+		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex.getBindingResult().getFieldErrors()));
 
 		return handleExceptionInternal(ex, apiResponse, headers, status, request);
 	}
 
 	@ExceptionHandler({BindException.class})
-	public final ResponseEntity<? extends ErrorResponseWrapper> handleBindException(BindException ex, WebRequest request) {
+	public final ResponseEntity<? extends ErrorResponseWrapper> handleBindException(BindException ex,
+			WebRequest request) {
 		log.debug("validation error", ex);
 		HttpHeaders headers = new HttpHeaders();
 		HttpStatus status = HttpStatus.BAD_REQUEST;
 		ErrorResponseWrapper apiResponse = new ErrorResponseWrapper(ErrorCode.INVALID_PARAMETER, ex.getMessage());
-		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex
-				.getBindingResult()
-				.getFieldErrors()));
+		apiResponse.setMessage(ValidationUtil.fieldErrorToString(ex.getBindingResult().getFieldErrors()));
 
 		return handleExceptionInternal(ex, apiResponse, headers, status, request);
 	}

@@ -4,7 +4,6 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
@@ -32,10 +30,8 @@ import io.penguinstats.dao.ItemDropDao;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
-import io.penguinstats.model.Item;
 import io.penguinstats.model.ItemDrop;
 import io.penguinstats.model.QueryConditions;
-import io.penguinstats.model.Stage;
 import io.penguinstats.model.TimeRange;
 import io.penguinstats.util.DropMatrixElementUtil;
 import io.penguinstats.util.HashUtil;
@@ -47,12 +43,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Service("itemDropService")
 public class ItemDropServiceImpl implements ItemDropService {
-
-	@Autowired
-	private ItemService itemService;
-
-	@Autowired
-	private StageService stageService;
 
 	@Autowired
 	private ItemDropDao itemDropDao;
@@ -136,155 +126,6 @@ public class ItemDropServiceImpl implements ItemDropService {
 	@Override
 	public Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable) {
 		return itemDropDao.findValidItemDropByStageId(stageId, pageable);
-	}
-
-	/** 
-	 * @Title: getStageTimesMap 
-	 * @Description: Get upload times for each stage under every time point.
-	 * @param filter The filter used in the first 'match' stage.
-	 * @param isWeighted
-	 * @return Map<String,List<Double>> stageId -> times list
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public Map<String, List<Double>> getStageTimesMap(Criteria filter, boolean isWeighted) {
-		Long startTime = System.currentTimeMillis();
-		List<Document> resultList =
-				isWeighted ? itemDropDao.aggregateWeightedStageTimes(filter) : itemDropDao.aggregateStageTimes(filter);
-		Iterator<Document> iter = resultList.iterator();
-		Map<String, List<Double>> map = new HashMap<>();
-		while (iter.hasNext()) {
-			Document doc = iter.next();
-			String stageId = doc.getString("_id");
-			List<Document> allTimesDocs = (ArrayList<Document>)doc.get("allTimes");
-			int size = allTimesDocs.size();
-			Double[] allTimesArray = new Double[size];
-			for (int i = 0; i < size; i++) {
-				Document subDoc = allTimesDocs.get(i);
-				Integer timePoint = subDoc.getLong("timePoint").intValue();
-				allTimesArray[timePoint] =
-						isWeighted ? subDoc.getDouble("times") : new Double(subDoc.getInteger("times"));
-			}
-			map.put(stageId, Arrays.asList(allTimesArray));
-		}
-		log.debug("aggregateStageTimes " + (System.currentTimeMillis() - startTime) + "ms");
-		return map;
-	}
-
-	/** 
-	 * @Title: getQuantitiesMap 
-	 * @Description: Get all item drop quantities under each stage.
-	 * @param filter The filter used in the first 'match' stage.
-	 * @param isWeighted
-	 * @return Map<String,Map<String,Double>> stageId -> itemId -> quantity
-	 */
-	@Override
-	public Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted) {
-		Long startTime = System.currentTimeMillis();
-		List<Document> resultList = isWeighted ? itemDropDao.aggregateWeightedItemDropQuantities(filter)
-				: itemDropDao.aggregateItemDropQuantities(filter);
-		Iterator<Document> iter = resultList.iterator();
-		Map<String, Map<String, Double>> map = new HashMap<>();
-		while (iter.hasNext()) {
-			Document doc = iter.next();
-			String stageId = doc.getString("stageId");
-			String itemId = doc.getString("itemId");
-			Double quantity = isWeighted ? doc.getDouble("quantity") : new Double(doc.getInteger("quantity"));
-			if (stageId != null && itemId != null && quantity != null) {
-				Map<String, Double> subMap = map.getOrDefault(stageId, new HashMap<>());
-				subMap.put(itemId, quantity);
-				map.put(stageId, subMap);
-			}
-		}
-		log.debug("aggregateItemDropQuantities " + (System.currentTimeMillis() - startTime) + "ms");
-		return map;
-	}
-
-	/** 
-	 * @Title: generateMatrixElements 
-	 * @Description: Generate a list of sparse matrix elements from drop records filtered by given filter using aggregation pipelines.
-	 * @param filter
-	 * @return List<DropMatrixElement>
-	 */
-	@Override
-	public List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted) {
-		Long startTime = System.currentTimeMillis();
-		List<DropMatrixElement> dropMatrixList = new ArrayList<>();
-		try {
-			Map<String, Map<String, Double>> quantitiesMap = getQuantitiesMap(filter, isWeighted);
-			Map<String, List<Double>> stageTimesMap = getStageTimesMap(filter, isWeighted);
-			Map<String, Item> itemMap = itemService.getItemMap();
-			Map<String, Stage> stageMap = stageService.getStageMap();
-			for (String stageId : quantitiesMap.keySet()) {
-				Stage stage = stageMap.get(stageId);
-				if (stage == null) {
-					log.error("cannot find stage " + stageId);
-					continue;
-				}
-				List<Double> allTimes = stageTimesMap.get(stageId);
-				if (allTimes == null) {
-					log.error("cannot find allTimes for " + stageId);
-					continue;
-				}
-				Map<String, Double> subMap = quantitiesMap.get(stageId);
-				Set<String> dropsSet = stage.getDropsSet();
-				for (String itemId : dropsSet) {
-					Integer quantity = new Long(Math.round(subMap.getOrDefault(itemId, 0D))).intValue();
-					Item item = itemMap.get(itemId);
-					if (item == null) {
-						// Sometimes item may be null because it has been removed from dropSet 
-						log.warn("cannot find item " + itemId);
-						continue;
-					}
-					Integer addTimePoint = item.getAddTimePoint();
-					if (addTimePoint == null)
-						addTimePoint = 0;
-					if (addTimePoint >= allTimes.size()) {
-						log.error("addTimePoint for " + itemId + " is too large");
-						continue;
-					}
-					Integer times = new Long(Math.round(allTimes.get(addTimePoint))).intValue();
-					if (!times.equals(0))
-						dropMatrixList.add(new DropMatrixElement(stageId, itemId, quantity, times, null, null));
-				}
-			}
-			log.debug("generateDropMatrixElements " + (System.currentTimeMillis() - startTime) + "ms");
-		} catch (Exception e) {
-			log.error("Error in generateDropMatrixElements", e);
-		}
-		LastUpdateTimeUtil
-				.setCurrentTimestamp(isWeighted ? "weightedDropMatrixElements" : "notWeightedDropMatrixElements");
-		return dropMatrixList;
-	}
-
-	/** 
-	 * @Title: updateDropMatrixElements 
-	 * @Description: Update matrix by generating a new one.
-	 * @param filter
-	 * @param isWeighted
-	 * @return List<DropMatrixElement>
-	 */
-	@Override
-	public List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted) {
-		return generateDropMatrixElements(filter, isWeighted);
-	}
-
-	/** 
-	 * @Title: generateUploadCountMap
-	 * @Description: Generate a map of user's upload count under given criteria
-	 * @param criteria
-	 * @return Map<String, Integer> userID -> count
-	 */
-	@Override
-	public Map<String, Integer> generateUploadCountMap(Criteria criteria) {
-		Map<String, Integer> map = new HashMap<>();
-		List<Document> docs = itemDropDao.aggregateUploadCount(criteria);
-		for (Document doc : docs) {
-			String userID = doc.getString("_id");
-			if (userID != null)
-				map.put(userID, doc.getInteger("count"));
-		}
-		return map;
 	}
 
 	@Override

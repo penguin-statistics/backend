@@ -23,8 +23,6 @@ public class UpdateCurrentDropMatrixTask implements Task {
 	public void execute() {
 		log.info("execute UpdateCurrentDropMatrixTask");
 
-		itemDropService.updateDropMatrixElements(null, false);
-
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 		for (Server server : Server.values()) {
 			singleThreadExecutor.execute(() -> itemDropService.refreshGlobalDropMatrixElements(server, false));

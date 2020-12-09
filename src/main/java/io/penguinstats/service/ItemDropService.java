@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
@@ -35,19 +34,6 @@ public interface ItemDropService {
 	List<ItemDrop> getItemDropsByUserID(String userID);
 
 	Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable);
-
-	Map<String, List<Double>> getStageTimesMap(Criteria filter, boolean isWeighted);
-
-	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);
-
-	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null",
-			sync = true)
-	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
-
-	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
-	List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted);
-
-	Map<String, Integer> generateUploadCountMap(Criteria criteria);
 
 	// below is v2
 
