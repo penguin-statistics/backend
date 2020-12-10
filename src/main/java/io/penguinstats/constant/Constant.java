@@ -39,4 +39,10 @@ public class Constant {
 		public static final String TOTAL_ITEM_QUANTITIES = "total-item-quantities";
 	}
 
+	public static class SiteURL {
+		public static final String PENGUIN_STATS_CN = "https://penguin-stats.cn/";
+		public static final String PENGUIN_STATS_IO = "https://penguin-stats.io/";
+		public static final String EXUSI_AI = "https://exusi.ai/";
+	}
+
 }

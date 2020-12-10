@@ -22,4 +22,7 @@ public interface ItemService {
 	@Cacheable(value = "maps", key = "'itemMap'")
 	Map<String, Item> getItemMap();
 
+	@Cacheable(value = "maps", key = "'allNameItemMap'")
+	Map<String, Item> getAllNameItemMap();
+
 }

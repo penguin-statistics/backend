@@ -1,19 +1,19 @@
 package io.penguinstats.service;
 
-import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.dao.StageDao;
+import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.model.Stage;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.penguinstats.util.exception.NotFoundException;
 
 @Service("stageService")
 public class StageServiceImpl implements StageService {
@@ -28,9 +28,8 @@ public class StageServiceImpl implements StageService {
 
 	@Override
 	public Stage getStageByStageId(String stageId) {
-		return stageDao.findByStageId(stageId).orElseThrow(
-				() -> new NotFoundException(ErrorCode.NOT_FOUND, "Stage[" + stageId + "] is not found",
-						Optional.of(stageId)));
+		return stageDao.findByStageId(stageId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND,
+				"Stage[" + stageId + "] is not found", Optional.of(stageId)));
 	}
 
 	/** 
@@ -67,6 +66,21 @@ public class StageServiceImpl implements StageService {
 		Map<String, Stage> map = new HashMap<>();
 		list.forEach(stage -> map.put(stage.getStageId(), stage));
 		return map;
+	}
+
+	/**
+	 * @Title: getAllCodeStageMap
+	 * @Description: Return a map which has stage code has key and stage object as value. The stage code comes from all languages.
+	 * @return Map<String,Item>
+	 */
+	@Override
+	public Map<String, Stage> getAllCodeStageMap() {
+		Map<String, Stage> result = new HashMap<>();
+		getAllStages().forEach(stage -> {
+			if (stage.getCodeMap() != null)
+				stage.getCodeMap().values().forEach(code -> result.put(code, stage));
+		});
+		return result;
 	}
 
 }
