@@ -21,6 +21,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,7 +71,7 @@ public class ResultController {
 	@Autowired
 	private QueryFactory queryFactory;
 
-	@ApiOperation(value = "Get the Result Matrix for all Stages and Items",
+	@ApiOperation(value = "Get matrix result",
 			notes = "Return the Result Matrix in the \"lastest accumulatable time ranges\". Detailed instructions can be found at: https://developer.penguin-stats.io/docs/api-v2-instruction/matrix-api")
 	@GetMapping(path = "/matrix", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<MatrixQueryResponse> getMatrix(HttpServletRequest request,
@@ -89,7 +90,87 @@ public class ResultController {
 			@ApiParam(value = "Do filter on final result by item. It should be a list of itemIds separated by commas.",
 					required = false) @RequestParam(name = "itemFilter", required = false) String itemFilter)
 			throws Exception {
+		return getMatrixHelper(request, server, showClosedZones, stageFilter, itemFilter, isPersonal);
+	}
+
+	@ApiOperation(value = "Get matrix result",
+			notes = "Return the Result Matrix in the \"lastest accumulatable time ranges\". This is for internal use.")
+	@GetMapping(path = "/matrix/{server:CN|US|JP|KR}/{source:global|personal}",
+			produces = "application/json;charset=UTF-8")
+	public ResponseEntity<MatrixQueryResponse> getMatrix(HttpServletRequest request,
+			@PathVariable("server") Server server, @PathVariable("source") String source,
+			@ApiParam(value = "Whether showing closed stages or not. Default to be false.",
+					required = false) @RequestParam(name = "show_closed_zones", required = false,
+							defaultValue = "false") boolean showClosedZones,
+			@ApiParam(
+					value = "Do filter on final result by stage. It should be a list of stageIds separated by commas.",
+					required = false) @RequestParam(name = "stageFilter", required = false) String stageFilter,
+			@ApiParam(value = "Do filter on final result by item. It should be a list of itemIds separated by commas.",
+					required = false) @RequestParam(name = "itemFilter", required = false) String itemFilter)
+			throws Exception {
+		return getMatrixHelper(request, server, showClosedZones, stageFilter, itemFilter, "personal".equals(source));
+	}
+
+	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
+			notes = "Return the segmented Matrix results of server `server`.")
+	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<TrendQueryResponse>
+			getAllSegmentedDropResults(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+					required = false) @RequestParam(name = "server", required = false,
+							defaultValue = "CN") Server server)
+					throws Exception {
+		return getTrendHelper(server);
+	}
+
+	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
+			notes = "Return the segmented Matrix results of server `server`. This is for internal use.")
+	@GetMapping(path = "/trend/{server:CN|US|JP|KR}", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<TrendQueryResponse> getAllSegmentedDropResults(HttpServletRequest request,
+			@PathVariable("server") Server server) throws Exception {
+		return getTrendHelper(server);
+	}
+
+	@ApiOperation(value = "Execute advanced queries",
+			notes = "Execute advanced queries in a batch and return the query results in an array.")
+	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
+			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
+		Integer maxQueryNum =
+				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
+		if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
+			AdvancedQueryResponse advancedQueryResponse =
+					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
+			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
+		}
+		final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
+		List<BasicQueryResponse> results = new ArrayList<>();
+		advancedQueryRequest.getQueries().forEach(singleQuery -> {
+			try {
+				Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
+				String userID = isPersonal ? userIDFromCookie : null;
+				Integer timeout =
+						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
+				BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
+				List<DropMatrixElement> elements = query.execute();
+				elements.forEach(DropMatrixElement::toResultView);
+				BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
+				results.add(queryResponse);
+			} catch (TimeoutException toEx) {
+				log.error("TimeoutException in executeAdvancedQueries: ", toEx);
+			} catch (ExecutionException exeEx) {
+				log.error("ExecutionException in executeAdvancedQueries: ", exeEx);
+			} catch (Exception ex) {
+				log.error("Error in executeAdvancedQueries: ", ex);
+			}
+		});
+		AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
+		return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
+	}
+
+	private ResponseEntity<MatrixQueryResponse> getMatrixHelper(HttpServletRequest request, Server server,
+			boolean showClosedZones, String stageFilter, String itemFilter, boolean isPersonal) throws Exception {
 		log.info("GET /matrix");
+
 		String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
 		if (isPersonal && userID == null) {
 			return new ResponseEntity<MatrixQueryResponse>(new MatrixQueryResponse(new ArrayList<>()), HttpStatus.OK);
@@ -158,14 +239,7 @@ public class ResultController {
 		return new ResponseEntity<MatrixQueryResponse>(result, headers, HttpStatus.OK);
 	}
 
-	@ApiOperation(value = "Get the segmented Result Matrix for all Items and Stages",
-			notes = "Return the segmented Matrix results of server `server`.")
-	@GetMapping(path = "/trends", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<TrendQueryResponse>
-			getAllSegmentedDropResults(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server)
-					throws Exception {
+	private ResponseEntity<TrendQueryResponse> getTrendHelper(Server server) throws Exception {
 		List<DropMatrixElement> elements = dropMatrixElementService.getGlobalTrendElements(server);
 		if (elements.isEmpty()) {
 			Thread.sleep(1000L);
@@ -186,43 +260,6 @@ public class ResultController {
 		TrendQueryResponse result = new TrendQueryResponse(elements);
 
 		return new ResponseEntity<TrendQueryResponse>(result, headers, HttpStatus.OK);
-	}
-
-	@ApiOperation(value = "Execute advanced queries",
-			notes = "Execute advanced queries in a batch and return the query results in an array.")
-	@PostMapping(path = "/advanced", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<AdvancedQueryResponse> executeAdvancedQueries(
-			@Valid @RequestBody AdvancedQueryRequest advancedQueryRequest, HttpServletRequest request) {
-		Integer maxQueryNum =
-				systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
-		if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
-			AdvancedQueryResponse advancedQueryResponse =
-					new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
-			return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
-		}
-		final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
-		List<BasicQueryResponse> results = new ArrayList<>();
-		advancedQueryRequest.getQueries().forEach(singleQuery -> {
-			try {
-				Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
-				String userID = isPersonal ? userIDFromCookie : null;
-				Integer timeout =
-						systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
-				BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
-				List<DropMatrixElement> elements = query.execute();
-				elements.forEach(DropMatrixElement::toResultView);
-				BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
-				results.add(queryResponse);
-			} catch (TimeoutException toEx) {
-				log.error("TimeoutException in executeAdvancedQueries: ", toEx);
-			} catch (ExecutionException exeEx) {
-				log.error("ExecutionException in executeAdvancedQueries: ", exeEx);
-			} catch (Exception ex) {
-				log.error("Error in executeAdvancedQueries: ", ex);
-			}
-		});
-		AdvancedQueryResponse advancedQueryResponse = new AdvancedQueryResponse(results);
-		return new ResponseEntity<AdvancedQueryResponse>(advancedQueryResponse, HttpStatus.OK);
 	}
 
 	private void removeClosedStages(List<DropMatrixElement> elements, Server server) {
