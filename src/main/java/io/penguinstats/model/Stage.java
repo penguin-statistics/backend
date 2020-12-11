@@ -53,6 +53,10 @@ public class Stage implements Serializable {
 	private Map<Server, Existence> existence;
 	@ApiModelProperty(notes = "The shortest time that one stage can be finished. Time unit is millisecond.")
 	private Integer minClearTime;
+	@JsonProperty("alias")
+	private Map<String, List<String>> aliasMap;
+	@JsonProperty("pron")
+	private Map<String, List<String>> pronMap;
 
 	@JsonIgnore
 	public Set<String> getDropsSet() {
@@ -70,6 +74,8 @@ public class Stage implements Serializable {
 	@JsonIgnore
 	public Stage toLegacyView() {
 		this.dropInfos = null;
+		this.aliasMap = null;
+		this.pronMap = null;
 		return this;
 	}
 

@@ -47,6 +47,10 @@ public class Item implements Serializable {
 	@ApiModelProperty(notes = "The position in the sprite image.")
 	private List<Integer> spriteCoord;
 	private String groupID;
+	@JsonProperty("alias")
+	private Map<String, List<String>> aliasMap;
+	@JsonProperty("pron")
+	private Map<String, List<String>> pronMap;
 
 	@JsonIgnore
 	public Item toNonI18nView() {
