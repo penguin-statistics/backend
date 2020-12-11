@@ -9,14 +9,14 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import io.penguinstats.model.DropMatrixElement;
+import io.penguinstats.model.MatrixElement;
 
 public class QueryUtil {
 
-	public static List<DropMatrixElement> runQuery(Callable<List<DropMatrixElement>> func, Integer timeout)
+	public static List<? extends MatrixElement> runQuery(Callable<List<? extends MatrixElement>> func, Integer timeout)
 			throws InterruptedException, ExecutionException, TimeoutException {
 		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		Future<List<DropMatrixElement>> future = singleThreadExecutor.submit(func);
+		Future<List<? extends MatrixElement>> future = singleThreadExecutor.submit(func);
 		return timeout != null ? future.get(timeout, TimeUnit.MINUTES) : future.get();
 	}
 

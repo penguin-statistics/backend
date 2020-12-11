@@ -1,5 +1,6 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "The model for the drop pattern.")
-public class DropPattern {
+public class DropPattern implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	List<Drop> drops;
 

@@ -27,6 +27,7 @@ public class Constant {
 		public static final String PAST_GLOBAL_MATRIX_QUERY_TIMEOUT = "past_global_matrix_query_timeout";
 		public static final String CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT = "current_global_matrix_query_timeout";
 		public static final String GLOBAL_TREND_QUERY_TIMEOUT = "global_trend_query_timeout";
+		public static final String GLOBAL_PATTERN_QUERY_TIMEOUT = "global_pattern_query_timeout";
 		public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
 	}
 

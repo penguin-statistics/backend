@@ -14,7 +14,8 @@ import io.penguinstats.model.DropInfo;
 public interface DropInfoService {
 
 	@Caching(evict = {@CacheEvict(value = "lists", key = "'dropInfoList_' + #dropInfo.server"),
-			@CacheEvict(value = "maps", key = "'latestTimeRangeMap_' + #dropInfo.server"),
+			@CacheEvict(value = "maps", key = "'latestMaxAccumulatableTimeRangesMap_' + #dropInfo.server"),
+			@CacheEvict(value = "maps", key = "'latestTimeRangesMap_' + #dropInfo.server"),
 			@CacheEvict(value = "sets", allEntries = true)})
 	void saveDropInfo(DropInfo dropInfo);
 

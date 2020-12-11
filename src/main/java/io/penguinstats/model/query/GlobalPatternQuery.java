@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.MatrixElement;
-import io.penguinstats.service.DropMatrixElementService;
+import io.penguinstats.service.PatternMatrixElementService;
 import io.penguinstats.util.QueryUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,29 +18,35 @@ import lombok.experimental.Accessors;
 @AllArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GlobalMatrixQuery implements Serializable, BasicQuery {
+public class GlobalPatternQuery implements Serializable, BasicQuery {
 
 	private static final long serialVersionUID = 1L;
 
-	public GlobalMatrixQuery(DropMatrixElementService dropMatrixElementService) {
-		this.dropMatrixElementService = dropMatrixElementService;
+	public GlobalPatternQuery(PatternMatrixElementService patternMatrixElementService) {
+		this.patternMatrixElementService = patternMatrixElementService;
 	}
 
 	@JsonIgnore
-	private DropMatrixElementService dropMatrixElementService;
+	private PatternMatrixElementService patternMatrixElementService;
 
 	private Server server;
+
+	private String stageId;
+
+	private List<String> itemIds;
+
+	private Long start;
+
+	private Long end;
 
 	private String userID;
 
 	private Integer timeout;
 
-	private Boolean isPast;
-
 	@Override
 	public List<? extends MatrixElement> execute() throws Exception {
-		return QueryUtil.runQuery(
-				() -> dropMatrixElementService.generateGlobalDropMatrixElements(server, userID, isPast), timeout);
+		return QueryUtil.runQuery(() -> patternMatrixElementService.generateGlobalPatternMatrixElements(server, userID),
+				timeout);
 	}
 
 }

@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Document(collection = "drop_matrix_element")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "The model for the element in drop matrix.")
-public class DropMatrixElement implements Serializable {
+public class DropMatrixElement implements MatrixElement, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
