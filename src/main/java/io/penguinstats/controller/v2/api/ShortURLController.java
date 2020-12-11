@@ -43,7 +43,7 @@ public class ShortURLController {
 	@ApiOperation(value = "Redirect to penguin-stats homepage")
 	@GetMapping("/")
 	public ResponseEntity<Void> redirectWithoutWord(HttpServletRequest request) {
-		return redirect(getPenguinStatsURL(request) + "?utm_medium=root&utm_campaign=root");
+		return redirect(getPenguinStatsURL(request) + "?utm_source=exusiai&utm_medium=root&utm_campaign=root");
 	}
 
 	@ApiOperation(value = "Redirect to penguin-stats site by the given word")
