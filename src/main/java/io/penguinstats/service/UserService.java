@@ -1,11 +1,8 @@
 package io.penguinstats.service;
 
-import java.util.Map;
-
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 
-import io.penguinstats.enums.UploadCountType;
 import io.penguinstats.model.User;
 
 public interface UserService {
@@ -25,11 +22,5 @@ public interface UserService {
 
 	@CacheEvict(value = "user", key = "'user_' + #userID")
 	void addTag(String userID, String tag);
-
-	@CacheEvict(value = "user", allEntries = true)
-	void updateUploadFromMap(Map<String, Integer> map, UploadCountType type);
-
-	@CacheEvict(value = "user", allEntries = true)
-	void updateWeightByUploadRange(Integer lower, Integer upper, UploadCountType type, Double weight);
 
 }

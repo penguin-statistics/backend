@@ -1,9 +1,12 @@
 package io.penguinstats.service;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +31,9 @@ public class ZoneServiceImpl implements ZoneService {
 
 	@Override
 	public Zone getZoneByZoneId(String zoneId) {
-		return zoneDao.findByZoneId(zoneId);
+		return zoneDao.findByZoneId(zoneId).orElseThrow(
+				() -> new NotFoundException(ErrorCode.NOT_FOUND, "Zone[" + zoneId + "] is not found",
+						Optional.of(zoneId)));
 	}
 
 	@Override

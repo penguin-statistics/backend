@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
-import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.util.QueryUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,12 +22,12 @@ public class GlobalMatrixQuery implements Serializable, BasicQuery {
 
 	private static final long serialVersionUID = 1L;
 
-	public GlobalMatrixQuery(ItemDropService itemDropService) {
-		this.itemDropService = itemDropService;
+	public GlobalMatrixQuery(DropMatrixElementService dropMatrixElementService) {
+		this.dropMatrixElementService = dropMatrixElementService;
 	}
 
 	@JsonIgnore
-	private ItemDropService itemDropService;
+	private DropMatrixElementService dropMatrixElementService;
 
 	private Server server;
 
@@ -35,9 +35,12 @@ public class GlobalMatrixQuery implements Serializable, BasicQuery {
 
 	private Integer timeout;
 
+	private Boolean isPast;
+
 	@Override
 	public List<DropMatrixElement> execute() throws Exception {
-		return QueryUtil.runQuery(() -> itemDropService.generateGlobalDropMatrixElements(server, userID), timeout);
+		return QueryUtil.runQuery(
+				() -> dropMatrixElementService.generateGlobalDropMatrixElements(server, userID, isPast), timeout);
 	}
 
 }

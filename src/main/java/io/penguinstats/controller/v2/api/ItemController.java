@@ -18,6 +18,7 @@ import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
+import io.penguinstats.util.exception.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -43,10 +44,8 @@ public class ItemController {
 
 	@ApiOperation(value = "Get an Item by ItemId")
 	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
+	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) throws NotFoundException {
 		Item item = itemService.getItemByItemId(itemId);
-		if (item == null)
-			return new ResponseEntity<Item>(HttpStatus.NOT_FOUND);
 		return new ResponseEntity<Item>(item, HttpStatus.OK);
 	}
 

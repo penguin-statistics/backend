@@ -3,25 +3,21 @@ package io.penguinstats.util.validator;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
+import io.penguinstats.enums.DropType;
+import io.penguinstats.model.DropInfo;
+import io.penguinstats.model.TypedDrop;
+import io.penguinstats.service.DropInfoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import io.penguinstats.enums.DropType;
-import io.penguinstats.model.DropInfo;
-import io.penguinstats.model.TypedDrop;
-import io.penguinstats.service.DropInfoService;
-
+@Log4j2
 @Component("dropsValidator")
 public class DropsValidator extends BaseValidator {
-
-	private static Logger logger = LogManager.getLogger(DropsValidator.class);
 
 	private DropInfoService dropInfoService;
 
@@ -50,7 +46,7 @@ public class DropsValidator extends BaseValidator {
 
 		for (DropType dropType : DropType.values()) {
 			if (!dropInfoMapByDropType.containsKey(dropType)) {
-				logger.warn("Failed to find " + dropType + " drop info.");
+				log.warn("Failed to find " + dropType + " drop info.");
 				continue;
 			}
 
@@ -60,7 +56,7 @@ public class DropsValidator extends BaseValidator {
 				typedDropMapByItemId = typedDrops.stream().collect(toMap(TypedDrop::getItemId, typedDrop -> typedDrop));
 			} catch (IllegalStateException ex) {
 				if (ex.getMessage().contains("Duplicate key")) {
-					logger.debug("Found duplicated itemId in drops.");
+					log.debug("Found duplicated itemId in drops.");
 					return false;
 				} else
 					throw ex;
@@ -80,15 +76,15 @@ public class DropsValidator extends BaseValidator {
 				if (!judge) {
 					String targetName = dropInfo.getItemId() == null ? "Item types num in " + dropType
 							: "Item " + dropInfo.getItemId() + "'s quantity in " + dropType;
-					logger.debug("Failed target: " + targetName + " = " + numberToCheck);
-					logger.debug("Bounds: " + dropInfo.getBounds().toString());
+					log.debug("Failed target: " + targetName + " = " + numberToCheck);
+					log.debug("Bounds: " + dropInfo.getBounds().toString());
 					return false;
 				}
 				if (dropInfo.getItemId() != null)
 					uncheckedItemIds.remove(dropInfo.getItemId());
 			}
 			if (!uncheckedItemIds.isEmpty()) {
-				logger.debug("Found unexpected items in " + dropType + ": " + uncheckedItemIds.toString());
+				log.debug("Found unexpected items in " + dropType + ": " + uncheckedItemIds.toString());
 				return false;
 			}
 		}

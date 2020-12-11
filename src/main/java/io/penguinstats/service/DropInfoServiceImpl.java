@@ -48,6 +48,11 @@ public class DropInfoServiceImpl implements DropInfoService {
 		return dropInfoDao.findDropInfosByServerAndStageId(server, stageId);
 	}
 
+	@Override
+	public List<DropInfo> getDropInfosByServerAndTimeRangeID(Server server, String timeRangeID) {
+		return dropInfoDao.findDropInfosByServerAndTimeRangeID(server, timeRangeID);
+	}
+
 	/** 
 	 * @Title: getLatestDropInfosMapByServer 
 	 * @Description: Get lists of the latest drop info in every stage. Key is stageId.
@@ -158,6 +163,11 @@ public class DropInfoServiceImpl implements DropInfoService {
 	 */
 	private DropInfoService getSpringProxy() {
 		return applicationContext.getBean(DropInfoService.class);
+	}
+
+	@Override
+	public void batchSave(List<DropInfo> infos) {
+		dropInfoDao.saveAll(infos);
 	}
 
 }

@@ -18,11 +18,16 @@ public interface DropInfoService {
 			@CacheEvict(value = "sets", allEntries = true)})
 	void saveDropInfo(DropInfo dropInfo);
 
+	void batchSave(List<DropInfo> infos);
+
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server", condition = "#filter == null")
 	List<DropInfo> getDropInfosByServer(Server server);
 
 	@Cacheable(value = "lists", key = "'dropInfoList_' + #server + '_' + #stageId", condition = "#filter == null")
 	List<DropInfo> getDropInfosByServerAndStageId(Server server, String stageId);
+
+	@Cacheable(value = "lists", key = "'dropInfoList_' + #server + '_' + #timeRangeID", condition = "#filter == null")
+	List<DropInfo> getDropInfosByServerAndTimeRangeID(Server server, String timeRangeID);
 
 	@Cacheable(value = "maps", key = "'latestDropInfosMap_' + #server", condition = "#filter == null")
 	public Map<String, List<DropInfo>> getLatestDropInfosMapByServer(Server server);

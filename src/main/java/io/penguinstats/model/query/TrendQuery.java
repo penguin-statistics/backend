@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
-import io.penguinstats.service.ItemDropService;
+import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.util.QueryUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,12 +24,12 @@ public class TrendQuery implements Serializable, BasicQuery {
 
 	private static final long serialVersionUID = 1L;
 
-	public TrendQuery(ItemDropService itemDropService) {
-		this.itemDropService = itemDropService;
+	public TrendQuery(DropMatrixElementService dropMatrixElementService) {
+		this.dropMatrixElementService = dropMatrixElementService;
 	}
 
 	@JsonIgnore
-	private ItemDropService itemDropService;
+	private DropMatrixElementService dropMatrixElementService;
 
 	private Server server;
 
@@ -50,7 +50,7 @@ public class TrendQuery implements Serializable, BasicQuery {
 	@Override
 	public List<DropMatrixElement> execute() throws Exception {
 		return QueryUtil.runQuery(
-				() -> itemDropService.generateCustomDropMatrixElements(server, stageId, itemIds, start, end,
+				() -> dropMatrixElementService.generateCustomDropMatrixElements(server, stageId, itemIds, start, end,
 						Optional.ofNullable(userID).map(userID -> Arrays.asList(userID)).orElse(null), interval),
 				timeout);
 	}

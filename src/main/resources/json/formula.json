@@ -107,9 +107,16 @@
     "name": "炽合金块",
     "rarity": 3,
     "weight": 63
+   },
+   {
+    "id": "31034",
+    "name": "晶体电路",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
    }
   ],
-  "totalWeight": 753
+  "totalWeight": 809
  },
  {
   "id": "30125",
@@ -213,9 +220,16 @@
     "name": "炽合金块",
     "rarity": 3,
     "weight": 63
+   },
+   {
+    "id": "31034",
+    "name": "晶体电路",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
    }
   ],
-  "totalWeight": 753
+  "totalWeight": 809
  },
  {
   "id": "30115",
@@ -325,9 +339,16 @@
     "name": "炽合金块",
     "rarity": 3,
     "weight": 63
+   },
+   {
+    "id": "31034",
+    "name": "晶体电路",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
    }
   ],
-  "totalWeight": 753
+  "totalWeight": 809
  },
  {
   "id": "30104",
@@ -437,9 +458,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30094",
@@ -549,9 +577,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30084",
@@ -661,9 +696,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30074",
@@ -773,9 +815,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30062",
@@ -1001,9 +1050,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30052",
@@ -1229,9 +1285,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30042",
@@ -1457,9 +1520,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30032",
@@ -1685,9 +1755,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30022",
@@ -1913,9 +1990,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "id": "30012",
@@ -2129,9 +2213,16 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "costs": [
@@ -2238,12 +2329,19 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
   "goldCost": 300,
   "id": "31024",
   "name": "炽合金块",
-  "totalWeight": 497
+  "totalWeight": 527
  },
  {
   "costs": [
@@ -2350,11 +2448,256 @@
     "name": "炽合金",
     "rarity": 2,
     "weight": 40
+   },
+   {
+    "id": "31033",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
    }
   ],
   "goldCost": 300,
   "id": "31014",
   "name": "聚合凝胶",
-  "totalWeight": 497
+  "totalWeight": 527
+ },
+ {
+  "id": "31034",
+  "name": "晶体电路",
+  "goldCost": 300,
+  "costs": [
+   {
+    "id": "30133",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 2
+   },
+   {
+    "id": "31013",
+    "name": "凝胶",
+    "rarity": 2,
+    "count": 1
+   },
+   {
+    "id": "31023",
+    "name": "炽合金",
+    "rarity": 2,
+    "count": 1
+   }
+  ],
+  "extraOutcome": [
+   {
+    "id": "30013",
+    "name": "固源岩组",
+    "rarity": 2,
+    "count": 1,
+    "weight": 60
+   },
+   {
+    "id": "30023",
+    "name": "糖组",
+    "rarity": 2,
+    "count": 1,
+    "weight": 50
+   },
+   {
+    "id": "30033",
+    "name": "聚酸酯组",
+    "rarity": 2,
+    "count": 1,
+    "weight": 50
+   },
+   {
+    "id": "30043",
+    "name": "异铁组",
+    "rarity": 2,
+    "count": 1,
+    "weight": 40
+   },
+   {
+    "id": "30053",
+    "name": "酮凝集组",
+    "rarity": 2,
+    "count": 1,
+    "weight": 40
+   },
+   {
+    "id": "30063",
+    "name": "全新装置",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
+   },
+   {
+    "id": "30073",
+    "name": "扭转醇",
+    "rarity": 2,
+    "count": 1,
+    "weight": 45
+   },
+   {
+    "id": "30083",
+    "name": "轻锰矿",
+    "rarity": 2,
+    "count": 1,
+    "weight": 40
+   },
+   {
+    "id": "30093",
+    "name": "研磨石",
+    "rarity": 2,
+    "count": 1,
+    "weight": 36
+   },
+   {
+    "id": "30103",
+    "name": "RMA70-12",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
+   },
+   {
+    "count": 1,
+    "id": "31013",
+    "name": "凝胶",
+    "rarity": 2,
+    "weight": 36
+   },
+   {
+    "count": 1,
+    "id": "31023",
+    "name": "炽合金",
+    "rarity": 2,
+    "weight": 40
+   },
+   {
+    "id": "30133",
+    "name": "晶体元件",
+    "rarity": 2,
+    "count": 1,
+    "weight": 30
+   }
+  ],
+  "totalWeight": 527
+ },
+ {
+  "id": "31035",
+  "name": "晶体电子单元",
+  "goldCost": 400,
+  "costs": [
+   {
+    "id": "31034",
+    "name": "晶体电路",
+    "rarity": 3,
+    "count": 1
+   },
+   {
+    "id": "31014",
+    "name": "聚合凝胶",
+    "rarity": 3,
+    "count": 2
+   },
+   {
+    "id": "31024",
+    "name": "炽合金块",
+    "rarity": 3,
+    "count": 1
+   }
+  ],
+  "extraOutcome": [
+   {
+    "id": "30014",
+    "name": "提纯源岩",
+    "rarity": 3,
+    "count": 1,
+    "weight": 84
+   },
+   {
+    "id": "30024",
+    "name": "糖聚块",
+    "rarity": 3,
+    "count": 1,
+    "weight": 63
+   },
+   {
+    "id": "30034",
+    "name": "聚酸酯块",
+    "rarity": 3,
+    "count": 1,
+    "weight": 63
+   },
+   {
+    "id": "30044",
+    "name": "异铁块",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
+   },
+   {
+    "id": "30054",
+    "name": "酮阵列",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
+   },
+   {
+    "id": "30064",
+    "name": "改量装置",
+    "rarity": 3,
+    "count": 1,
+    "weight": 42
+   },
+   {
+    "id": "30074",
+    "name": "白马醇",
+    "rarity": 3,
+    "count": 1,
+    "weight": 72
+   },
+   {
+    "id": "30084",
+    "name": "三水锰矿",
+    "rarity": 3,
+    "count": 1,
+    "weight": 63
+   },
+   {
+    "id": "30094",
+    "name": "五水研磨石",
+    "rarity": 3,
+    "count": 1,
+    "weight": 63
+   },
+   {
+    "id": "30104",
+    "name": "RMA70-24",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
+   },
+   {
+    "count": 1,
+    "id": "31014",
+    "name": "聚合凝胶",
+    "rarity": 3,
+    "weight": 72
+   },
+   {
+    "count": 1,
+    "id": "31024",
+    "name": "炽合金块",
+    "rarity": 3,
+    "weight": 63
+   },
+   {
+    "id": "30134",
+    "name": "晶体电路",
+    "rarity": 3,
+    "count": 1,
+    "weight": 56
+   }
+  ],
+  "totalWeight": 809
  }
 ]
