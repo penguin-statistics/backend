@@ -43,10 +43,10 @@ public class ShortURLController {
 	@ApiOperation(value = "Redirect to penguin-stats homepage")
 	@GetMapping("/")
 	public ResponseEntity<Void> redirectWithoutWord(HttpServletRequest request) {
-		return redirect(getPenguinStatsURL(request));
+		return redirect(getPenguinStatsURL(request) + "?utm_medium=root&utm_campaign=root");
 	}
 
-	@ApiOperation(value = "Redirect to penguin-stats site by the given word.")
+	@ApiOperation(value = "Redirect to penguin-stats site by the given word")
 	@GetMapping("/{word}")
 	public ResponseEntity<Void> redirect(HttpServletRequest request, @PathVariable("word") String word) {
 		if ("item".equals(word))
@@ -88,7 +88,7 @@ public class ShortURLController {
 		if (!allNameItemMap.containsKey(word))
 			return null;
 		String itemId = allNameItemMap.get(word).getItemId();
-		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId);
+		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId + "?utm_medium=item&utm_campaign=name");
 	}
 
 	private ResponseEntity<Void> redirectByItemId(HttpServletRequest request, String word) {
@@ -96,7 +96,7 @@ public class ShortURLController {
 		if (!itemMap.containsKey(word))
 			return null;
 		String itemId = itemMap.get(word).getItemId();
-		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId);
+		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId + "?utm_medium=item&utm_campaign=id");
 	}
 
 	private ResponseEntity<Void> redirectByStageCode(HttpServletRequest request, String word) {
@@ -106,7 +106,8 @@ public class ShortURLController {
 		Stage stage = allCodeStageMap.get(word);
 		String stageId = stage.getStageId();
 		String zoneId = stage.getZoneId();
-		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId);
+		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId
+				+ "?utm_medium=stage&utm_campaign=code");
 	}
 
 	private ResponseEntity<Void> redirectByStageId(HttpServletRequest request, String word) {
@@ -116,16 +117,18 @@ public class ShortURLController {
 		Stage stage = stageMap.get(word);
 		String stageId = stage.getStageId();
 		String zoneId = stage.getZoneId();
-		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId);
+		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId
+				+ "?utm_medium=stage&utm_campaign=id");
 	}
 
 	private ResponseEntity<Void> redirectUnknown(HttpServletRequest request, String word) {
 		try {
 			String encoded = URLEncoder.encode(word, StandardCharsets.UTF_8.toString());
-			return redirect(getPenguinStatsURL(request) + "search?q=" + encoded);
+			return redirect(
+					getPenguinStatsURL(request) + "search?utm_medium=search&utm_campaign=fallback&q=" + encoded);
 		} catch (UnsupportedEncodingException e) {
 			log.error("Error in redirectUnknown: ", e);
-			return redirect(getPenguinStatsURL(request));
+			return redirect(getPenguinStatsURL(request) + "?utm_medium=root&utm_campaign=error");
 		}
 	}
 
