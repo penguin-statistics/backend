@@ -21,7 +21,7 @@ public class UpdatePastDropMatrixTask implements Task {
 	@Autowired
 	private DropMatrixElementService dropMatrixElementService;
 
-	@Scheduled(fixedRate = 43200000)
+	@Scheduled(fixedRate = 43200000, initialDelay = 900000)
 	@Override
 	public void execute() {
 		log.info("execute UpdatePastDropMatrixTask");

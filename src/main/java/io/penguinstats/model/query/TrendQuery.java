@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.Server;
-import io.penguinstats.model.DropMatrixElement;
+import io.penguinstats.model.MatrixElement;
 import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.util.QueryUtil;
 import lombok.AllArgsConstructor;
@@ -48,7 +48,7 @@ public class TrendQuery implements Serializable, BasicQuery {
 	private Integer timeout;
 
 	@Override
-	public List<DropMatrixElement> execute() throws Exception {
+	public List<? extends MatrixElement> execute() throws Exception {
 		return QueryUtil.runQuery(
 				() -> dropMatrixElementService.generateCustomDropMatrixElements(server, stageId, itemIds, start, end,
 						Optional.ofNullable(userID).map(userID -> Arrays.asList(userID)).orElse(null), interval),

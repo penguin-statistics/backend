@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -16,6 +17,8 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ArithmeticOperators;
 import org.springframework.data.mongodb.core.aggregation.LiteralOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
+
+import com.mongodb.BasicDBObject;
 
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.ItemDrop;
@@ -224,6 +227,201 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		operations.add(Aggregation.project("section", "stageId", "times").and("drops.itemId").as("itemId")
 				.and("drops.quantity").as("quantity"));
 		operations.add(Aggregation.group("section", "stageId", "times", "itemId").sum("quantity").as("quantity"));
+
+		Aggregation aggregation =
+				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());
+
+		AggregationResults<Document> results = mongoTemplate.aggregate(aggregation, ItemDrop.class, Document.class);
+
+		log.debug(conditions.toString() + ", time = " + (System.currentTimeMillis() - currentTime) + "ms");
+
+		return results.getMappedResults();
+	}
+
+	@Override
+	public List<Document> aggregateDropPatterns(QueryConditions conditions) {
+		Long currentTime = System.currentTimeMillis();
+
+		List<String> userIDs = conditions.getUserIDs();
+		List<Server> servers = conditions.getServers();
+		List<StageWithTimeRange> stages = conditions.getStages();
+
+		List<AggregationOperation> operations = new LinkedList<>();
+
+		/* Pipe 1: filter by isReliable, isDeleted, stageId and timestamp
+			{
+			  $match:{
+			    $or:[
+			      {
+			        stageId:"main_01-07",
+			        timestamp:{
+			          $gt:1586853840000,
+			          $lt:91559229418034
+			        }
+			      },
+			      {
+			        stageId:"main_04-04",
+			        timestamp:{
+			          $gt:1586853840000,
+			          $lt:91569229418034
+			        }
+			      }
+			    ],
+			    isReliable:true,
+			    isDeleted:false
+			  }
+			}
+		 */
+		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
+
+		criteriasInAndInPipe1.add(Criteria.where("isReliable").is(true));
+
+		if (userIDs.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
+		else
+			criteriasInAndInPipe1.add(Criteria.where("userID").in(userIDs));
+
+		if (!servers.isEmpty())
+			criteriasInAndInPipe1.add(Criteria.where("server").in(servers));
+
+		if (!stages.isEmpty()) {
+			if (1 == stages.size() && stages.get(0).getStageId() == null) {
+				StageWithTimeRange stage = stages.get(0);
+				Long min = stage.getStart() == null ? 0L : stage.getStart();
+				Long max = stage.getEnd() == null ? System.currentTimeMillis() : stage.getEnd();
+				criteriasInAndInPipe1.add(Criteria.where("timestamp").gte(min).lt(max));
+			} else {
+				List<Criteria> criteriasInOrInPipe1 = new ArrayList<>();
+				stages.forEach(stage -> {
+					Long min = stage.getStart() == null ? 0L : stage.getStart();
+					Long max = stage.getEnd() == null ? System.currentTimeMillis() : stage.getEnd();
+					criteriasInOrInPipe1.add(new Criteria().andOperator(Criteria.where("timestamp").gte(min).lt(max),
+							Criteria.where("stageId").is(stage.getStageId())));
+				});
+				criteriasInAndInPipe1.add(new Criteria().orOperator(criteriasInOrInPipe1.toArray(new Criteria[0])));
+			}
+		}
+
+		operations.add(Aggregation.match(new Criteria().andOperator(criteriasInAndInPipe1.toArray(new Criteria[0]))));
+
+		/* Pipe 2: group by stageId, sum up 'times' to calculate total times for this stage
+		{
+		  $group:{
+		    _id:{
+		      stageId:"$stageId"
+		    },
+		    times:{
+		      $sum:"$times"
+		    },
+		    drops:{
+		      $push:{
+			    docId: "$$ROOT._id",
+			    pattern: "$drops",
+			    quantity: "$$ROOT.times"
+		      }
+		    }
+		  }
+		}
+		*/
+		operations.add(Aggregation.group("stageId").push(
+				new BasicDBObject("docId", "$$ROOT._id").append("pattern", "$drops").append("quantity", "$$ROOT.times"))
+				.as("drops").sum("times").as("times"));
+
+		// Pipe3: unwind drops
+		/*
+			{
+			  $unwind:{
+			    path:"$drops",
+			    preserveNullAndEmptyArrays:false
+			  }
+			}
+		 */
+		operations.add(Aggregation.unwind("drops", false));
+
+		/* Pipe 4: project unwind results
+			{
+			  $project:{
+			    _id:0,
+			    stageId:"$_id",
+			    times:1,
+			    docId:"$drops.docId",
+			    pattern:"$drops.pattern",
+			    quantity:"$drops.quantity"
+			  }
+			}
+		*/
+		operations.add(Aggregation.project("times").and("_id").as("stageId").and("drops.quantity").as("quantity")
+				.and("drops.pattern").as("pattern").and("drops.docId").as("docId"));
+
+		/* Pipe 5: group by pattern, sum up their quantities
+			{
+			  $group:{
+			    _id:{
+			      stageId:"$stageId",
+			      times:"$times",
+			      pattern:"$pattern"
+			    },
+			    quantity:{
+			      $sum:"$quantity"
+			    },
+			    docId:{
+			      $first:"$docId"
+			    }
+			  }
+			}
+		 */
+		operations.add(Aggregation.group("stageId", "times", "pattern").first("docId").as("docId").sum("quantity")
+				.as("quantity"));
+
+		/* Pipe 6: unwind pattern
+			{
+			  $unwind:{
+			    path:"$_id.pattern",
+			    preserveNullAndEmptyArrays:true
+			  }
+			}
+		 */
+		operations.add(Aggregation.unwind("_id.pattern", true));
+
+		/* Pipe 7: sort by itemId
+			$sort:{
+			  "_id.pattern.itemId":1
+			}
+		 */
+		operations.add(Aggregation.sort(Direction.ASC, "_id.pattern.itemId"));
+
+		/* Pipe 8: pipe 6~8 is to sort all inner pattern array by itemId ASC
+			{
+			  $group:{
+			    _id:{
+			      docId:"$docId",
+			      times:"$$ROOT._id.times",
+			      stageId:"$$ROOT._id.stageId",
+			      quantity:"$$ROOT.quantity"
+			    },
+			    pattern:{
+			      $push:"$$ROOT._id.pattern"
+			    }
+			  }
+			}
+		 */
+		operations.add(Aggregation.group("docId", "times", "stageId", "quantity").push("pattern").as("pattern"));
+
+		/* Pipe 9: group the sorted results again and sum up their quantities
+			{
+			  $group:{
+			    _id:{
+			      pattern:"$pattern",
+			      stageId:"$_id.stageId",
+			      times:"$_id.times"
+			    },
+			    quantity:{
+			      $sum:"$_id.quantity"
+			    }
+			  }
+			}
+		 */
+		operations.add(Aggregation.group("pattern", "times", "stageId").sum("quantity").as("quantity"));
 
 		Aggregation aggregation =
 				newAggregation(operations).withOptions(newAggregationOptions().allowDiskUse(true).build());

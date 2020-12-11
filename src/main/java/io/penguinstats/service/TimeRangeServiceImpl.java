@@ -3,12 +3,11 @@ package io.penguinstats.service;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
-import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.exception.NotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -18,9 +17,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import io.penguinstats.dao.TimeRangeDao;
+import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.TimeRange;
+import io.penguinstats.util.exception.NotFoundException;
 
 @Service("timeRangeService")
 public class TimeRangeServiceImpl implements TimeRangeService {
@@ -39,9 +40,8 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 
 	@Override
 	public TimeRange getTimeRangeByRangeID(String rangeID) {
-		return timeRangeDao.findByRangeID(rangeID).orElseThrow(
-				() -> new NotFoundException(ErrorCode.NOT_FOUND, "TimeRange[" + rangeID + "] is not found",
-						Optional.of(rangeID)));
+		return timeRangeDao.findByRangeID(rangeID).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND,
+				"TimeRange[" + rangeID + "] is not found", Optional.of(rangeID)));
 	}
 
 	/**
@@ -118,6 +118,39 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 				itemTimeRanges.add(itemWithRange);
 			});
 			result.put(stageId, itemTimeRanges);
+		});
+		return result;
+	}
+
+	@Override
+	public Map<String, TimeRange> getLatestTimeRangesMapByServer(Server server) {
+		Map<String, TimeRange> timeRangeMap = getSpringProxy().getTimeRangeMap();
+		List<DropInfo> infos = dropInfoService.getDropInfosByServer(server);
+		infos.forEach(info -> {
+			TimeRange range = timeRangeMap.get(info.getTimeRangeID());
+			info.setTimeRange(range);
+		});
+		Map<String, List<DropInfo>> infosMapStageId = infos.stream().collect(groupingBy(DropInfo::getStageId));
+		Map<String, TimeRange> result = new HashMap<>();
+		infosMapStageId.forEach((stageId, infosInOneStage) -> {
+			Long maxEnd = Long.MIN_VALUE;
+			for (DropInfo info : infosInOneStage) {
+				Long end = info.getTimeRange().getEnd();
+				if (end == null) {
+					maxEnd = null;
+					break;
+				} else if (end.compareTo(maxEnd) > 0)
+					maxEnd = end;
+			}
+			final Long maxEndFinal = maxEnd;
+			infosInOneStage = infosInOneStage.stream()
+					.filter(info -> Objects.equals(info.getTimeRange().getEnd(), maxEndFinal)).collect(toList());
+			if (!infosInOneStage.isEmpty()) {
+				TimeRange range = infosInOneStage.get(0).getTimeRange();
+				for (int i = 1, l = infosInOneStage.size(); i < l; i++)
+					range = range.intersection(infosInOneStage.get(i).getTimeRange());
+				result.put(stageId, range);
+			}
 		});
 		return result;
 	}

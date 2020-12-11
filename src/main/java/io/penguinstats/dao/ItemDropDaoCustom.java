@@ -10,6 +10,8 @@ public interface ItemDropDaoCustom {
 
 	List<Document> aggregateItemDrops(QueryConditions conditions);
 
+	List<Document> aggregateDropPatterns(QueryConditions conditions);
+
 	List<Document> aggregateStageTimes(QueryConditions conditions);
 
 	List<Document> aggregateItemQuantities(QueryConditions conditions);

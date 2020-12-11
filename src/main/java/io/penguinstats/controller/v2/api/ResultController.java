@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.penguinstats.controller.v2.request.AdvancedQueryRequest;
 import io.penguinstats.controller.v2.response.AdvancedQueryResponse;
 import io.penguinstats.controller.v2.response.MatrixQueryResponse;
+import io.penguinstats.controller.v2.response.PatternQueryResponse;
 import io.penguinstats.controller.v2.response.TrendQueryResponse;
 import io.penguinstats.enums.Server;
 import io.penguinstats.util.ResultUtil;
@@ -61,6 +62,19 @@ public class ResultController {
 							defaultValue = "CN") Server server)
 					throws Exception {
 		return resultUtil.getTrendHelper(server);
+	}
+
+	@ApiOperation(value = "Get pattern result", notes = "Return the Pattern Result in the \"lastest time ranges\".")
+	@GetMapping(path = "/pattern", produces = "application/json;charset=UTF-8")
+	public ResponseEntity<PatternQueryResponse> getPattern(HttpServletRequest request,
+			@ApiParam(value = "Whether to see personal pattern result or not. Default to be false.",
+					required = false) @RequestParam(name = "is_personal", required = false,
+							defaultValue = "false") boolean isPersonal,
+			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+					required = false) @RequestParam(name = "server", required = false,
+							defaultValue = "CN") Server server)
+			throws Exception {
+		return resultUtil.getPatternHelper(request, server, isPersonal);
 	}
 
 	@ApiOperation(value = "Execute advanced queries",
