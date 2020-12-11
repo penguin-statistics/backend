@@ -134,11 +134,12 @@ public class ResultUtil {
 		if (itemFilter != null)
 			filterItems(elements, itemFilter);
 
-		DropMatrixElement maxLastUpdateTimeElement = elements.stream()
-				.max(Comparator.comparing(DropMatrixElement::getUpdateTime)).orElseThrow(NoSuchElementException::new);
-		Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
 		HttpHeaders headers = new HttpHeaders();
 		if (userID == null) {
+			DropMatrixElement maxLastUpdateTimeElement =
+					elements.stream().max(Comparator.comparing(DropMatrixElement::getUpdateTime))
+							.orElseThrow(NoSuchElementException::new);
+			Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
 			String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
 			headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 		}
@@ -202,12 +203,12 @@ public class ResultUtil {
 			}
 		}
 
-		PatternMatrixElement maxLastUpdateTimeElement =
-				elements.stream().max(Comparator.comparing(PatternMatrixElement::getUpdateTime))
-						.orElseThrow(NoSuchElementException::new);
-		Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
 		HttpHeaders headers = new HttpHeaders();
 		if (userID == null) {
+			PatternMatrixElement maxLastUpdateTimeElement =
+					elements.stream().max(Comparator.comparing(PatternMatrixElement::getUpdateTime))
+							.orElseThrow(NoSuchElementException::new);
+			Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
 			String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
 			headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 		}
