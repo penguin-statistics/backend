@@ -88,7 +88,8 @@ public class ShortURLController {
 		if (!allNameItemMap.containsKey(word))
 			return null;
 		String itemId = allNameItemMap.get(word).getItemId();
-		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId + "?utm_medium=item&utm_campaign=name");
+		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId
+				+ "?utm_source=exusiai&utm_medium=item&utm_campaign=name");
 	}
 
 	private ResponseEntity<Void> redirectByItemId(HttpServletRequest request, String word) {
@@ -96,7 +97,8 @@ public class ShortURLController {
 		if (!itemMap.containsKey(word))
 			return null;
 		String itemId = itemMap.get(word).getItemId();
-		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId + "?utm_medium=item&utm_campaign=id");
+		return redirect(getPenguinStatsURL(request) + "result/item/" + itemId
+				+ "?utm_source=exusiai&utm_medium=item&utm_campaign=id");
 	}
 
 	private ResponseEntity<Void> redirectByStageCode(HttpServletRequest request, String word) {
@@ -107,7 +109,7 @@ public class ShortURLController {
 		String stageId = stage.getStageId();
 		String zoneId = stage.getZoneId();
 		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId
-				+ "?utm_medium=stage&utm_campaign=code");
+				+ "?utm_source=exusiai&utm_medium=stage&utm_campaign=code");
 	}
 
 	private ResponseEntity<Void> redirectByStageId(HttpServletRequest request, String word) {
@@ -118,17 +120,17 @@ public class ShortURLController {
 		String stageId = stage.getStageId();
 		String zoneId = stage.getZoneId();
 		return redirect(getPenguinStatsURL(request) + "result/stage/" + zoneId + "/" + stageId
-				+ "?utm_medium=stage&utm_campaign=id");
+				+ "?utm_source=exusiai&utm_medium=stage&utm_campaign=id");
 	}
 
 	private ResponseEntity<Void> redirectUnknown(HttpServletRequest request, String word) {
 		try {
 			String encoded = URLEncoder.encode(word, StandardCharsets.UTF_8.toString());
-			return redirect(
-					getPenguinStatsURL(request) + "search?utm_medium=search&utm_campaign=fallback&q=" + encoded);
+			return redirect(getPenguinStatsURL(request)
+					+ "search?utm_source=exusiai&utm_medium=search&utm_campaign=fallback&q=" + encoded);
 		} catch (UnsupportedEncodingException e) {
 			log.error("Error in redirectUnknown: ", e);
-			return redirect(getPenguinStatsURL(request) + "?utm_medium=root&utm_campaign=error");
+			return redirect(getPenguinStatsURL(request) + "?utm_source=exusiai&utm_medium=root&utm_campaign=error");
 		}
 	}
 
