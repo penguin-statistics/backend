@@ -3,14 +3,45 @@ package io.penguinstats.util;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.penguinstats.enums.DropMatrixElementType;
+import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
 
 public class DropMatrixElementUtil {
+
+	public static DropMatrixElement combineElements(List<DropMatrixElement> elements) {
+		if (elements.isEmpty())
+			return null;
+		DropMatrixElement firstElement = elements.get(0);
+		String stageId = firstElement.getStageId();
+		String itemId = firstElement.getItemId();
+		Integer quantity = 0;
+		Integer times = 0;
+		Long start = firstElement.getStart();
+		Long end = firstElement.getEnd();
+		Server server = firstElement.getServer();
+		Boolean isPast = firstElement.getIsPast();
+		Long updateTime = firstElement.getUpdateTime();
+		DropMatrixElementType type = firstElement.getType();
+		for (int i = 0, l = elements.size(); i < l; i++) {
+			DropMatrixElement element = elements.get(i);
+			quantity += element.getQuantity();
+			times += element.getTimes();
+			if (element.getStart().compareTo(start) < 0)
+				start = element.getStart();
+			if (end != null && (element.getEnd() == null || element.getEnd().compareTo(end) > 0))
+				end = element.getEnd();
+			if (element.getUpdateTime().compareTo(updateTime) > 0)
+				updateTime = element.getUpdateTime();
+		}
+		return new DropMatrixElement(type, stageId, itemId, quantity, times, start, end, server, isPast, updateTime);
+	}
 
 	public static List<DropMatrixElement> combineElementLists(Collection<DropMatrixElement> elements1,
 			Collection<DropMatrixElement> elements2) {
@@ -19,11 +50,10 @@ public class DropMatrixElementUtil {
 			String stageId = el.getStageId();
 			String itemId = el.getItemId();
 			Map<String, DropMatrixElement> subMap = convertedMap.getOrDefault(stageId, new HashMap<>());
-			DropMatrixElement element =
-					subMap.getOrDefault(itemId, new DropMatrixElement(stageId, itemId, 0, 0, null, null));
-			element.setQuantity(element.getQuantity() + el.getQuantity());
-			element.setTimes(element.getTimes() + el.getTimes());
-			subMap.put(itemId, element);
+			if (subMap.containsKey(itemId))
+				subMap.put(itemId, combineElements(Arrays.asList(subMap.get(itemId), el)));
+			else
+				subMap.put(itemId, el);
 			convertedMap.put(stageId, subMap);
 		});
 		return convertMapByStageIdAndItemIdToElements(convertedMap);

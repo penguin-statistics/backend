@@ -2,10 +2,10 @@ package io.penguinstats.model.query;
 
 import java.util.List;
 
-import io.penguinstats.model.DropMatrixElement;
+import io.penguinstats.model.MatrixElement;
 
 public interface BasicQuery {
 
-	List<DropMatrixElement> execute() throws Exception;
+	List<? extends MatrixElement> execute() throws Exception;
 
 }

@@ -8,10 +8,8 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Criteria;
 
 import io.penguinstats.enums.Server;
-import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.ItemDrop;
 
 public interface ItemDropService {
@@ -35,42 +33,6 @@ public interface ItemDropService {
 	List<ItemDrop> getItemDropsByUserID(String userID);
 
 	Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable);
-
-	Map<String, List<Double>> getStageTimesMap(Criteria filter, boolean isWeighted);
-
-	Map<String, Map<String, Double>> getQuantitiesMap(Criteria filter, boolean isWeighted);
-
-	@Cacheable(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null",
-			sync = true)
-	List<DropMatrixElement> generateDropMatrixElements(Criteria filter, boolean isWeighted);
-
-	@CachePut(value = "drop-matrix", key = "#isWeighted ? 'weighted' : 'not-weighted'", condition = "#filter == null")
-	List<DropMatrixElement> updateDropMatrixElements(Criteria filter, boolean isWeighted);
-
-	Map<String, Integer> generateUploadCountMap(Criteria criteria);
-
-	// below is v2
-
-	@Cacheable(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server + '_' + (#isPast ? 'past' : 'current')",
-			condition = "#filter == null && #userID == null", sync = true)
-	List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, boolean isPast);
-
-	@CachePut(value = "drop-matrix-v2", key = "'drop-matrix-v2_' + #server + '_' + (#isPast ? 'past' : 'current')",
-			condition = "#filter == null && #userID == null")
-	List<DropMatrixElement> refreshGlobalDropMatrixElements(Server server, boolean isPast);
-
-	@Cacheable(value = "all-segmented-drop-matrix-v2",
-			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
-			condition = "#filter == null", sync = true)
-	List<DropMatrixElement> generateSegmentedGlobalDropMatrixElements(Server server, Long interval, Long range);
-
-	@CachePut(value = "all-segmented-drop-matrix-v2",
-			key = "'all-segmented-drop-matrix-v2_' + #server + '_' + #interval + '_' + #range",
-			condition = "#filter == null")
-	List<DropMatrixElement> refreshSegmentedGlobalDropMatrixElements(Server server, Long interval, Long range);
-
-	List<DropMatrixElement> generateCustomDropMatrixElements(Server server, String stageId, List<String> itemIds,
-			Long start, Long end, List<String> userIDs, Long interval);
 
 	@Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
 			condition = "#filter == null", sync = true)

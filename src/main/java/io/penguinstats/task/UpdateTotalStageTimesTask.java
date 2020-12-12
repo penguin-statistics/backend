@@ -20,7 +20,7 @@ public class UpdateTotalStageTimesTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	@Scheduled(fixedRate = 3600000, initialDelay = 300000)
+	@Scheduled(fixedRate = 3600000, initialDelay = 0)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateTotalStageTimesTask");

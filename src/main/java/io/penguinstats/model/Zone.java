@@ -43,6 +43,10 @@ public class Zone implements Serializable {
 	private List<String> stages;
 	private Long openTime;
 	private Long closeTime;
+	@JsonProperty("alias")
+	private Map<String, List<String>> aliasMap;
+	@JsonProperty("pron")
+	private Map<String, List<String>> pronMap;
 
 	@JsonIgnore
 	public boolean isInTimeRange(long timestamp) {
@@ -57,12 +61,16 @@ public class Zone implements Serializable {
 	public Zone toLegacyNonI18nView() {
 		this.zoneNameMap = null;
 		this.existence = null;
+		this.aliasMap = null;
+		this.pronMap = null;
 		return this;
 	}
 
 	@JsonIgnore
 	public Zone toLegacyI18nView() {
 		this.existence = null;
+		this.aliasMap = null;
+		this.pronMap = null;
 		return this;
 	}
 

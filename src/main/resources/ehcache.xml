@@ -102,18 +102,6 @@
         </resources>
     </cache>
     
-    <cache alias="limitation" uses-template="heap-cache">
-        <key-type>java.lang.String</key-type>
-        <value-type>io.penguinstats.model.Limitation</value-type>
-        <expiry>
-            <ttl unit="hours">24</ttl>
-        </expiry>
-        <resources>
-            <heap unit="entries">1000</heap>
-            <offheap unit="MB">10</offheap>
-        </resources>
-    </cache>
-    
     <cache alias="user" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>io.penguinstats.model.User</value-type>
@@ -122,18 +110,6 @@
         </expiry>
         <resources>
             <heap unit="entries">2000</heap>
-            <offheap unit="MB">10</offheap>
-        </resources>
-    </cache>
-    
-    <cache alias="drop-matrix" uses-template="heap-cache">
-        <key-type>java.lang.String</key-type>
-        <value-type>java.util.List</value-type>
-        <expiry>
-            <none/>
-        </expiry>
-        <resources>
-            <heap unit="entries">50</heap>
             <offheap unit="MB">10</offheap>
         </resources>
     </cache>
@@ -151,6 +127,18 @@
     </cache>
     
     <cache alias="all-segmented-drop-matrix-v2" uses-template="heap-cache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.util.List</value-type>
+        <expiry>
+            <none/>
+        </expiry>
+        <resources>
+            <heap unit="entries">50</heap>
+            <offheap unit="MB">20</offheap>
+        </resources>
+    </cache>
+    
+    <cache alias="pattern-matrix-v2" uses-template="heap-cache">
         <key-type>java.lang.String</key-type>
         <value-type>java.util.List</value-type>
         <expiry>
