@@ -64,33 +64,25 @@ public class UserController {
 	@ApiResponses(value = {@ApiResponse(code = 200, message = "Successfully logged the user in"),
 			@ApiResponse(code = 400, message = "User not found")})
 	public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
-			HttpServletResponse response) {
-		try {
-			boolean isInternal = false;
-			if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
-				isInternal = true;
-				userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
-			}
-			User user = userService.getUserByUserID(userID);
-			if (user == null) {
-				if (isInternal) {
-					userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
-					if (userID == null) {
-						logger.error("Failed to create new user.");
-						return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-					} else {
-						userService.addTag(userID, "internal");
-					}
-				} else {
-					return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-				}
-			}
-			CookieUtil.setUserIDCookie(response, userID);
-			return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
-		} catch (Exception e) {
-			logger.error("Error in getUser", e);
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+			HttpServletResponse response) throws Exception {
+		boolean isInternal = false;
+		if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
+			isInternal = true;
+			userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
 		}
+		User user = userService.getUserByUserID(userID);
+		if (user == null) {
+			if (isInternal) {
+				userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
+				if (userID != null) {
+					userService.addTag(userID, "internal");
+				}
+			} else {
+				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+			}
+		}
+		CookieUtil.setUserIDCookie(response, userID);
+		return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
 	}
 
 	@ApiOperation(value = "Get authorization URL", notes = "Generate URL for third-party platform authorization.")

@@ -25,4 +25,7 @@ public interface StageService {
 	@Cacheable(value = "maps", key = "'stageMap'")
 	Map<String, Stage> getStageMap();
 
+	@Cacheable(value = "maps", key = "'allCodeStageMap'")
+	Map<String, Stage> getAllCodeStageMap();
+
 }

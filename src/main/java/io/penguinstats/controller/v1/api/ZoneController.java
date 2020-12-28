@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v1.api;
 
+import io.penguinstats.util.exception.NotFoundException;
 import java.util.List;
 
 import io.swagger.annotations.Api;
@@ -46,10 +47,8 @@ public class ZoneController {
 	@ApiOperation("Get zone by zone ID")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
 	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId,
-			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) {
+			@RequestParam(name = "i18n", required = false, defaultValue = "false") boolean i18n) throws NotFoundException {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
-		if (zone == null)
-			return new ResponseEntity<Zone>(HttpStatus.NOT_FOUND);
 		zone = i18n ? zone.toLegacyI18nView() : zone.toLegacyNonI18nView();
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);

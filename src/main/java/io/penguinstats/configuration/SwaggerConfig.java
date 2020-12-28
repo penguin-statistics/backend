@@ -33,7 +33,7 @@ public class SwaggerConfig implements WebMvcConfigurer {
 				"Backend APIs for Arknights drop rate statistics website 'Penguin Statistics': https://penguin-stats.io/")
 				.contact(new Contact("AlvISs_Reimu", "https://github.com/AlvISsReimu", "alvissreimu@gmail.com"))
 				.license("MIT License").licenseUrl("https://github.com/penguin-statistics/backend/blob/master/LICENSE")
-				.version("2.0.0").build();
+				.version("2.3.0").build();
 	}
 
 	private Predicate<RequestHandler> apis() {

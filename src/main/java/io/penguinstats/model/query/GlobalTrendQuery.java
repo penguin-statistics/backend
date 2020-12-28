@@ -7,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.penguinstats.enums.Server;
-import io.penguinstats.model.DropMatrixElement;
-import io.penguinstats.service.ItemDropService;
+import io.penguinstats.model.MatrixElement;
+import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.util.QueryUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,12 +22,12 @@ public class GlobalTrendQuery implements Serializable, BasicQuery {
 
 	private static final long serialVersionUID = 1L;
 
-	public GlobalTrendQuery(ItemDropService itemDropService) {
-		this.itemDropService = itemDropService;
+	public GlobalTrendQuery(DropMatrixElementService dropMatrixElementService) {
+		this.dropMatrixElementService = dropMatrixElementService;
 	}
 
 	@JsonIgnore
-	private ItemDropService itemDropService;
+	private DropMatrixElementService dropMatrixElementService;
 
 	private Server server;
 
@@ -38,9 +38,10 @@ public class GlobalTrendQuery implements Serializable, BasicQuery {
 	private Integer timeout;
 
 	@Override
-	public List<DropMatrixElement> execute() throws Exception {
+	public List<? extends MatrixElement> execute() throws Exception {
 		return QueryUtil.runQuery(
-				() -> itemDropService.generateSegmentedGlobalDropMatrixElements(server, interval, range), timeout);
+				() -> dropMatrixElementService.generateSegmentedGlobalDropMatrixElements(server, interval, range),
+				timeout);
 	}
 
 }

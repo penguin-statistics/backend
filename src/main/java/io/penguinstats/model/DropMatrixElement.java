@@ -2,8 +2,16 @@ package io.penguinstats.model;
 
 import java.io.Serializable;
 
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import io.penguinstats.enums.DropMatrixElementType;
+import io.penguinstats.enums.Server;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -20,12 +28,21 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Document(collection = "drop_matrix_element")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "The model for the element in drop matrix.")
-public class DropMatrixElement implements Serializable {
+public class DropMatrixElement implements MatrixElement, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@JsonIgnore
+	private ObjectId id;
+
+	@Indexed
+	private DropMatrixElementType type;
+
+	@Indexed
 	private String stageId;
 
 	private String itemId;
@@ -41,5 +58,36 @@ public class DropMatrixElement implements Serializable {
 
 	@ApiModelProperty(notes = "The right end of the interval used in the calculation")
 	private Long end;
+
+	@Indexed
+	private Server server;
+
+	@Indexed
+	private Boolean isPast;
+
+	private Long updateTime;
+
+	public DropMatrixElement(DropMatrixElementType type, String stageId, String itemId, Integer quantity, Integer times,
+			Long start, Long end, Server server, Boolean isPast, Long updateTime) {
+		this.type = type;
+		this.stageId = stageId;
+		this.itemId = itemId;
+		this.quantity = quantity;
+		this.times = times;
+		this.start = start;
+		this.end = end;
+		this.server = server;
+		this.isPast = isPast;
+		this.updateTime = updateTime;
+	}
+
+	@JsonIgnore
+	public DropMatrixElement toResultView() {
+		this.type = null;
+		this.server = null;
+		this.isPast = null;
+		this.updateTime = null;
+		return this;
+	}
 
 }

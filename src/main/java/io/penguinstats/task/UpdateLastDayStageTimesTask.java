@@ -21,7 +21,7 @@ public class UpdateLastDayStageTimesTask implements Task {
 	@Autowired
 	private ItemDropService itemDropService;
 
-	@Scheduled(fixedRate = 900000, initialDelay = 300000)
+	@Scheduled(fixedRate = 900000, initialDelay = 0)
 	@Override
 	public void execute() {
 		logger.info("execute UpdateLastDayStageTimesTask");

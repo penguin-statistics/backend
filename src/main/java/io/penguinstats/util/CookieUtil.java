@@ -1,26 +1,22 @@
 package io.penguinstats.util;
 
+import io.penguinstats.model.User;
+import io.penguinstats.service.UserService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import io.penguinstats.model.User;
-import io.penguinstats.service.UserService;
-
+@Log4j2
 @Component("cookieUtil")
 public class CookieUtil {
 
-	private static Logger logger = LogManager.getLogger(CookieUtil.class);
 	private static CookieUtil cookieUtil;
 
 	@Autowired
@@ -57,26 +53,26 @@ public class CookieUtil {
 						try {
 							userID = URLDecoder.decode(userID, "UTF-8");
 						} catch (UnsupportedEncodingException e) {
-							logger.error("Error in getUserIDFromCookies: ", e);
+							log.error("Error in getUserIDFromCookies: ", e);
 							userID = null;
 						}
 					}
 					if (userID != null) {
 						User user = userService.getUserByUserID(userID);
 						if (user == null) {
-							logger.warn("userID " + userID + " is not existed.");
+							log.warn("userID " + userID + " is not existed.");
 							userID = null;
 						} else {
 							// old user
 							String ip = IpUtil.getIpAddr(request);
 							if (ip != null && !user.containsIp(ip)) {
-								logger.info("Add ip " + ip + " to user " + userID);
+								log.info("Add ip " + ip + " to user " + userID);
 								userService.addIP(userID, ip);
 							}
 						}
 					} else {
 						// userID == null
-						logger.warn("userID's value in the cookie map is null.");
+						log.warn("userID's value in the cookie map is null.");
 					}
 					break;
 				}

@@ -2,14 +2,9 @@ package io.penguinstats.constant;
 
 public class Constant {
 
-	public static final Long[] ADD_TIME_POINTS =
-			new Long[] {0L, 1558989300000L, 1560045456000L, 1577145600000L, 1581105600000L};
-
 	public static final String API_V2 = "/api/v2";
 
 	public static class LastUpdateMapKeyName {
-		public static final String MATRIX_RESULT = "matrix_result";
-		public static final String TREND_RESULT = "trend_result";
 		public static final String ITEM_LIST = "item_list";
 		public static final String ZONE_LIST = "zone_list";
 		public static final String STAGE_LIST = "stage_list";
@@ -29,8 +24,10 @@ public class Constant {
 		public static final String DEFAULT_GLOBAL_TREND_INTERVAL = "default_global_trend_interval";
 		public static final String DEFAULT_GLOBAL_TREND_RANGE = "default_global_trend_range";
 		public static final String MAX_SECTION_NUM = "max_section_num";
-		public static final String GLOBAL_MATRIX_QUERY_TIMEOUT = "global_matrix_query_timeout";
+		public static final String PAST_GLOBAL_MATRIX_QUERY_TIMEOUT = "past_global_matrix_query_timeout";
+		public static final String CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT = "current_global_matrix_query_timeout";
 		public static final String GLOBAL_TREND_QUERY_TIMEOUT = "global_trend_query_timeout";
+		public static final String GLOBAL_PATTERN_QUERY_TIMEOUT = "global_pattern_query_timeout";
 		public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
 	}
 
@@ -41,6 +38,12 @@ public class Constant {
 	public static class CacheKeyPrefix {
 		public static final String TOTAL_STAGE_TIMES = "total-stage-times";
 		public static final String TOTAL_ITEM_QUANTITIES = "total-item-quantities";
+	}
+
+	public static class SiteURL {
+		public static final String PENGUIN_STATS_CN = "https://penguin-stats.cn/";
+		public static final String PENGUIN_STATS_IO = "https://penguin-stats.io/";
+		public static final String EXUSI_AI = "https://exusi.ai/";
 	}
 
 }

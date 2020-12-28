@@ -1,20 +1,5 @@
 package io.penguinstats.controller.v2.api;
 
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
@@ -24,8 +9,22 @@ import io.penguinstats.service.StageService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
 import io.swagger.annotations.Api;
+import io.penguinstats.util.exception.NotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController("stageController_v2")
 @RequestMapping("/api/v2/stages")
@@ -56,7 +55,7 @@ public class StageController {
 				stage.setDropInfos(infos);
 			}
 		}
-		stages.forEach(stage -> stage.toNewView());
+		stages.forEach(Stage::toNewView);
 
 		Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
 				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
@@ -73,10 +72,8 @@ public class StageController {
 			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server,
-					@PathVariable("stageId") String stageId) {
+					@PathVariable("stageId") String stageId) throws NotFoundException {
 		Stage stage = stageService.getStageByStageId(stageId);
-		if (stage == null)
-			return new ResponseEntity<Stage>(HttpStatus.NOT_FOUND);
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		List<DropInfo> infos = dropInfosMap.get(stageId);
@@ -85,7 +82,7 @@ public class StageController {
 			stage.setDropInfos(infos);
 		}
 		stage.toNewView();
-		return new ResponseEntity<Stage>(stage, stage != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+		return new ResponseEntity<Stage>(stage, HttpStatus.OK);
 	}
 
 }

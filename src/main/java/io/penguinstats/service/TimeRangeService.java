@@ -25,8 +25,11 @@ public interface TimeRangeService {
 	@Cacheable(value = "maps", key = "'timeRangeMap'")
 	Map<String, TimeRange> getTimeRangeMap();
 
-	@Cacheable(value = "maps", key = "'latestTimeRangeMap_' + #server", condition = "#filter == null")
+	@Cacheable(value = "maps", key = "'latestMaxAccumulatableTimeRangesMap_' + #server")
 	Map<String, List<Pair<String, List<TimeRange>>>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
+
+	@Cacheable(value = "maps", key = "'latestTimeRangesMap_' + #server")
+	Map<String, TimeRange> getLatestTimeRangesMapByServer(Server server);
 
 	List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
 
