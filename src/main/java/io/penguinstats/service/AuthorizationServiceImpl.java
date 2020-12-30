@@ -1,5 +1,7 @@
 package io.penguinstats.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +21,22 @@ public class AuthorizationServiceImpl implements AuthorizationService {
 	}
 
 	@Override
-	public Authorization getAuthorizationByUserIDAndPlatform(String userID, SocialPlatform platform) {
+	public Authorization getAuthorizationByPlatformAndUuid(SocialPlatform platform, String uuid) {
+		return authorizationDao.findByPlatformAndUuid(platform, uuid);
+	}
+
+	@Override
+	public List<Authorization> getAuthorizationByUserId(String userID) {
+		return authorizationDao.findByUserID(userID);
+	}
+
+	@Override
+	public Authorization getAuthorizationByUserIdAndPlatform(String userID, SocialPlatform platform) {
 		return authorizationDao.findByUserIDAndPlatform(userID, platform);
 	}
 
 	@Override
-	public Authorization getAuthorizationByStateAndPlatform(String state, SocialPlatform platform) {
-		return authorizationDao.findByStateAndPlatform(state, platform);
+	public void deleteAuthorizationByUserIDAndPlatform(String userID, SocialPlatform platform){
+		authorizationDao.deleteByUserIDAndPlatform(userID, platform);
 	}
-
 }

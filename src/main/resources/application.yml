@@ -17,5 +17,9 @@ justauth:
       client-secret: <client-secret>
       redirect-uri: https://penguin-stats.cn/PenguinStats/api/v2/users/oauth/qq/callback
       union-id: false
+    Google:
+      client-id: 805375618645-uminp53odfqd0kdcg9smjmgd911oto9s.apps.googleusercontent.com
+      client-secret: XldKeMTyiyiyQwt7MMeutzNw
+      redirect-uri: http://localhost:8080/PenguinStats/api/v2/users/oauth/google/callback
   cache:
     type: default

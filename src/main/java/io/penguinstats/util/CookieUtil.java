@@ -81,4 +81,33 @@ public class CookieUtil {
 		return userID;
 	}
 
+	public static void setOauth2State(HttpServletResponse response, String userID)
+			throws UnsupportedEncodingException {
+		Cookie cookie = new Cookie("oauth2State", URLEncoder.encode(userID, "UTF-8"));
+		cookie.setPath("/");
+		cookie.setMaxAge(60 * 3); // 3 minutes expiration
+		response.addCookie(cookie);
+	}
+
+	public String readOauth2StateFromCookie(HttpServletRequest request) {
+		Cookie[] cookies = request.getCookies();
+		String state = null;
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("oauth2State")) {
+					state = cookie.getValue();
+					if (state != null) {
+						try {
+							state = URLDecoder.decode(state, "UTF-8");
+						} catch (UnsupportedEncodingException e) {
+							log.error("Error in getOauth2StateFromCookies: ", e);
+							state = null;
+						}
+					}
+					break;
+				}
+			}
+		}
+		return state;
+	}
 }

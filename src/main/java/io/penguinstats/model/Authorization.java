@@ -34,12 +34,11 @@ public class Authorization implements Serializable {
 	@Indexed
 	private SocialPlatform platform;
 	@Indexed
-	private String state;
-	private String redirectURI;
+	private String uuid;
+	private String username;
 	private String accessToken;
 	private String refreshToken;
-	private String platformID;
-	private Long authRequestTime;
-	private Long tokenGenerateTime;
+	@Indexed
+	private Long expireAt;
 
 }
