@@ -206,9 +206,8 @@ public class UserController {
 			if (redirectURI != null) {
 				try {
 					String redirectURIHost = (new URL(redirectURI)).getHost();
-					System.out.println(redirectURIHost);
-					if (redirectURIHost == "localhost" || redirectURIHost == "penguin-stats.io"
-							|| redirectURIHost == "penguin-stats.io") {
+					if ("localhost".equals(redirectURIHost)  || "penguin-stats.io".equals(redirectURIHost)
+							|| "penguin-stats.cn".equals(redirectURIHost)) {
 						// FIXME Prefer using a function to check if the redirectURI is validated
 						return new ResponseEntity<>("Invalid redirect_uri", HttpStatus.BAD_REQUEST);
 					}

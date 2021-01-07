@@ -47,7 +47,7 @@ public class CookieUtil {
 		String userID = null;
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("userID")) {
+				if ("userID".equals(cookie.getName())) {
 					userID = cookie.getValue();
 					if (userID != null) {
 						try {
@@ -94,7 +94,7 @@ public class CookieUtil {
 		String state = null;
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
-				if (cookie.getName().equals("oauth2State")) {
+				if ("oauth2State".equals(cookie.getName())) {
 					state = cookie.getValue();
 					if (state != null) {
 						try {
