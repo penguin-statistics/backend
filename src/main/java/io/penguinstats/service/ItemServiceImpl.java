@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import io.penguinstats.util.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,58 +19,58 @@ import io.penguinstats.util.exception.NotFoundException;
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
 
-	@Autowired
-	private ItemDao itemDao;
+    @Autowired
+    private ItemDao itemDao;
 
-	@Override
-	public void saveItem(Item item) {
-		itemDao.save(item);
-	}
+    @Override
+    public void saveItem(Item item) {
+        itemDao.save(item);
+    }
 
-	@Override
-	public Item getItemByItemId(String itemId) {
-		return itemDao.findByItemId(itemId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND,
-				"Item[" + itemId + "] is not found", Optional.of(itemId)));
-	}
+    @Override
+    public Item getItemByItemId(String itemId) {
+        return itemDao.findByItemId(itemId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND,
+                "Item[" + itemId + "] is not found", Optional.of(itemId)));
+    }
 
-	/**
-	 * @Title: getAllItems
-	 * @Description: Return all items in the database as a list.
-	 * @return List<Item>
-	 */
-	@Override
-	public List<Item> getAllItems() {
-		List<Item> items = itemDao.findAll();
-		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.ITEM_LIST);
-		return items;
-	}
+    /**
+     * @return List<Item>
+     * @Title: getAllItems
+     * @Description: Return all items in the database as a list.
+     */
+    @Override
+    public List<Item> getAllItems() {
+        List<Item> items = itemDao.findAll();
+        LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.ITEM_LIST);
+        return items;
+    }
 
-	/**
-	 * @Title: getItemMap
-	 * @Description: Return a map which has itemId as key and item object as value.
-	 * @return Map<String,Item>
-	 */
-	@Override
-	public Map<String, Item> getItemMap() {
-		List<Item> list = getAllItems();
-		Map<String, Item> map = new HashMap<>();
-		list.forEach(item -> map.put(item.getItemId(), item));
-		return map;
-	}
+    /**
+     * @return Map<String, Item>
+     * @Title: getItemMap
+     * @Description: Return a map which has itemId as key and item object as value.
+     */
+    @Override
+    public Map<String, Item> getItemMap() {
+        List<Item> list = getAllItems();
+        Map<String, Item> map = new HashMap<>();
+        list.forEach(item -> map.put(item.getItemId(), item));
+        return map;
+    }
 
-	/**
-	 * @Title: getAllNameItemMap
-	 * @Description: Return a map which has item name has key and item object as value. The item name comes from all languages.
-	 * @return Map<String,Item>
-	 */
-	@Override
-	public Map<String, Item> getAllNameItemMap() {
-		Map<String, Item> result = new HashMap<>();
-		getAllItems().forEach(item -> {
-			if (item.getNameMap() != null)
-				item.getNameMap().values().forEach(name -> result.put(name, item));
-		});
-		return result;
-	}
+    /**
+     * @return Map<String, Item>
+     * @Title: getAllNameItemMap
+     * @Description: Return a map which has item name has key and item object as value. The item name comes from all languages.
+     */
+    @Override
+    public Map<String, Item> getAllNameItemMap() {
+        Map<String, Item> result = new HashMap<>();
+        getAllItems().forEach(item -> {
+            if (item.getNameMap() != null)
+                item.getNameMap().values().forEach(name -> result.put(name, item));
+        });
+        return result;
+    }
 
 }
