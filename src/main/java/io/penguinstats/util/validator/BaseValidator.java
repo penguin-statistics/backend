@@ -9,9 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public abstract class BaseValidator implements Validator {
 
-	protected ValidatorContext context;
-
 	@Override
-	public abstract boolean validate();
+	public abstract boolean validate(ValidatorContext context);
 
 }
