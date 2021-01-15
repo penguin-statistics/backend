@@ -18,17 +18,6 @@ import java.util.Optional;
 @RequestMapping("/api/v2/cache")
 public class CacheController {
 
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        throw new ServiceException(ErrorCode.CANNOT_CREATE_USER, "Failed to create new user.", Optional.empty());
-    }
-
-    @GetMapping("/test2")
-    public ResponseEntity<String> test2() {
-        String userID = "123321";
-        throw new BusinessException(ErrorCode.NOT_FOUND,String.format("user not found: uid=%s",userID));
-    }
-
     @DeleteMapping(path = "/item")
     @Caching(evict = {@CacheEvict(value = "lists", key = "'itemList'"), @CacheEvict(value = "maps", key = "'itemMap'")})
     public ResponseEntity<String> evictItemCache() {
