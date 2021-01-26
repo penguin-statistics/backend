@@ -1,5 +1,6 @@
 package io.penguinstats.controller.v2.api;
 
+import io.penguinstats.util.exception.ServiceException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -25,15 +26,18 @@ public class FormulaController {
 
     @ApiOperation(value = "Get all Formulas", notes = "Get synthesis conversion formulas.")
     @GetMapping(produces = "application/json;charset=UTF-8")
-    public ResponseEntity<String> getFormula() throws IOException {
+    public ResponseEntity<String> getFormula() {
         Resource resource = new ClassPathResource("json/formula.json");
         File sourceFile;
-        FileReader fileReader = null;
-        BufferedReader reader = null;
         try {
             sourceFile = resource.getFile();
-            fileReader = new FileReader(sourceFile);
-            reader = new BufferedReader(fileReader);
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
+        }
+
+        try (FileReader fileReader = new FileReader(sourceFile);
+             BufferedReader reader = new BufferedReader(fileReader)) {
+
             StringBuilder builder = new StringBuilder();
             String currentLine = reader.readLine();
             while (currentLine != null) {
@@ -41,14 +45,8 @@ public class FormulaController {
                 currentLine = reader.readLine();
             }
             return new ResponseEntity<>(builder.toString(), HttpStatus.OK);
-        } finally {
-            if (fileReader != null) {
-                fileReader.close();
-            }
-            if (reader != null) {
-                reader.close();
-            }
+        } catch (Exception ex) {
+            throw new ServiceException(ex);
         }
     }
-
 }
