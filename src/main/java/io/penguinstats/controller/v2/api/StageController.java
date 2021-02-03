@@ -1,21 +1,11 @@
 package io.penguinstats.controller.v2.api;
 
-import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
-import io.penguinstats.enums.Server;
-import io.penguinstats.model.DropInfo;
-import io.penguinstats.model.Stage;
-import io.penguinstats.service.DropInfoService;
-import io.penguinstats.service.StageService;
-import io.penguinstats.util.DateUtil;
-import io.penguinstats.util.LastUpdateTimeUtil;
-import io.swagger.annotations.Api;
-import io.penguinstats.util.exception.NotFoundException;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,6 +15,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
+import io.penguinstats.enums.DropType;
+import io.penguinstats.enums.Server;
+import io.penguinstats.model.DropInfo;
+import io.penguinstats.model.Stage;
+import io.penguinstats.service.DropInfoService;
+import io.penguinstats.service.StageService;
+import io.penguinstats.util.DateUtil;
+import io.penguinstats.util.LastUpdateTimeUtil;
+import io.penguinstats.util.exception.NotFoundException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 
 @RestController("stageController_v2")
 @RequestMapping("/api/v2/stages")
@@ -52,7 +56,15 @@ public class StageController {
 			List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
 			if (infos != null && !infos.isEmpty()) {
 				infos.forEach(info -> info.toStageView());
-				stage.setDropInfos(infos);
+				List<DropInfo> dropInfos = infos.stream()
+						.filter(info -> DropType.RECOGNITION_ONLY != info.getDropType()).collect(Collectors.toList());
+				stage.setDropInfos(dropInfos);
+				List<String> recognitionOnly =
+						infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
+								.map(DropInfo::getItemId).collect(Collectors.toList());
+				if (!recognitionOnly.isEmpty()) {
+					stage.setRecognitionOnly(recognitionOnly);
+				}
 			}
 		}
 		stages.forEach(Stage::toNewView);
@@ -68,18 +80,26 @@ public class StageController {
 
 	@ApiOperation(value = "Get Stage by StageId")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Stage>
-			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+	public ResponseEntity<Stage> getStageByStageId(
+			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server,
-					@PathVariable("stageId") String stageId) throws NotFoundException {
+			@PathVariable("stageId") String stageId) throws NotFoundException {
 		Stage stage = stageService.getStageByStageId(stageId);
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
 		List<DropInfo> infos = dropInfosMap.get(stageId);
 		if (infos != null && !infos.isEmpty()) {
 			infos.forEach(info -> info.toStageView());
-			stage.setDropInfos(infos);
+			List<DropInfo> dropInfos = infos.stream().filter(info -> DropType.RECOGNITION_ONLY != info.getDropType())
+					.collect(Collectors.toList());
+			stage.setDropInfos(dropInfos);
+			List<String> recognitionOnly =
+					infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
+							.map(DropInfo::getItemId).collect(Collectors.toList());
+			if (!recognitionOnly.isEmpty()) {
+				stage.setRecognitionOnly(recognitionOnly);
+			}
 		}
 		stage.toNewView();
 		return new ResponseEntity<Stage>(stage, HttpStatus.OK);
