@@ -274,6 +274,7 @@ public class ItemDropDaoCustomImpl implements ItemDropDaoCustom {
 		 */
 		List<Criteria> criteriasInAndInPipe1 = new ArrayList<>();
 
+		criteriasInAndInPipe1.add(Criteria.where("times").is(1));
 		criteriasInAndInPipe1.add(Criteria.where("isDeleted").is(false));
 
 		if (userIDs.isEmpty())
