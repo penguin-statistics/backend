@@ -18,7 +18,6 @@ import io.penguinstats.model.Item;
 import io.penguinstats.service.ItemService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
-import io.penguinstats.util.exception.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -27,26 +26,26 @@ import io.swagger.annotations.ApiOperation;
 @Api(tags = {"Item"})
 public class ItemController {
 
-	@Autowired
-	private ItemService itemService;
+    @Autowired
+    private ItemService itemService;
 
-	@ApiOperation(value = "Get all Items", notes = "Get all Items in the DB.")
-	@GetMapping(produces = "application/json;charset=UTF-8")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<List<Item>> getAllItems() {
-		List<Item> items = itemService.getAllItems();
-		HttpHeaders headers = new HttpHeaders();
-		String lastModified =
-				DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST)));
-		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
-		return new ResponseEntity<List<Item>>(items, headers, HttpStatus.OK);
-	}
+    @ApiOperation(value = "Get all Items", notes = "Get all Items in the DB.")
+    @GetMapping(produces = "application/json;charset=UTF-8")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<Item>> getAllItems() {
+        List<Item> items = itemService.getAllItems();
+        HttpHeaders headers = new HttpHeaders();
+        String lastModified =
+                DateUtil.formatDate(new Date(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.ITEM_LIST)));
+        headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+        return new ResponseEntity<>(items, headers, HttpStatus.OK);
+    }
 
-	@ApiOperation(value = "Get an Item by ItemId")
-	@GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) throws NotFoundException {
-		Item item = itemService.getItemByItemId(itemId);
-		return new ResponseEntity<Item>(item, HttpStatus.OK);
-	}
+    @ApiOperation(value = "Get an Item by ItemId")
+    @GetMapping(path = "/{itemId}", produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Item> getItemByItemId(@PathVariable("itemId") String itemId) {
+        Item item = itemService.getItemByItemId(itemId);
+        return new ResponseEntity<>(item, HttpStatus.OK);
+    }
 
 }

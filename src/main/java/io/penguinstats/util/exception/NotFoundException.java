@@ -5,6 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * @see io.penguinstats.util.exception.BusinessException
+ * @see io.penguinstats.util.exception.ServiceException
+ */
+@Deprecated
 public class NotFoundException extends PenguinException {
   public NotFoundException(ErrorCode errorCode, String message,
       Optional<Object> data, Throwable cause, boolean enableSuppression,

@@ -3,6 +3,8 @@ package io.penguinstats.controller.v2.api;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.penguinstats.enums.ErrorCode;
+import io.penguinstats.util.exception.BusinessException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +52,7 @@ public class UserController {
 					userService.addTag(userID, "internal");
 				}
 			} else {
-				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+				throw new BusinessException(ErrorCode.NOT_FOUND,String.format("user not found: uid=%s",userID));
 			}
 		}
 		CookieUtil.setUserIDCookie(response, userID);
