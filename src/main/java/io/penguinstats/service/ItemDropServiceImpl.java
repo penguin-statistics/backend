@@ -123,8 +123,9 @@ public class ItemDropServiceImpl implements ItemDropService {
 	public Map<String, Integer> getTotalItemQuantitiesMap(Server server) {
 		QueryConditions conditions = new QueryConditions().addServer(server);
 		List<Document> docs = itemDropDao.aggregateItemQuantities(conditions);
-		Map<String, Integer> result =
-				docs.stream().collect(Collectors.toMap(doc -> doc.getString("_id"), doc -> doc.getInteger("quantity")));
+		// TODO: Obsidian related items are excluded here using hardcode
+		Map<String, Integer> result = docs.stream().filter(doc -> !doc.getString("_id").contains("Obsidian"))
+				.collect(Collectors.toMap(doc -> doc.getString("_id"), doc -> doc.getInteger("quantity")));
 		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
 		return result;
 	}

@@ -17,6 +17,7 @@ public class Constant {
 
 	public static class CustomHeader {
 		public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
+		public static final String X_PENGUIN_COMPATIBLE = "X-Penguin-Compatible";
 	}
 
 	public static class SystemPropertyKey {
@@ -44,6 +45,10 @@ public class Constant {
 		public static final String PENGUIN_STATS_CN = "https://penguin-stats.cn/";
 		public static final String PENGUIN_STATS_IO = "https://penguin-stats.io/";
 		public static final String EXUSI_AI = "https://exusi.ai/";
+	}
+
+	public static class CompatibleVersion {
+		public static final String FRONTEND_V2_3_4_0 = "frontend-v2@v3.4.0";
 	}
 
 }

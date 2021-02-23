@@ -3,10 +3,6 @@ package io.penguinstats.util.validator;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toMap;
 
-import io.penguinstats.enums.DropType;
-import io.penguinstats.model.DropInfo;
-import io.penguinstats.model.TypedDrop;
-import io.penguinstats.service.DropInfoService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +40,10 @@ public class DropsValidator extends BaseValidator {
 				drops.stream().collect(groupingBy(TypedDrop::getDropType));
 
 		for (DropType dropType : DropType.values()) {
+			// We don't check screenshot recognition-only drops
+			if (DropType.RECOGNITION_ONLY == dropType)
+				continue;
+
 			if (!dropInfoMapByDropType.containsKey(dropType)) {
 				log.warn("Failed to find " + dropType + " drop info.");
 				continue;
