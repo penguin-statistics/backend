@@ -8,29 +8,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import io.penguinstats.enums.DropType;
-import io.penguinstats.model.DropInfo;
-import io.penguinstats.model.TypedDrop;
-import io.penguinstats.service.DropInfoService;
-import lombok.extern.log4j.Log4j2;
-
+@Order(4)
 @Log4j2
 @Component("dropsValidator")
 public class DropsValidator extends BaseValidator {
 
+	@Autowired
 	private DropInfoService dropInfoService;
 
-	public DropsValidator(ValidatorContext context, DropInfoService dropInfoService) {
-		super(context);
-		this.dropInfoService = dropInfoService;
-	}
-
 	@Override
-	public boolean validate() {
-		List<TypedDrop> drops = this.context.getDrops();
+	public boolean validate(ValidatorContext context) {
+		List<TypedDrop> drops = context.getDrops();
 		if (drops == null)
 			return false;
 
