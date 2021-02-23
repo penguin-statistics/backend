@@ -5,7 +5,7 @@ server:
 spring:
     data:
         mongodb:
-            uri: mongodb://localhost:27017/penguin_stats_testing
+            uri: mongodb://username:password@localhost:27017/penguin_stats
     cache:
         jcache:
             config: classpath:ehcache.xml
