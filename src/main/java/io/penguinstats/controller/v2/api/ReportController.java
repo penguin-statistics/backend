@@ -1,5 +1,26 @@
 package io.penguinstats.controller.v2.api;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
+import static java.util.stream.Collectors.toList;
+
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.SingleReportRequest;
 import io.penguinstats.controller.v2.response.SingleReportResponse;
@@ -17,40 +38,11 @@ import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.JSONUtil;
 import io.penguinstats.util.exception.BusinessException;
-import io.penguinstats.util.validator.Validator;
 import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFacade;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.summingInt;
-import static java.util.stream.Collectors.toList;
 
 @Log4j2
 @RestController("reportController_v2")
@@ -107,8 +99,8 @@ public class ReportController {
         // Combine typed drop list into untyped drop list. Sum up quantities for each item.
         Map<String, Integer> itemIdQuantityMap = singleReportRequest.getDrops().stream()
                 .collect(groupingBy(TypedDrop::getItemId, summingInt(TypedDrop::getQuantity)));
-        List<Drop> drops = itemIdQuantityMap.entrySet().stream().map(e -> new Drop(e.getKey(), e.getValue()))
-                .collect(toList());
+        List<Drop> drops =
+                itemIdQuantityMap.entrySet().stream().map(e -> new Drop(e.getKey(), e.getValue())).collect(toList());
 
         // For gacha type stage, the # of times should be the sum of quantities.
         Stage stage = stageService.getStageByStageId(stageId);
@@ -139,7 +131,8 @@ public class ReportController {
                     + "which in addition will also expire after 24 hours.")
     @PostMapping(path = "/recall")
     public ResponseEntity<String> recallPersonalReport(
-            @Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request) throws Exception {
+            @Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request)
+            throws Exception {
         String userID = cookieUtil.readUserIDFromCookie(request);
         if (userID == null) {
             log.error("Error in recallPersonalReport: Cannot read user ID");

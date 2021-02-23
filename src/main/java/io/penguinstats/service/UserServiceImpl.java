@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Random;
 
-import io.penguinstats.util.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 import io.penguinstats.dao.UserDao;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.model.User;
-import io.penguinstats.util.exception.DatabaseException;
+import io.penguinstats.util.exception.ServiceException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

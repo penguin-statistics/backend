@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import io.penguinstats.util.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import io.penguinstats.dao.ItemDao;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.model.Item;
 import io.penguinstats.util.LastUpdateTimeUtil;
-import io.penguinstats.util.exception.NotFoundException;
+import io.penguinstats.util.exception.BusinessException;
 
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {

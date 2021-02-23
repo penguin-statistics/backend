@@ -21,7 +21,7 @@ import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropInfo;
 import io.penguinstats.model.TimeRange;
-import io.penguinstats.util.exception.NotFoundException;
+import io.penguinstats.util.exception.BusinessException;
 
 @Service("timeRangeService")
 public class TimeRangeServiceImpl implements TimeRangeService {
@@ -40,7 +40,7 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 
 	@Override
 	public TimeRange getTimeRangeByRangeID(String rangeID) {
-		return timeRangeDao.findByRangeID(rangeID).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND,
+		return timeRangeDao.findByRangeID(rangeID).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND,
 				"TimeRange[" + rangeID + "] is not found", Optional.of(rangeID)));
 	}
 

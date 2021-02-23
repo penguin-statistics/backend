@@ -1,18 +1,12 @@
 package io.penguinstats.controller.v2.api;
 
-import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.exception.BusinessException;
-import io.penguinstats.util.exception.ServiceException;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController("cacheController_v2")
 @RequestMapping("/api/v2/cache")

@@ -1,15 +1,9 @@
 package io.penguinstats.controller.v2.api;
 
-import io.penguinstats.util.exception.ServiceException;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 
-import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -18,7 +12,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Log4j2
+import io.penguinstats.util.exception.ServiceException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 @RestController("formulaController_v2")
 @RequestMapping("/api/v2/formula")
 @Api(tags = {"Formula"})
@@ -36,7 +33,7 @@ public class FormulaController {
         }
 
         try (FileReader fileReader = new FileReader(sourceFile);
-             BufferedReader reader = new BufferedReader(fileReader)) {
+                BufferedReader reader = new BufferedReader(fileReader)) {
 
             StringBuilder builder = new StringBuilder();
             String currentLine = reader.readLine();

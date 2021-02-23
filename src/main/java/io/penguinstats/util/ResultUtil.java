@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
-import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.exception.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +30,7 @@ import io.penguinstats.controller.v2.response.BasicQueryResponse;
 import io.penguinstats.controller.v2.response.MatrixQueryResponse;
 import io.penguinstats.controller.v2.response.PatternQueryResponse;
 import io.penguinstats.controller.v2.response.TrendQueryResponse;
+import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.QueryType;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.DropMatrixElement;
@@ -44,6 +43,7 @@ import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.DropMatrixElementService;
 import io.penguinstats.service.PatternMatrixElementService;
 import io.penguinstats.service.SystemPropertyService;
+import io.penguinstats.util.exception.ServiceException;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -80,7 +80,7 @@ public class ResultUtil {
 
     @SuppressWarnings("unchecked")
     public ResponseEntity<MatrixQueryResponse> getMatrixHelper(HttpServletRequest request, Server server,
-                                                               boolean showClosedZones, String stageFilter, String itemFilter, boolean isPersonal) throws Exception {
+            boolean showClosedZones, String stageFilter, String itemFilter, boolean isPersonal) throws Exception {
         log.info("GET /matrix");
 
         String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
@@ -91,21 +91,21 @@ public class ResultUtil {
         List<DropMatrixElement> pastElements = null;
         List<DropMatrixElement> currentElements = null;
         if (userID != null) {
-            GlobalMatrixQuery pastQuery = (GlobalMatrixQuery) queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+            GlobalMatrixQuery pastQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
             Integer pastTimeout =
                     systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
             pastQuery.setServer(server).setUserID(userID).setIsPast(true);
             if (pastTimeout != null)
                 pastQuery.setTimeout(pastTimeout);
-            pastElements = (List<DropMatrixElement>) pastQuery.execute();
+            pastElements = (List<DropMatrixElement>)pastQuery.execute();
 
-            GlobalMatrixQuery currentQuery = (GlobalMatrixQuery) queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
+            GlobalMatrixQuery currentQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
             Integer currentTimeout = systemPropertyService
                     .getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
             currentQuery.setServer(server).setUserID(userID).setIsPast(false);
             if (currentTimeout != null)
                 currentQuery.setTimeout(currentTimeout);
-            currentElements = (List<DropMatrixElement>) currentQuery.execute();
+            currentElements = (List<DropMatrixElement>)currentQuery.execute();
         } else {
             pastElements = dropMatrixElementService.getGlobalDropMatrixElements(server, true);
             if (pastElements.isEmpty()) {
@@ -137,7 +137,7 @@ public class ResultUtil {
             filterItems(elements, itemFilter);
 
         HttpHeaders headers = new HttpHeaders();
-        if (userID == null) {
+        if (userID == null && !elements.isEmpty()) {
             DropMatrixElement maxLastUpdateTimeElement =
                     elements.stream().max(Comparator.comparing(DropMatrixElement::getUpdateTime))
                             .orElseThrow(NoSuchElementException::new);
@@ -162,12 +162,15 @@ public class ResultUtil {
             }
         }
 
-        DropMatrixElement maxLastUpdateTimeElement = elements.stream()
-                .max(Comparator.comparing(DropMatrixElement::getUpdateTime)).orElseThrow(NoSuchElementException::new);
-        Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
-        String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+        if (!elements.isEmpty()) {
+            DropMatrixElement maxLastUpdateTimeElement =
+                    elements.stream().max(Comparator.comparing(DropMatrixElement::getUpdateTime))
+                            .orElseThrow(NoSuchElementException::new);
+            Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
+            String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+            headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+        }
 
         elements.forEach(DropMatrixElement::toResultView);
         TrendQueryResponse result = new TrendQueryResponse(elements);
@@ -177,7 +180,7 @@ public class ResultUtil {
 
     @SuppressWarnings("unchecked")
     public ResponseEntity<PatternQueryResponse> getPatternHelper(HttpServletRequest request, Server server,
-                                                                 boolean isPersonal) throws Exception {
+            boolean isPersonal) throws Exception {
         log.info("GET /pattern");
 
         String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
@@ -188,13 +191,13 @@ public class ResultUtil {
         List<PatternMatrixElement> elements = null;
         try {
             if (userID != null) {
-                GlobalPatternQuery pastQuery = (GlobalPatternQuery) queryFactory.getQuery(QueryType.GLOBAL_PATTERN);
+                GlobalPatternQuery pastQuery = (GlobalPatternQuery)queryFactory.getQuery(QueryType.GLOBAL_PATTERN);
                 Integer pastTimeout =
                         systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_PATTERN_QUERY_TIMEOUT);
                 pastQuery.setServer(server).setUserID(userID);
                 if (pastTimeout != null)
                     pastQuery.setTimeout(pastTimeout);
-                elements = (List<PatternMatrixElement>) pastQuery.execute();
+                elements = (List<PatternMatrixElement>)pastQuery.execute();
             } else {
                 elements = patternMatrixElementService.getGlobalPatternMatrixElements(server);
                 if (elements.isEmpty()) {
@@ -216,10 +219,9 @@ public class ResultUtil {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        if (userID == null) {
-            PatternMatrixElement maxLastUpdateTimeElement =
-                    elements.stream().max(Comparator.comparing(PatternMatrixElement::getUpdateTime))
-                            .orElseThrow(ServiceException::new);
+        if (userID == null && !elements.isEmpty()) {
+            PatternMatrixElement maxLastUpdateTimeElement = elements.stream()
+                    .max(Comparator.comparing(PatternMatrixElement::getUpdateTime)).orElseThrow(ServiceException::new);
             Long lastUpdateTime = maxLastUpdateTimeElement.getUpdateTime();
             String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
             headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
@@ -233,7 +235,7 @@ public class ResultUtil {
 
     @SuppressWarnings("unchecked")
     public ResponseEntity<AdvancedQueryResponse> getAdvancedResultHelper(AdvancedQueryRequest advancedQueryRequest,
-                                                                         HttpServletRequest request) {
+            HttpServletRequest request) {
         Integer maxQueryNum =
                 systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
         if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
@@ -250,7 +252,7 @@ public class ResultUtil {
                 Integer timeout =
                         systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
                 BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
-                List<DropMatrixElement> elements = (List<DropMatrixElement>) query.execute();
+                List<DropMatrixElement> elements = (List<DropMatrixElement>)query.execute();
                 elements.forEach(DropMatrixElement::toResultView);
                 BasicQueryResponse queryResponse = queryMapper.elementsToBasicQueryResponse(singleQuery, elements);
                 results.add(queryResponse);

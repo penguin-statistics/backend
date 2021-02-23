@@ -25,7 +25,6 @@ import io.penguinstats.service.DropInfoService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.util.DateUtil;
 import io.penguinstats.util.LastUpdateTimeUtil;
-import io.penguinstats.util.exception.NotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -80,11 +79,11 @@ public class StageController {
 
 	@ApiOperation(value = "Get Stage by StageId")
 	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Stage> getStageByStageId(
-			@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+	public ResponseEntity<Stage>
+			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
 					required = false) @RequestParam(name = "server", required = false,
 							defaultValue = "CN") Server server,
-			@PathVariable("stageId") String stageId) throws NotFoundException {
+					@PathVariable("stageId") String stageId) {
 		Stage stage = stageService.getStageByStageId(stageId);
 		Map<String, List<DropInfo>> dropInfosMap =
 				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
