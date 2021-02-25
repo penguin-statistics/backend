@@ -5,38 +5,51 @@ import static java.util.stream.Collectors.summingInt;
 import static java.util.stream.Collectors.toList;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.penguinstats.constant.Constant;
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
+import io.penguinstats.controller.v2.request.RecognitionReportRequest;
+import io.penguinstats.controller.v2.request.SingleRecognitionDrop;
 import io.penguinstats.controller.v2.request.SingleReportRequest;
 import io.penguinstats.controller.v2.response.SingleReportResponse;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.ScreenshotMetadata;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.TypedDrop;
 import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.StageService;
+import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.service.UserService;
+import io.penguinstats.util.AESUtil;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.JSONUtil;
+import io.penguinstats.util.RSAUtil;
 import io.penguinstats.util.exception.BusinessException;
 import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFacade;
@@ -60,10 +73,16 @@ public class ReportController {
     private StageService stageService;
 
     @Autowired
+    private SystemPropertyService systemPropertyService;
+
+    @Autowired
     private CookieUtil cookieUtil;
 
     @Autowired
     private ValidatorFacade validatorFacade;
+
+    @Resource(name = "threadPool")
+    private ThreadPoolTaskExecutor executor;
 
     @ApiOperation(value = "Submit a drop report",
             notes = "Detailed instructions can be found at: https://developer.penguin-stats.io/docs/report-api")
@@ -125,6 +144,29 @@ public class ReportController {
         return new ResponseEntity<SingleReportResponse>(new SingleReportResponse(reportHash), HttpStatus.CREATED);
     }
 
+    @ApiOperation(value = "Submit a batch drop report from screenshot recognition")
+    @PostMapping(path = "/recognition")
+    public ResponseEntity<String> saveBatchRecognitionReport(@RequestBody String requestBody,
+            HttpServletRequest request, HttpServletResponse response) throws Exception {
+        RecognitionReportRequest recognitionReportRequest = getRecognitionReportRequestFromRequestBody(requestBody);
+
+        String userID = cookieUtil.readUserIDFromCookie(request);
+        if (userID == null) {
+            userID = userService.createNewUser(IpUtil.getIpAddr(request));
+        }
+        try {
+            CookieUtil.setUserIDCookie(response, userID);
+        } catch (UnsupportedEncodingException e) {
+            log.error("Error in handleUserIDFromCookie: uid={}", userID);
+        }
+        log.info("user " + userID + " POST /report/recognition\n"
+                + Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(recognitionReportRequest)).toString(2));
+
+        batchSaveDropsFromRecognitionReportRequest(recognitionReportRequest, request, userID);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @ApiOperation(value = "Recall the last Report",
             notes = "Recall the last Drop Report by providing its hash value. "
                     + "Notice that you can only recall the *last* report, "
@@ -142,6 +184,130 @@ public class ReportController {
         log.info("user " + userID + " POST /report/recall\n");
         itemDropService.recallItemDrop(userID, recallLastReportRequest.getReportHash());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    private RecognitionReportRequest getRecognitionReportRequestFromRequestBody(String requestBody) {
+        String dataJSONStr = null;
+        boolean doneDecryption = false;
+        if (JSONUtil.isValidJSON(requestBody)) {
+            JSONObject requestObj = new JSONObject(requestBody);
+            dataJSONStr = requestObj.toString();
+        } else {
+            String[] strs = requestBody.split(":");
+            if (strs.length != 2) {
+                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
+            }
+            String encryptedAESKey = strs[0];
+            String encryptedBody = strs[1];
+            if (StringUtils.isAnyEmpty(encryptedAESKey, encryptedBody)) {
+                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Invalid request.");
+            }
+            dataJSONStr = decryptRecgonitionRequest(encryptedAESKey, encryptedBody);
+            if (!JSONUtil.isValidJSON(dataJSONStr)) {
+                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
+            }
+            doneDecryption = true;
+        }
+
+        RecognitionReportRequest recognitionReportRequest =
+                JSONUtil.convertJSONStrToObject(dataJSONStr, RecognitionReportRequest.class);
+        if (recognitionReportRequest == null) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
+        }
+        recognitionReportRequest.setDoneDecryption(doneDecryption);
+        return recognitionReportRequest;
+    }
+
+    private String decryptRecgonitionRequest(String encryptedAESKey, String encryptedBody) {
+        String privateKey =
+                systemPropertyService.getPropertyStringValue(Constant.SystemPropertyKey.RECOGNITION_PRIVATE_KEY);
+        try {
+            String decryptedAESKey = RSAUtil.decryptDataOnJava(encryptedAESKey, privateKey);
+            System.out.println("decryptedAESKey = " + decryptedAESKey);
+            String s = AESUtil.decrypt(encryptedBody, decryptedAESKey);
+            System.out.println(s);
+            return s;
+        } catch (Exception e) {
+            log.error("Error in decryptRecgonitionRequest.", e);
+            return null;
+        }
+    }
+
+    private void batchSaveDropsFromRecognitionReportRequest(RecognitionReportRequest recognitionReportRequest,
+            HttpServletRequest request, String userID) {
+        String source = recognitionReportRequest.getSource();
+        String version = recognitionReportRequest.getVersion();
+        Server server = recognitionReportRequest.getServer();
+        Long timestamp = System.currentTimeMillis();
+        String ip = IpUtil.getIpAddr(request);
+
+        List<SingleRecognitionDrop> batchDrops = recognitionReportRequest.getBatchDrops();
+        if (batchDrops == null || batchDrops.isEmpty()) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "'batchDrops' cannot be null or empty.");
+        }
+
+        List<ItemDrop> itemDrops = new ArrayList<>();
+        CountDownLatch countDownLatch = new CountDownLatch(batchDrops.size());
+        for (int i = 0, l = batchDrops.size(); i < l; i++) {
+            SingleRecognitionDrop singleDrop = batchDrops.get(i);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String stageId = singleDrop.getStageId();
+                        ScreenshotMetadata screenshotMetadata = singleDrop.getMetadata();
+                        String md5 = screenshotMetadata != null ? screenshotMetadata.getMd5() : null;
+                        Integer times = 1;
+
+                        // Validation
+                        ValidatorContext context = new ValidatorContext().setStageId(stageId).setServer(server)
+                                .setTimes(times).setDrops(singleDrop.getDrops()).setTimestamp(timestamp).setIp(ip)
+                                .setUserID(userID).setMd5(md5);
+                        Boolean isReliable = validatorFacade.doValid(context);
+
+                        // Combine typed drop list into untyped drop list. Sum up quantities for each item.
+                        Map<String, Integer> itemIdQuantityMap = singleDrop.getDrops().stream()
+                                .collect(groupingBy(TypedDrop::getItemId, summingInt(TypedDrop::getQuantity)));
+                        List<Drop> drops = itemIdQuantityMap.entrySet().stream()
+                                .map(e -> new Drop(e.getKey(), e.getValue())).collect(toList());
+
+                        // Screenshot recognition does not accept gacha stage for now
+                        Stage stage = stageService.getStageByStageId(stageId);
+                        if (stage != null) {
+                            Boolean isGacha = stage.getIsGacha();
+                            if (isGacha != null && isGacha) {
+                                times = 0;
+                                for (Drop drop : drops) {
+                                    times += drop.getQuantity();
+                                }
+                                isReliable = false;
+                            }
+                        }
+
+                        // If the request is not from decryption, this record won't be calculated into global data
+                        if (!Boolean.TRUE.equals(recognitionReportRequest.getDoneDecryption())) {
+                            isReliable = false;
+                        }
+
+                        ItemDrop itemDrop = new ItemDrop().setStageId(stageId).setServer(server).setTimes(times)
+                                .setDrops(drops).setTimestamp(timestamp).setIp(ip).setIsReliable(isReliable)
+                                .setIsDeleted(false).setSource(source).setVersion(version).setUserID(userID)
+                                .setScreenshotMetadata(screenshotMetadata);
+                        itemDrops.add(itemDrop);
+                    } catch (Exception e) {
+                        log.error("Error in batchSaveDropsFromRecognitionReportRequest");
+                    } finally {
+                        countDownLatch.countDown();
+                    }
+                }
+            });
+        }
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            log.error("Error in batchSaveDropsFromRecognitionReportRequest");
+        }
+        itemDropService.batchSaveItemDrops(itemDrops);
     }
 
 }

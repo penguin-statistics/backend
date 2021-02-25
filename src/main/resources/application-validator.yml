@@ -4,3 +4,4 @@ validator:
     IPValidator: true
     StageTimeValidator: true
     UserValidator: true
+    MD5Validator: true

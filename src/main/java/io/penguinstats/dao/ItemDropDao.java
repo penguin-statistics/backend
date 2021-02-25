@@ -13,14 +13,17 @@ import io.penguinstats.model.ItemDrop;
 @Repository
 public interface ItemDropDao extends MongoRepository<ItemDrop, String>, ItemDropDaoCustom {
 
-	List<ItemDrop> findByIsReliable(Boolean isReliable);
+    List<ItemDrop> findByIsReliable(Boolean isReliable);
 
-	@Query("{'$and' : [{'isDeleted' : ?0}, {'userID' : ?1}]}")
-	Page<ItemDrop> findByIsDeletedAndUserID(Boolean isDeleted, String userID, Pageable pageable);
+    @Query("{'$and' : [{'isDeleted' : ?0}, {'userID' : ?1}]}")
+    Page<ItemDrop> findByIsDeletedAndUserID(Boolean isDeleted, String userID, Pageable pageable);
 
-	List<ItemDrop> findByUserID(String userID);
+    List<ItemDrop> findByUserID(String userID);
 
-	@Query("{'$and' : [{'isDeleted' : false}, {'isReliable' : true}, {'stageId': ?0}]}")
-	Page<ItemDrop> findValidItemDropByStageId(String stageId, Pageable pageable);
+    @Query("{'$and' : [{'isDeleted' : false}, {'isReliable' : true}, {'stageId': ?0}]}")
+    Page<ItemDrop> findValidItemDropByStageId(String stageId, Pageable pageable);
+
+    @Query("{'screenshotMetadata.md5' : ?0}")
+    List<ItemDrop> findByMD5(String md5);
 
 }

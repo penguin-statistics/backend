@@ -103,6 +103,11 @@ public class ItemDropServiceImpl implements ItemDropService {
     }
 
     @Override
+    public List<ItemDrop> getItemDropsByMD5(String md5) {
+        return itemDropDao.findByMD5(md5);
+    }
+
+    @Override
     public Map<String, Integer> getTotalStageTimesMap(Server server, Long range) {
         QueryConditions conditions = new QueryConditions().addServer(server).setRange(range);
         List<Document> docs = itemDropDao.aggregateStageTimes(conditions);

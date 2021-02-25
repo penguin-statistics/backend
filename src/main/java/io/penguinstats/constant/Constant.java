@@ -30,6 +30,8 @@ public class Constant {
 		public static final String GLOBAL_TREND_QUERY_TIMEOUT = "global_trend_query_timeout";
 		public static final String GLOBAL_PATTERN_QUERY_TIMEOUT = "global_pattern_query_timeout";
 		public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
+		public static final String RECOGNITION_PUBLIC_KEY = "recognition_public_key";
+		public static final String RECOGNITION_PRIVATE_KEY = "recognition_private_key";
 	}
 
 	public static class CacheName {
