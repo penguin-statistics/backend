@@ -24,7 +24,6 @@ import com.google.common.base.Splitter;
 
 public class RSAUtil {
 
-    /** */
     /**
      * 加密算法RSA
      */
@@ -33,45 +32,38 @@ public class RSAUtil {
     /**
      * 算法名称/加密模式/数据填充方式
      */
-    private static final String ALGORITHMS = "RSA/None/OAEPWithSHA1AndMGF1Padding";
+    private static final String ALGORITHMS = "RSA/None/OAEPWithSHA256AndMGF1Padding";
 
-    /** */
     /**
      * 签名算法
      */
     public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
 
-    /** */
     /**
      * 获取公钥的key
      */
     private static final String PUBLIC_KEY = "RSAPublicKey";
 
-    /** */
     /**
      * 获取私钥的key
      */
     private static final String PRIVATE_KEY = "RSAPrivateKey";
 
-    /** */
     /**
      * RSA最大加密明文大小
      */
     private static final int MAX_ENCRYPT_BLOCK = 117;
 
-    /** */
     /**
      * RSA最大解密密文大小
      */
     private static final int MAX_DECRYPT_BLOCK = 128;
 
-    /** */
     /**
      * RSA 位数 如果采用2048 上面最大加密和最大解密则须填写:  245 256
      */
     private static final int INITIALIZE_LENGTH = 1024;
 
-    /** */
     /**
      * <p>
      * 生成密钥对(公钥和私钥)
@@ -92,7 +84,6 @@ public class RSAUtil {
         return keyMap;
     }
 
-    /** */
     /**
      * <p>
      * 用私钥对信息生成数字签名
@@ -117,7 +108,6 @@ public class RSAUtil {
         return Base64.encodeBase64String(signature.sign());
     }
 
-    /** */
     /**
      * <p>
      * 校验数字签名
@@ -145,7 +135,6 @@ public class RSAUtil {
         return signature.verify(Base64.decodeBase64(sign));
     }
 
-    /** */
     /**
      * <P>
      * 私钥解密
@@ -186,7 +175,6 @@ public class RSAUtil {
         return decryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 公钥解密
@@ -227,7 +215,6 @@ public class RSAUtil {
         return decryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 公钥加密
@@ -269,7 +256,6 @@ public class RSAUtil {
         return encryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 私钥加密
@@ -310,7 +296,6 @@ public class RSAUtil {
         return encryptedData;
     }
 
-    /** */
     /**
      * <p>
      * 获取私钥
@@ -326,7 +311,6 @@ public class RSAUtil {
         return Base64.encodeBase64String(key.getEncoded());
     }
 
-    /** */
     /**
      * <p>
      * 获取公钥
@@ -370,6 +354,9 @@ public class RSAUtil {
         return temp;
     }
 
+    /**
+     * 生成pem格式的公钥
+     */
     public static String genPem(String keyContent) {
         String publicKeyFormatted = "-----BEGIN PUBLIC KEY-----" + System.lineSeparator();
         for (final String row : Splitter.fixedLength(64).split(keyContent)) {
@@ -380,14 +367,14 @@ public class RSAUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        //        Map<String, Object> map = RSAUtil.genKeyPair();
-        //        String pub = RSAUtil.getPublicKey(map);
-        //        String pri = RSAUtil.getPrivateKey(map);
-        //        System.out.println(pub);
-        //        System.out.println(pri);
-        //        String en = RSAUtil.encryptedDataOnJava("hello", pub);
-        //        String de = RSAUtil.decryptDataOnJava(en, pri);
-        //        System.out.println(de);
+        Map<String, Object> map = RSAUtil.genKeyPair();
+        String pub = RSAUtil.getPublicKey(map);
+        String pri = RSAUtil.getPrivateKey(map);
+        System.out.println(pub);
+        System.out.println(pri);
+        String en = RSAUtil.encryptedDataOnJava("hello", pub);
+        String de = RSAUtil.decryptDataOnJava(en, pri);
+        System.out.println(de);
     }
 
 }
