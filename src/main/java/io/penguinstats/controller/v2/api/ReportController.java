@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toList;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,11 +34,13 @@ import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.RecognitionReportRequest;
 import io.penguinstats.controller.v2.request.SingleRecognitionDrop;
 import io.penguinstats.controller.v2.request.SingleReportRequest;
+import io.penguinstats.controller.v2.response.RecognitionReportResponse;
 import io.penguinstats.controller.v2.response.SingleReportResponse;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.Drop;
 import io.penguinstats.model.ItemDrop;
+import io.penguinstats.model.RecognitionReportError;
 import io.penguinstats.model.ScreenshotMetadata;
 import io.penguinstats.model.Stage;
 import io.penguinstats.model.TypedDrop;
@@ -147,7 +150,7 @@ public class ReportController {
 
     @ApiOperation(value = "Submit a batch drop report from screenshot recognition")
     @PostMapping(path = "/recognition")
-    public ResponseEntity<String> saveBatchRecognitionReport(@RequestBody String requestBody,
+    public ResponseEntity<RecognitionReportResponse> saveBatchRecognitionReport(@RequestBody String requestBody,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         RecognitionReportRequest recognitionReportRequest = getRecognitionReportRequestFromRequestBody(requestBody);
 
@@ -163,9 +166,12 @@ public class ReportController {
         log.info("user " + userID + " POST /report/recognition\n"
                 + Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(recognitionReportRequest)).toString(2));
 
-        batchSaveDropsFromRecognitionReportRequest(recognitionReportRequest, request, userID);
+        List<RecognitionReportError> errors = new ArrayList<>();
+        batchSaveDropsFromRecognitionReportRequest(recognitionReportRequest, request, userID, errors);
+        Collections.sort(errors, (err1, err2) -> (err1.getIndex().compareTo(err2.getIndex())));
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        RecognitionReportResponse recognitionReportResponse = new RecognitionReportResponse(errors);
+        return new ResponseEntity<>(recognitionReportResponse, HttpStatus.OK);
     }
 
     @ApiOperation(value = "Recall the last Report",
@@ -233,7 +239,7 @@ public class ReportController {
     }
 
     private void batchSaveDropsFromRecognitionReportRequest(RecognitionReportRequest recognitionReportRequest,
-            HttpServletRequest request, String userID) {
+            HttpServletRequest request, String userID, List<RecognitionReportError> errors) {
         String source = recognitionReportRequest.getSource();
         String version = recognitionReportRequest.getVersion();
         Server server = recognitionReportRequest.getServer();
@@ -254,6 +260,7 @@ public class ReportController {
         CountDownLatch countDownLatch = new CountDownLatch(batchDrops.size());
         for (int i = 0, l = batchDrops.size(); i < l; i++) {
             SingleRecognitionDrop singleDrop = batchDrops.get(i);
+            final int index = i;
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -300,6 +307,7 @@ public class ReportController {
                         itemDrops.add(itemDrop);
                     } catch (Exception e) {
                         log.error("Error in batchSaveDropsFromRecognitionReportRequest");
+                        errors.add(new RecognitionReportError(index, e.getMessage()));
                     } finally {
                         countDownLatch.countDown();
                     }

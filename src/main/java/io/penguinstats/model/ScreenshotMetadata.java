@@ -1,5 +1,7 @@
 package io.penguinstats.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.annotations.ApiModel;
@@ -13,7 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "The model for the metadata of one screenshot.")
-public class ScreenshotMetadata {
+public class ScreenshotMetadata implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @ApiModelProperty(notes = "The name of the file.")
     private String fileName;
