@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.RecognitionReportRequest;
 import io.penguinstats.controller.v2.request.SingleRecognitionDrop;
@@ -204,7 +205,7 @@ public class ReportController {
             }
             dataJSONStr = decryptRecgonitionRequest(encryptedAESKey, encryptedBody);
             if (!JSONUtil.isValidJSON(dataJSONStr)) {
-                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
+                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Invalid request body.");
             }
             doneDecryption = true;
         }
@@ -212,7 +213,7 @@ public class ReportController {
         RecognitionReportRequest recognitionReportRequest =
                 JSONUtil.convertJSONStrToObject(dataJSONStr, RecognitionReportRequest.class);
         if (recognitionReportRequest == null) {
-            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to convert report object.");
         }
         recognitionReportRequest.setDoneDecryption(doneDecryption);
         return recognitionReportRequest;
@@ -222,11 +223,9 @@ public class ReportController {
         String privateKey =
                 systemPropertyService.getPropertyStringValue(Constant.SystemPropertyKey.RECOGNITION_PRIVATE_KEY);
         try {
-            String decryptedAESKey = RSAUtil.decryptDataOnJava(encryptedAESKey, privateKey);
-            System.out.println("decryptedAESKey = " + decryptedAESKey);
-            String s = AESUtil.decrypt(encryptedBody, decryptedAESKey);
-            System.out.println(s);
-            return s;
+            String decryptedAESKeyBase64 = RSAUtil.decryptDataOnJava(encryptedAESKey, privateKey);
+            String decyptedBody = AESUtil.decrypt(encryptedBody, decryptedAESKeyBase64);
+            return decyptedBody;
         } catch (Exception e) {
             log.error("Error in decryptRecgonitionRequest.", e);
             return null;
@@ -244,6 +243,11 @@ public class ReportController {
         List<SingleRecognitionDrop> batchDrops = recognitionReportRequest.getBatchDrops();
         if (batchDrops == null || batchDrops.isEmpty()) {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER, "'batchDrops' cannot be null or empty.");
+        }
+        Integer maxBatchSize = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.RECOGNITION_BATCH_MAX);
+        if (maxBatchSize != null && Integer.compare(batchDrops.size(), maxBatchSize) > 0) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER,
+                    "The size of 'batchDrops' cannot exceed " + maxBatchSize);
         }
 
         List<ItemDrop> itemDrops = new ArrayList<>();
@@ -305,7 +309,7 @@ public class ReportController {
         try {
             countDownLatch.await();
         } catch (Exception e) {
-            log.error("Error in batchSaveDropsFromRecognitionReportRequest");
+            log.error("Error in batchSaveDropsFromRecognitionReportRequest", e);
         }
         itemDropService.batchSaveItemDrops(itemDrops);
     }

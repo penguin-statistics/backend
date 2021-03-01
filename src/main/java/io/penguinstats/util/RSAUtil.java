@@ -32,7 +32,7 @@ public class RSAUtil {
     /**
      * 算法名称/加密模式/数据填充方式
      */
-    private static final String ALGORITHMS = "RSA/None/OAEPWithSHA256AndMGF1Padding";
+    private static final String ALGORITHMS = "RSA/ECB/OAEPWithSHA256AndMGF1Padding";
 
     /**
      * 签名算法
@@ -364,17 +364,6 @@ public class RSAUtil {
         }
         publicKeyFormatted += "-----END PUBLIC KEY-----";
         return publicKeyFormatted;
-    }
-
-    public static void main(String[] args) throws Exception {
-        Map<String, Object> map = RSAUtil.genKeyPair();
-        String pub = RSAUtil.getPublicKey(map);
-        String pri = RSAUtil.getPrivateKey(map);
-        System.out.println(pub);
-        System.out.println(pri);
-        String en = RSAUtil.encryptedDataOnJava("hello", pub);
-        String de = RSAUtil.decryptDataOnJava(en, pri);
-        System.out.println(de);
     }
 
 }

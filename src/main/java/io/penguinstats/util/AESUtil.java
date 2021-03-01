@@ -31,6 +31,8 @@ public class AESUtil {
      */
     private static final String ALGORITHMS = "AES/CBC/PKCS7Padding";
 
+    private static final byte[] IV = new byte[] {0, 0, 0, 1, 1, 4, 5, 1, 4, 1, 9, 1, 9, 8, 1, 0};
+
     /**
      * 后端AES的key，由静态代码块赋值
      */
@@ -80,7 +82,7 @@ public class AESUtil {
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, new BouncyCastleProvider());
         SecretKeySpec keySpec = new SecretKeySpec(encryptKey.getBytes(), KEY_ALGORITHM);
-        AlgorithmParameterSpec paramSpec = new IvParameterSpec(new byte[16]);
+        AlgorithmParameterSpec paramSpec = new IvParameterSpec(IV);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
 
         //调用doFinal
@@ -95,7 +97,7 @@ public class AESUtil {
      * 解密
      *
      * @param encryptStr 解密的字符串
-     * @param decryptKey 解密的key值
+     * @param decryptKey 解密的key值, Base64 encoded
      */
     public static String decrypt(String encryptStr, String decryptKey) throws Exception {
         //base64格式的key字符串转byte
@@ -103,24 +105,13 @@ public class AESUtil {
 
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, new BouncyCastleProvider());
-        SecretKeySpec keySpec = new SecretKeySpec(decryptKey.getBytes(), KEY_ALGORITHM);
-        AlgorithmParameterSpec paramSpec = new IvParameterSpec(new byte[16]);
+        SecretKeySpec keySpec = new SecretKeySpec(Base64.decodeBase64(decryptKey), KEY_ALGORITHM);
+        AlgorithmParameterSpec paramSpec = new IvParameterSpec(IV);
         cipher.init(Cipher.DECRYPT_MODE, keySpec, paramSpec);
 
         //调用doFinal解密
         byte[] decryptBytes = cipher.doFinal(decodeBase64);
         return new String(decryptBytes);
-    }
-
-    public static void main(String[] args) throws Exception {
-        //        String content =
-        //                "{\"batchDrops\":[{\"drops\":[{\"dropType\":\"SPECIAL_DROP\",\"itemId\":\"randomMaterial_3\",\"quantity\":1},{\"dropType\":\"EXTRA_DROP\",\"itemId\":\"30061\",\"quantity\":2},{\"dropType\":\"NORMAL_DROP\",\"itemId\":\"30013\",\"quantity\":1},{\"dropType\":\"FURNITURE\",\"itemId\":\"furni\",\"quantity\":1}],\"stageId\":\"main_04-06\",\"metadata\":{\"lastModified\":1614117219485,\"fingerprint\":\"0ed4a7b87193f\",\"width\":1024}},{\"drops\":[{\"dropType\":\"NORMAL_DROP\",\"itemId\":\"30063\",\"quantity\":1}],\"stageId\":\"main_06-14\",\"metadata\":{\"lastModified\":1614117295032,\"md5\":\"0ab3c05fe\",\"height\":800}}],\"server\":\"CN\",\"source\":\"frontend_recognition\",\"version\":\"v1.0\"}";
-        //        String AESkey = AESUtil.getKey();
-        //        String enData = AESUtil.encrypt(content, AESkey);
-        //        String enAESKey = RSAUtil.encryptedDataOnJava(AESkey,
-        //                "");
-        //        System.out.println(AESkey);
-        //        System.out.println(enAESKey + ":" + enData);
     }
 
 }
