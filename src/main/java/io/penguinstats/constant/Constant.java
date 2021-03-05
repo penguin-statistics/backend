@@ -55,4 +55,17 @@ public class Constant {
         public static final String FRONTEND_V2_3_4_0 = "frontend-v2@v3.4.0";
     }
 
+    public static class DefaultValue {
+        public static final int ADVANCED_QUERY_REQUEST_NUM_MAX = 5;
+        public static final long DEFAULT_GLOBAL_TREND_INTERVAL = 86400000L;
+        public static final long DEFAULT_GLOBAL_TREND_RANGE = 5184000000L;
+        public static final int MAX_SECTION_NUM = 180;
+        public static final int PAST_GLOBAL_MATRIX_QUERY_TIMEOUT = 3;
+        public static final int CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT = 3;
+        public static final int GLOBAL_TREND_QUERY_TIMEOUT = 1;
+        public static final int GLOBAL_PATTERN_QUERY_TIMEOUT = 3;
+        public static final int ADVANCED_QUERY_TIMEOUT = 2;
+        public static final int RECOGNITION_BATCH_MAX = 50;
+    }
+
 }

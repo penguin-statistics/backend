@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.penguinstats.constant.Constant;
+import io.penguinstats.constant.Constant.DefaultValue;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
 import io.penguinstats.controller.v2.request.RecognitionReportRequest;
@@ -250,7 +251,8 @@ public class ReportController {
         if (batchDrops == null || batchDrops.isEmpty()) {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER, "'batchDrops' cannot be null or empty.");
         }
-        Integer maxBatchSize = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.RECOGNITION_BATCH_MAX);
+        Integer maxBatchSize = systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.RECOGNITION_BATCH_MAX,
+                DefaultValue.RECOGNITION_BATCH_MAX);
         if (maxBatchSize != null && Integer.compare(batchDrops.size(), maxBatchSize) > 0) {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER,
                     "The size of 'batchDrops' cannot exceed " + maxBatchSize);
