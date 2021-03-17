@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.constant.Constant;
 import io.penguinstats.constant.Constant.DefaultValue;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.request.RecallLastReportRequest;
@@ -227,11 +227,20 @@ public class ReportController {
     }
 
     private String decryptRecgonitionRequest(String encryptedAESKey, String encryptedBody) {
-        String privateKey =
-                systemPropertyService.getPropertyStringValue(Constant.SystemPropertyKey.RECOGNITION_PRIVATE_KEY);
+        String privateKey = systemPropertyService.getPropertyStringValue(SystemPropertyKey.RECOGNITION_PRIVATE_KEY);
+        String ivStr = systemPropertyService.getPropertyStringValue(SystemPropertyKey.AES_IV);
+        JSONArray ivArr = new JSONArray(ivStr);
+        if (16 != ivArr.length()) {
+            log.error("Invalid iv {}", ivStr);
+            return null;
+        }
+        byte[] iv = new byte[16];
+        for (int i = 0; i < 16; i++) {
+            iv[i] = (byte)ivArr.getInt(i);
+        }
         try {
             String decryptedAESKeyBase64 = RSAUtil.decryptDataOnJava(encryptedAESKey, privateKey);
-            String decyptedBody = AESUtil.decrypt(encryptedBody, decryptedAESKeyBase64);
+            String decyptedBody = AESUtil.decrypt(encryptedBody, decryptedAESKeyBase64, iv);
             return decyptedBody;
         } catch (Exception e) {
             log.error("Error in decryptRecgonitionRequest.", e);

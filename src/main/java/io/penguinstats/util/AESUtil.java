@@ -31,8 +31,6 @@ public class AESUtil {
      */
     private static final String ALGORITHMS = "AES/CBC/PKCS7Padding";
 
-    private static final byte[] IV = new byte[] {0, 0, 0, 1, 1, 4, 5, 1, 4, 1, 9, 1, 9, 8, 1, 0};
-
     /**
      * 后端AES的key，由静态代码块赋值
      */
@@ -78,11 +76,11 @@ public class AESUtil {
      * @param content    加密的字符串
      * @param encryptKey key值
      */
-    public static String encrypt(String content, String encryptKey) throws Exception {
+    public static String encrypt(String content, String encryptKey, byte[] iv) throws Exception {
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, new BouncyCastleProvider());
         SecretKeySpec keySpec = new SecretKeySpec(encryptKey.getBytes(), KEY_ALGORITHM);
-        AlgorithmParameterSpec paramSpec = new IvParameterSpec(IV);
+        AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, paramSpec);
 
         //调用doFinal
@@ -99,14 +97,14 @@ public class AESUtil {
      * @param encryptStr 解密的字符串
      * @param decryptKey 解密的key值, Base64 encoded
      */
-    public static String decrypt(String encryptStr, String decryptKey) throws Exception {
+    public static String decrypt(String encryptStr, String decryptKey, byte[] iv) throws Exception {
         //base64格式的key字符串转byte
         byte[] decodeBase64 = Base64.decodeBase64(encryptStr);
 
         //设置Cipher对象
         Cipher cipher = Cipher.getInstance(ALGORITHMS, new BouncyCastleProvider());
         SecretKeySpec keySpec = new SecretKeySpec(Base64.decodeBase64(decryptKey), KEY_ALGORITHM);
-        AlgorithmParameterSpec paramSpec = new IvParameterSpec(IV);
+        AlgorithmParameterSpec paramSpec = new IvParameterSpec(iv);
         cipher.init(Cipher.DECRYPT_MODE, keySpec, paramSpec);
 
         //调用doFinal解密

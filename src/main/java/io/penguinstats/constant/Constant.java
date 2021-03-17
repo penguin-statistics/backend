@@ -33,6 +33,7 @@ public class Constant {
         public static final String ADVANCED_QUERY_TIMEOUT = "global_advanced_query_timeout";
         public static final String RECOGNITION_PUBLIC_KEY = "recognition_public_key";
         public static final String RECOGNITION_PRIVATE_KEY = "recognition_private_key";
+        public static final String AES_IV = "aes_iv";
         public static final String RECOGNITION_BATCH_MAX = "recognition_batch_max";
         public static final String OUTLIER_IMG_BUCKET = "outlier_img_bucket";
         public static final String OUTLIER_IMG_SAVE_KEY = "outlier_img_save_key";
