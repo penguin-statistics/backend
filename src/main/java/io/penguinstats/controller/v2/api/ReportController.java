@@ -212,7 +212,7 @@ public class ReportController {
             }
             dataJSONStr = decryptRecgonitionRequest(encryptedAESKey, encryptedBody);
             if (!JSONUtil.isValidJSON(dataJSONStr)) {
-                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Invalid request body.");
+                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Request body is not a valid json.");
             }
             doneDecryption = true;
         }
