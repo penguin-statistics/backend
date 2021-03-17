@@ -34,6 +34,11 @@ public class Constant {
         public static final String RECOGNITION_PUBLIC_KEY = "recognition_public_key";
         public static final String RECOGNITION_PRIVATE_KEY = "recognition_private_key";
         public static final String RECOGNITION_BATCH_MAX = "recognition_batch_max";
+        public static final String OUTLIER_IMG_BUCKET = "outlier_img_bucket";
+        public static final String OUTLIER_IMG_SAVE_KEY = "outlier_img_save_key";
+        public static final String OUTLIER_IMG_USERNAME = "outlier_img_username";
+        public static final String OUTLIER_IMG_PASSWORD = "outlier_img_password";
+        public static final String OUTLIER_IMG_EXPIRATION = "outlier_img_expiration";
     }
 
     public static class CacheName {
@@ -66,6 +71,11 @@ public class Constant {
         public static final int GLOBAL_PATTERN_QUERY_TIMEOUT = 3;
         public static final int ADVANCED_QUERY_TIMEOUT = 2;
         public static final int RECOGNITION_BATCH_MAX = 50;
+        public static final int OUTLIER_IMG_EXPIRATION = 30;
+    }
+
+    public static class OutlierUpYunSignature {
+        public static final String METHOD_POST = "POST";
     }
 
 }

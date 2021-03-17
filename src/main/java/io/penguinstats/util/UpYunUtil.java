@@ -3,6 +3,7 @@ package io.penguinstats.util;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -85,19 +86,23 @@ public class UpYunUtil {
      * @param bucket
      * @param saveKey The path of the saved file. Example: /upload_{random32}{.suffix}
      * @param expiration The expiration of the request. UNIX UTC timestamp. Unit is second.
+     * @param notifyUrl The callback URL. Optional
      * @return
      */
-    public static String getPolicy(String bucket, String saveKey, Long expiration) {
+    public static String getPolicy(String bucket, String saveKey, Long expiration, String notifyUrl) {
         Map<String, Object> policyMap = new HashMap<>();
         policyMap.put("bucket", bucket);
         policyMap.put("save-key", saveKey);
         policyMap.put("expiration", expiration);
+        if (!StringUtils.isEmpty(notifyUrl)) {
+            policyMap.put("notify-url", notifyUrl);
+        }
         JSONObject obj = new JSONObject(policyMap);
         return Base64.getEncoder().encodeToString(obj.toString().getBytes());
     }
 
-    private static String getDateTimeRFC1123String(Long dateTime) {
-        ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);
+    public static String getDateTimeRFC1123String(Long dateTime) {
+        ZonedDateTime now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(dateTime), ZoneOffset.UTC);
         DateTimeFormatter formatter = DateTimeFormatter.RFC_1123_DATE_TIME;
         return now.format(formatter);
     }
