@@ -80,4 +80,9 @@ public class Constant {
         public static final String METHOD_POST = "POST";
     }
 
+    public static class UserTag {
+        public static final String TESTER = "tester";
+        public static final String BANNED = "banned";
+    }
+
 }
