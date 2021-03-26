@@ -11,3 +11,10 @@ spring:
     cache:
         jcache:
             config: classpath:ehcache.xml
+executor:
+    size:
+        core: 10
+        max: 20
+        queue: 8
+    keepalive:
+        time: 60

@@ -14,39 +14,41 @@ import io.penguinstats.model.ItemDrop;
 
 public interface ItemDropService {
 
-	void saveItemDrop(ItemDrop itemDrop);
+    void saveItemDrop(ItemDrop itemDrop);
 
-	void batchSaveItemDrops(Collection<ItemDrop> itemDrops);
+    void batchSaveItemDrops(Collection<ItemDrop> itemDrops);
 
-	void deleteItemDrop(String userID, String itemDropId) throws Exception;
+    void deleteItemDrop(String userID, String itemDropId) throws Exception;
 
-	void recallItemDrop(String userID, String itemDropHashId) throws Exception;
+    void recallItemDrop(String userID, String itemDropHashId) throws Exception;
 
-	List<ItemDrop> getAllItemDrops();
+    List<ItemDrop> getAllItemDrops();
 
-	Page<ItemDrop> getAllItemDrops(Pageable pageable);
+    Page<ItemDrop> getAllItemDrops(Pageable pageable);
 
-	List<ItemDrop> getAllReliableItemDrops();
+    List<ItemDrop> getAllReliableItemDrops();
 
-	Page<ItemDrop> getVisibleItemDropsByUserID(String userID, Pageable pageable);
+    Page<ItemDrop> getVisibleItemDropsByUserID(String userID, Pageable pageable);
 
-	List<ItemDrop> getItemDropsByUserID(String userID);
+    List<ItemDrop> getItemDropsByUserID(String userID);
 
-	Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable);
+    Page<ItemDrop> getValidItemDropsByStageId(String stageId, Pageable pageable);
 
-	@Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
-			condition = "#filter == null", sync = true)
-	Map<String, Integer> getTotalStageTimesMap(Server server, Long range);
+    List<ItemDrop> getItemDropsByMD5(String md5);
 
-	@CachePut(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
-			condition = "#filter == null")
-	Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range);
+    @Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+            condition = "#filter == null", sync = true)
+    Map<String, Integer> getTotalStageTimesMap(Server server, Long range);
 
-	@Cacheable(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null",
-			sync = true)
-	Map<String, Integer> getTotalItemQuantitiesMap(Server server);
+    @CachePut(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+            condition = "#filter == null")
+    Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range);
 
-	@CachePut(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null")
-	Map<String, Integer> refreshTotalItemQuantitiesMap(Server server);
+    @Cacheable(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null",
+            sync = true)
+    Map<String, Integer> getTotalItemQuantitiesMap(Server server);
+
+    @CachePut(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null")
+    Map<String, Integer> refreshTotalItemQuantitiesMap(Server server);
 
 }

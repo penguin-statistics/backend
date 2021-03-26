@@ -50,6 +50,12 @@ public class CacheController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    @DeleteMapping(path = "/config")
+    @Caching(evict = {@CacheEvict(value = "maps", key = "'frontendConfigMap'")})
+    public ResponseEntity<String> evictFrontendConfigsCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @DeleteMapping(path = "/event-period")
     @Caching(evict = {@CacheEvict(value = "lists", key = "'eventPeriodList'")})
     public ResponseEntity<String> evictEventPeriodCache() {

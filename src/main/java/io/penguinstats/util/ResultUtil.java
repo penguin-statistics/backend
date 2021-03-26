@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import io.penguinstats.constant.Constant.DefaultValue;
 import io.penguinstats.constant.Constant.SystemPropertyKey;
 import io.penguinstats.controller.v2.mapper.QueryMapper;
 import io.penguinstats.controller.v2.request.AdvancedQueryRequest;
@@ -92,16 +93,17 @@ public class ResultUtil {
         List<DropMatrixElement> currentElements = null;
         if (userID != null) {
             GlobalMatrixQuery pastQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-            Integer pastTimeout =
-                    systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
+            Integer pastTimeout = systemPropertyService.getPropertyIntegerValue(
+                    SystemPropertyKey.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT, DefaultValue.PAST_GLOBAL_MATRIX_QUERY_TIMEOUT);
             pastQuery.setServer(server).setUserID(userID).setIsPast(true);
             if (pastTimeout != null)
                 pastQuery.setTimeout(pastTimeout);
             pastElements = (List<DropMatrixElement>)pastQuery.execute();
 
             GlobalMatrixQuery currentQuery = (GlobalMatrixQuery)queryFactory.getQuery(QueryType.GLOBAL_MATRIX);
-            Integer currentTimeout = systemPropertyService
-                    .getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
+            Integer currentTimeout =
+                    systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT,
+                            DefaultValue.CURRENT_GLOBAL_MATRIX_QUERY_TIMEOUT);
             currentQuery.setServer(server).setUserID(userID).setIsPast(false);
             if (currentTimeout != null)
                 currentQuery.setTimeout(currentTimeout);
@@ -192,8 +194,8 @@ public class ResultUtil {
         try {
             if (userID != null) {
                 GlobalPatternQuery pastQuery = (GlobalPatternQuery)queryFactory.getQuery(QueryType.GLOBAL_PATTERN);
-                Integer pastTimeout =
-                        systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.GLOBAL_PATTERN_QUERY_TIMEOUT);
+                Integer pastTimeout = systemPropertyService.getPropertyIntegerValue(
+                        SystemPropertyKey.GLOBAL_PATTERN_QUERY_TIMEOUT, DefaultValue.GLOBAL_PATTERN_QUERY_TIMEOUT);
                 pastQuery.setServer(server).setUserID(userID);
                 if (pastTimeout != null)
                     pastQuery.setTimeout(pastTimeout);
@@ -236,8 +238,8 @@ public class ResultUtil {
     @SuppressWarnings("unchecked")
     public ResponseEntity<AdvancedQueryResponse> getAdvancedResultHelper(AdvancedQueryRequest advancedQueryRequest,
             HttpServletRequest request) {
-        Integer maxQueryNum =
-                systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX);
+        Integer maxQueryNum = systemPropertyService.getPropertyIntegerValue(
+                SystemPropertyKey.ADVANCED_QUERY_REQUEST_NUM_MAX, DefaultValue.ADVANCED_QUERY_REQUEST_NUM_MAX);
         if (advancedQueryRequest.getQueries().size() > maxQueryNum) {
             AdvancedQueryResponse advancedQueryResponse =
                     new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
@@ -249,8 +251,8 @@ public class ResultUtil {
             try {
                 Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
                 String userID = isPersonal ? userIDFromCookie : null;
-                Integer timeout =
-                        systemPropertyService.getPropertyIntegerValue(SystemPropertyKey.ADVANCED_QUERY_TIMEOUT);
+                Integer timeout = systemPropertyService.getPropertyIntegerValue(
+                        SystemPropertyKey.ADVANCED_QUERY_TIMEOUT, DefaultValue.ADVANCED_QUERY_TIMEOUT);
                 BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);
                 List<DropMatrixElement> elements = (List<DropMatrixElement>)query.execute();
                 elements.forEach(DropMatrixElement::toResultView);
