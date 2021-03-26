@@ -39,4 +39,7 @@ public class RecognitionReportRequest {
     @ApiModelProperty(notes = "This object is generated from decryption or not.")
     private Boolean doneDecryption;
 
+    @ApiModelProperty(notes = "Used for verification.")
+    private Long timestamp;
+
 }

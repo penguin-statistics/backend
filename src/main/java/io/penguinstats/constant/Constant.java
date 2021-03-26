@@ -73,6 +73,7 @@ public class Constant {
         public static final int ADVANCED_QUERY_TIMEOUT = 2;
         public static final int RECOGNITION_BATCH_MAX = 50;
         public static final int OUTLIER_IMG_EXPIRATION = 30;
+        public static final long SCREENSHOT_REPORT_TIMESTAMP_THRESHOLD = 1800000L;
     }
 
     public static class OutlierUpYunSignature {

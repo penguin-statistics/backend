@@ -154,6 +154,9 @@ public class ReportController {
     public ResponseEntity<RecognitionReportResponse> saveBatchRecognitionReport(@RequestBody String requestBody,
             HttpServletRequest request, HttpServletResponse response) throws Exception {
         RecognitionReportRequest recognitionReportRequest = getRecognitionReportRequestFromRequestBody(requestBody);
+        if (!verifyTimestamp(recognitionReportRequest.getTimestamp())) {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to verify timestamp.");
+        }
 
         String userID = cookieUtil.readUserIDFromCookie(request);
         if (userID == null) {
@@ -317,8 +320,8 @@ public class ReportController {
                                 .setScreenshotMetadata(screenshotMetadata);
                         itemDrops.add(itemDrop);
                     } catch (Exception e) {
-                        log.error("Error in batchSaveDropsFromRecognitionReportRequest");
-                        errors.add(new RecognitionReportError(index, e.getMessage()));
+                        log.error("Error in batchSaveDropsFromRecognitionReportRequest", e);
+                        errors.add(new RecognitionReportError(index, e.getClass() + ": " + e.getMessage()));
                     } finally {
                         countDownLatch.countDown();
                     }
@@ -331,6 +334,15 @@ public class ReportController {
             log.error("Error in batchSaveDropsFromRecognitionReportRequest", e);
         }
         itemDropService.batchSaveItemDrops(itemDrops);
+    }
+
+    private boolean verifyTimestamp(Long timestamp) {
+        if (timestamp == null) {
+            return false;
+        }
+        long upperBound = System.currentTimeMillis() + DefaultValue.SCREENSHOT_REPORT_TIMESTAMP_THRESHOLD;
+        long lowerBound = System.currentTimeMillis() - DefaultValue.SCREENSHOT_REPORT_TIMESTAMP_THRESHOLD;
+        return Long.compare(lowerBound, timestamp) <= 0 && Long.compare(timestamp, upperBound) <= 0;
     }
 
 }
