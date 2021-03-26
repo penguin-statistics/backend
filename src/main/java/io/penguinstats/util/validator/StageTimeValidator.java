@@ -19,8 +19,6 @@ public class StageTimeValidator extends BaseValidator {
     @Autowired
     private DropInfoService dropInfoService;
 
-
-
     @Override
     public boolean validate(ValidatorContext context) {
         Server server = context.getServer();
@@ -30,7 +28,8 @@ public class StageTimeValidator extends BaseValidator {
         if (server == null || StringUtils.isEmpty(stageId) || timestamp == null)
             return false;
 
-        Map<String, List<DropInfo>> openingDropInfosMap = dropInfoService.getOpeningDropInfosMap(server, timestamp);
+        Map<String, List<DropInfo>> openingDropInfosMap =
+                dropInfoService.getOpeningDropInfosMap(server, timestamp, true);
         return openingDropInfosMap.containsKey(stageId);
     }
 

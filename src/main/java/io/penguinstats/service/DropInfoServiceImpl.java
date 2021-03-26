@@ -123,15 +123,17 @@ public class DropInfoServiceImpl implements DropInfoService {
      * @return Map<String,List<DropInfo>>
      */
     @Override
-    public Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time) {
+    public Map<String, List<DropInfo>> getOpeningDropInfosMap(Server server, Long time,
+            boolean excludeRecognitionOnly) {
         Map<String, TimeRange> timeRangeMap = timeRangeService.getTimeRangeMap();
         List<DropInfo> infos = getSpringProxy().getDropInfosByServer(server);
 
-        Map<String, List<DropInfo>> result =
-                infos.stream().filter(info -> DropType.RECOGNITION_ONLY != info.getDropType()).filter(info -> {
-                    TimeRange range = timeRangeMap.get(info.getTimeRangeID());
-                    return range.isIn(time);
-                }).collect(groupingBy(DropInfo::getStageId));
+        Map<String, List<DropInfo>> result = infos.stream().filter(info -> {
+            return !excludeRecognitionOnly || DropType.RECOGNITION_ONLY != info.getDropType();
+        }).filter(info -> {
+            TimeRange range = timeRangeMap.get(info.getTimeRangeID());
+            return range.isIn(time);
+        }).collect(groupingBy(DropInfo::getStageId));
         return result;
     }
 

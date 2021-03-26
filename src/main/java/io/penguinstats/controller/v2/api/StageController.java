@@ -34,74 +34,74 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = {"Stage"})
 public class StageController {
 
-	@Autowired
-	private StageService stageService;
-	@Autowired
-	private DropInfoService dropInfoService;
+    @Autowired
+    private StageService stageService;
+    @Autowired
+    private DropInfoService dropInfoService;
 
-	@ApiOperation(value = "Get all Stages",
-			notes = "Get all Stages in the DB, together with their current drop infos (if applicable).")
-	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<List<Stage>>
-			getAllStages(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
-		List<Stage> stages = stageService.getAllStages();
-		Map<String, List<DropInfo>> dropInfosMap =
-				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
-		Iterator<Stage> iter = stages.iterator();
-		while (iter.hasNext()) {
-			Stage stage = iter.next();
-			List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
-			if (infos != null && !infos.isEmpty()) {
-				infos.forEach(info -> info.toStageView());
-				List<DropInfo> dropInfos = infos.stream()
-						.filter(info -> DropType.RECOGNITION_ONLY != info.getDropType()).collect(Collectors.toList());
-				stage.setDropInfos(dropInfos);
-				List<String> recognitionOnly =
-						infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
-								.map(DropInfo::getItemId).collect(Collectors.toList());
-				if (!recognitionOnly.isEmpty()) {
-					stage.setRecognitionOnly(recognitionOnly);
-				}
-			}
-		}
-		stages.forEach(Stage::toNewView);
+    @ApiOperation(value = "Get all Stages",
+            notes = "Get all Stages in the DB, together with their current drop infos (if applicable).")
+    @GetMapping(produces = "application/json;charset=UTF-8")
+    public ResponseEntity<List<Stage>>
+            getAllStages(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+                    required = false) @RequestParam(name = "server", required = false,
+                            defaultValue = "CN") Server server) {
+        List<Stage> stages = stageService.getAllStages();
+        Map<String, List<DropInfo>> dropInfosMap =
+                dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis(), false);
+        Iterator<Stage> iter = stages.iterator();
+        while (iter.hasNext()) {
+            Stage stage = iter.next();
+            List<DropInfo> infos = dropInfosMap.get(stage.getStageId());
+            if (infos != null && !infos.isEmpty()) {
+                infos.forEach(info -> info.toStageView());
+                List<DropInfo> dropInfos = infos.stream()
+                        .filter(info -> DropType.RECOGNITION_ONLY != info.getDropType()).collect(Collectors.toList());
+                stage.setDropInfos(dropInfos);
+                List<String> recognitionOnly =
+                        infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
+                                .map(DropInfo::getItemId).collect(Collectors.toList());
+                if (!recognitionOnly.isEmpty()) {
+                    stage.setRecognitionOnly(recognitionOnly);
+                }
+            }
+        }
+        stages.forEach(Stage::toNewView);
 
-		Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
-				LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
-		HttpHeaders headers = new HttpHeaders();
-		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
-		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+        Long lastUpdateTime = Math.max(LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.STAGE_LIST),
+                LastUpdateTimeUtil.getLastUpdateTime(LastUpdateMapKeyName.DROP_INFO_LIST + "_" + server));
+        HttpHeaders headers = new HttpHeaders();
+        String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+        headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 
-		return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
-	}
+        return new ResponseEntity<List<Stage>>(stages, headers, HttpStatus.OK);
+    }
 
-	@ApiOperation(value = "Get Stage by StageId")
-	@GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Stage>
-			getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server,
-					@PathVariable("stageId") String stageId) {
-		Stage stage = stageService.getStageByStageId(stageId);
-		Map<String, List<DropInfo>> dropInfosMap =
-				dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis());
-		List<DropInfo> infos = dropInfosMap.get(stageId);
-		if (infos != null && !infos.isEmpty()) {
-			infos.forEach(info -> info.toStageView());
-			List<DropInfo> dropInfos = infos.stream().filter(info -> DropType.RECOGNITION_ONLY != info.getDropType())
-					.collect(Collectors.toList());
-			stage.setDropInfos(dropInfos);
-			List<String> recognitionOnly =
-					infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
-							.map(DropInfo::getItemId).collect(Collectors.toList());
-			if (!recognitionOnly.isEmpty()) {
-				stage.setRecognitionOnly(recognitionOnly);
-			}
-		}
-		stage.toNewView();
-		return new ResponseEntity<Stage>(stage, HttpStatus.OK);
-	}
+    @ApiOperation(value = "Get Stage by StageId")
+    @GetMapping(path = "/{stageId}", produces = "application/json;charset=UTF-8")
+    public ResponseEntity<Stage>
+            getStageByStageId(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+                    required = false) @RequestParam(name = "server", required = false,
+                            defaultValue = "CN") Server server,
+                    @PathVariable("stageId") String stageId) {
+        Stage stage = stageService.getStageByStageId(stageId);
+        Map<String, List<DropInfo>> dropInfosMap =
+                dropInfoService.getOpeningDropInfosMap(server, System.currentTimeMillis(), false);
+        List<DropInfo> infos = dropInfosMap.get(stageId);
+        if (infos != null && !infos.isEmpty()) {
+            infos.forEach(info -> info.toStageView());
+            List<DropInfo> dropInfos = infos.stream().filter(info -> DropType.RECOGNITION_ONLY != info.getDropType())
+                    .collect(Collectors.toList());
+            stage.setDropInfos(dropInfos);
+            List<String> recognitionOnly =
+                    infos.stream().filter(info -> DropType.RECOGNITION_ONLY == info.getDropType())
+                            .map(DropInfo::getItemId).collect(Collectors.toList());
+            if (!recognitionOnly.isEmpty()) {
+                stage.setRecognitionOnly(recognitionOnly);
+            }
+        }
+        stage.toNewView();
+        return new ResponseEntity<Stage>(stage, HttpStatus.OK);
+    }
 
 }
