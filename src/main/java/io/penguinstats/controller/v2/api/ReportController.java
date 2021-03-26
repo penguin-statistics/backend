@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,13 +48,14 @@ import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.service.UserService;
-import io.penguinstats.util.AESUtil;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.JSONUtil;
-import io.penguinstats.util.RSAUtil;
 import io.penguinstats.util.exception.BusinessException;
+import io.penguinstats.util.strategy.DecryptStrategy;
+import io.penguinstats.util.strategy.DecryptStrategyFactory;
+import io.penguinstats.util.strategy.DecryptStrategyName;
 import io.penguinstats.util.validator.ValidatorContext;
 import io.penguinstats.util.validator.ValidatorFacade;
 import io.swagger.annotations.Api;
@@ -85,6 +85,9 @@ public class ReportController {
 
     @Autowired
     private ValidatorFacade validatorFacade;
+
+    @Autowired
+    private DecryptStrategyFactory decryptStrategyFactory;
 
     @Resource(name = "threadPool")
     private ThreadPoolTaskExecutor executor;
@@ -152,15 +155,25 @@ public class ReportController {
     @ApiOperation(value = "Submit a batch drop report from screenshot recognition")
     @PostMapping(path = "/recognition")
     public ResponseEntity<RecognitionReportResponse> saveBatchRecognitionReport(@RequestBody String requestBody,
-            HttpServletRequest request, HttpServletResponse response) throws Exception {
-        RecognitionReportRequest recognitionReportRequest = getRecognitionReportRequestFromRequestBody(requestBody);
+            @RequestHeader("x-penguin-variant") String variant, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        DecryptStrategy decryptStrategy = null;
+        if ("1".equals(variant)) {
+            decryptStrategy =
+                    decryptStrategyFactory.findStrategy(DecryptStrategyName.SCREENSHOT_REPORT_DECRYPT_STRATEGY);
+        } else {
+            throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Cannot find X-Penguin-Variant header.");
+        }
+        RecognitionReportRequest recognitionReportRequest =
+                getRecognitionReportRequestFromRequestBody(requestBody, decryptStrategy);
         if (!verifyTimestamp(recognitionReportRequest.getTimestamp())) {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to verify timestamp.");
         }
 
         String userID = cookieUtil.readUserIDFromCookie(request);
+        String ipAddr = IpUtil.getIpAddr(request);
         if (userID == null) {
-            userID = userService.createNewUser(IpUtil.getIpAddr(request));
+            userID = userService.createNewUser(ipAddr);
         }
         try {
             CookieUtil.setUserIDCookie(response, userID);
@@ -171,7 +184,7 @@ public class ReportController {
                 + Objects.requireNonNull(JSONUtil.convertObjectToJSONObject(recognitionReportRequest)).toString(2));
 
         List<RecognitionReportError> errors = new ArrayList<>();
-        batchSaveDropsFromRecognitionReportRequest(recognitionReportRequest, request, userID, errors);
+        batchSaveDropsFromRecognitionReportRequest(recognitionReportRequest, ipAddr, userID, errors);
         Collections.sort(errors, (err1, err2) -> (err1.getIndex().compareTo(err2.getIndex())));
 
         RecognitionReportResponse recognitionReportResponse = new RecognitionReportResponse(errors);
@@ -197,23 +210,16 @@ public class ReportController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private RecognitionReportRequest getRecognitionReportRequestFromRequestBody(String requestBody) {
+    private RecognitionReportRequest getRecognitionReportRequestFromRequestBody(String requestBody,
+            DecryptStrategy decryptStrategy) {
         String dataJSONStr = null;
         boolean doneDecryption = false;
         if (JSONUtil.isValidJSON(requestBody)) {
             JSONObject requestObj = new JSONObject(requestBody);
             dataJSONStr = requestObj.toString();
         } else {
-            String[] strs = requestBody.split(":");
-            if (strs.length != 2) {
-                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to parse request body.");
-            }
-            String encryptedAESKey = strs[0];
-            String encryptedBody = strs[1];
-            if (StringUtils.isAnyEmpty(encryptedAESKey, encryptedBody)) {
-                throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Invalid request.");
-            }
-            dataJSONStr = decryptRecgonitionRequest(encryptedAESKey, encryptedBody);
+            dataJSONStr = decryptStrategy.decrypt(requestBody);
+
             if (!JSONUtil.isValidJSON(dataJSONStr)) {
                 throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Request body is not a valid json.");
             }
@@ -229,35 +235,12 @@ public class ReportController {
         return recognitionReportRequest;
     }
 
-    private String decryptRecgonitionRequest(String encryptedAESKey, String encryptedBody) {
-        String privateKey = systemPropertyService.getPropertyStringValue(SystemPropertyKey.RECOGNITION_PRIVATE_KEY);
-        String ivStr = systemPropertyService.getPropertyStringValue(SystemPropertyKey.AES_IV);
-        JSONArray ivArr = new JSONArray(ivStr);
-        if (16 != ivArr.length()) {
-            log.error("Invalid iv {}", ivStr);
-            return null;
-        }
-        byte[] iv = new byte[16];
-        for (int i = 0; i < 16; i++) {
-            iv[i] = (byte)ivArr.getInt(i);
-        }
-        try {
-            String decryptedAESKeyBase64 = RSAUtil.decryptDataOnJava(encryptedAESKey, privateKey);
-            String decyptedBody = AESUtil.decrypt(encryptedBody, decryptedAESKeyBase64, iv);
-            return decyptedBody;
-        } catch (Exception e) {
-            log.error("Error in decryptRecgonitionRequest.", e);
-            return null;
-        }
-    }
-
     private void batchSaveDropsFromRecognitionReportRequest(RecognitionReportRequest recognitionReportRequest,
-            HttpServletRequest request, String userID, List<RecognitionReportError> errors) {
+            String ipAddr, String userID, List<RecognitionReportError> errors) {
         String source = recognitionReportRequest.getSource();
         String version = recognitionReportRequest.getVersion();
         Server server = recognitionReportRequest.getServer();
         Long timestamp = System.currentTimeMillis();
-        String ip = IpUtil.getIpAddr(request);
 
         List<SingleRecognitionDrop> batchDrops = recognitionReportRequest.getBatchDrops();
         if (batchDrops == null || batchDrops.isEmpty()) {
@@ -286,7 +269,7 @@ public class ReportController {
 
                         // Validation
                         ValidatorContext context = new ValidatorContext().setStageId(stageId).setServer(server)
-                                .setTimes(times).setDrops(singleDrop.getDrops()).setTimestamp(timestamp).setIp(ip)
+                                .setTimes(times).setDrops(singleDrop.getDrops()).setTimestamp(timestamp).setIp(ipAddr)
                                 .setUserID(userID).setMd5(md5);
                         Boolean isReliable = validatorFacade.doValid(context);
 
@@ -315,7 +298,7 @@ public class ReportController {
                         }
 
                         ItemDrop itemDrop = new ItemDrop().setStageId(stageId).setServer(server).setTimes(times)
-                                .setDrops(drops).setTimestamp(timestamp).setIp(ip).setIsReliable(isReliable)
+                                .setDrops(drops).setTimestamp(timestamp).setIp(ipAddr).setIsReliable(isReliable)
                                 .setIsDeleted(false).setSource(source).setVersion(version).setUserID(userID)
                                 .setScreenshotMetadata(screenshotMetadata);
                         itemDrops.add(itemDrop);
