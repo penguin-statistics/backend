@@ -13,7 +13,7 @@ import io.penguinstats.dao.StageDao;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.model.Stage;
 import io.penguinstats.util.LastUpdateTimeUtil;
-import io.penguinstats.util.exception.NotFoundException;
+import io.penguinstats.util.exception.BusinessException;
 
 @Service("stageService")
 public class StageServiceImpl implements StageService {
@@ -28,7 +28,7 @@ public class StageServiceImpl implements StageService {
 
 	@Override
 	public Stage getStageByStageId(String stageId) {
-		return stageDao.findByStageId(stageId).orElseThrow(() -> new NotFoundException(ErrorCode.NOT_FOUND,
+		return stageDao.findByStageId(stageId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND,
 				"Stage[" + stageId + "] is not found", Optional.of(stageId)));
 	}
 

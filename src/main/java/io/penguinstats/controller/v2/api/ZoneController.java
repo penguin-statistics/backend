@@ -1,6 +1,5 @@
 package io.penguinstats.controller.v2.api;
 
-import io.penguinstats.util.exception.NotFoundException;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class ZoneController {
 
 	@ApiOperation(value = "Get a Zone by ZoneId")
 	@GetMapping(path = "/{zoneId}", produces = "application/json;charset=UTF-8")
-	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) throws NotFoundException {
+	public ResponseEntity<Zone> getZoneByZoneId(@PathVariable("zoneId") String zoneId) {
 		Zone zone = zoneService.getZoneByZoneId(zoneId);
 		zone.toNewView();
 		return new ResponseEntity<Zone>(zone, HttpStatus.OK);

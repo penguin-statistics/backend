@@ -6,7 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DropType {
-	NORMAL_DROP("normal_drop"), EXTRA_DROP("extra_drop"), SPECIAL_DROP("special_drop"), FURNITURE("furniture");
+	NORMAL_DROP("normal_drop"), EXTRA_DROP("extra_drop"), SPECIAL_DROP("special_drop"), FURNITURE("furniture"),
+	RECOGNITION_ONLY("recognition_only");
 
 	private String type;
 }

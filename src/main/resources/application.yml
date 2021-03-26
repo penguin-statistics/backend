@@ -3,9 +3,18 @@ server:
     servlet:
         context-path: /PenguinStats
 spring:
+    profiles:
+        active: validator
     data:
         mongodb:
             uri: mongodb://username:password@localhost:27017/penguin_stats
     cache:
         jcache:
             config: classpath:ehcache.xml
+executor:
+    size:
+        core: 10
+        max: 20
+        queue: 8
+    keepalive:
+        time: 60

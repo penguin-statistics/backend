@@ -57,6 +57,7 @@ public class Stage implements Serializable {
 	private Map<String, List<String>> aliasMap;
 	@JsonProperty("pron")
 	private Map<String, List<String>> pronMap;
+	private List<String> recognitionOnly;
 
 	@JsonIgnore
 	public Set<String> getDropsSet() {

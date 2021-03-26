@@ -18,12 +18,13 @@ import lombok.experimental.Accessors;
 @Component
 public class ValidatorContext {
 
-	private String stageId;
-	private Server server;
-	private Integer times;
-	private List<TypedDrop> drops;
-	private Long timestamp;
-	private String ip;
-	private String userID;
+    private String stageId;
+    private Server server;
+    private Integer times;
+    private List<TypedDrop> drops;
+    private Long timestamp;
+    private String ip;
+    private String userID;
+    private String md5;
 
 }

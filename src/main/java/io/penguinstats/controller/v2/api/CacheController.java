@@ -12,48 +12,54 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v2/cache")
 public class CacheController {
 
-	@DeleteMapping(path = "/item")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'itemList'"), @CacheEvict(value = "maps", key = "'itemMap'")})
-	public ResponseEntity<String> evictItemCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/item")
+    @Caching(evict = {@CacheEvict(value = "lists", key = "'itemList'"), @CacheEvict(value = "maps", key = "'itemMap'")})
+    public ResponseEntity<String> evictItemCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/zone")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
-	public ResponseEntity<String> evictZoneCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/zone")
+    @Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
+    public ResponseEntity<String> evictZoneCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/stage")
-	@Caching(evict = {@CacheEvict(value = "lists", allEntries = true), @CacheEvict(value = "maps", allEntries = true),
-			@CacheEvict(value = "sets", allEntries = true)})
-	public ResponseEntity<String> evictStageCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/stage")
+    @Caching(evict = {@CacheEvict(value = "lists", allEntries = true), @CacheEvict(value = "maps", allEntries = true),
+            @CacheEvict(value = "sets", allEntries = true)})
+    public ResponseEntity<String> evictStageCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/time-range")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
-			@CacheEvict(value = "maps", key = "'timeRangeMap'")})
-	public ResponseEntity<String> evictTimeRangeCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/time-range")
+    @Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
+            @CacheEvict(value = "maps", key = "'timeRangeMap'")})
+    public ResponseEntity<String> evictTimeRangeCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/notice")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'noticeList'")})
-	public ResponseEntity<String> evictNoticeCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/notice")
+    @Caching(evict = {@CacheEvict(value = "lists", key = "'noticeList'")})
+    public ResponseEntity<String> evictNoticeCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/property")
-	@Caching(evict = {@CacheEvict(value = "maps", key = "'propertiesMap'")})
-	public ResponseEntity<String> evictSystemPropertiesCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/property")
+    @Caching(evict = {@CacheEvict(value = "maps", key = "'propertiesMap'")})
+    public ResponseEntity<String> evictSystemPropertiesCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
-	@DeleteMapping(path = "/event-period")
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'eventPeriodList'")})
-	public ResponseEntity<String> evictEventPeriodCache() {
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
+    @DeleteMapping(path = "/config")
+    @Caching(evict = {@CacheEvict(value = "maps", key = "'frontendConfigMap'")})
+    public ResponseEntity<String> evictFrontendConfigsCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @DeleteMapping(path = "/event-period")
+    @Caching(evict = {@CacheEvict(value = "lists", key = "'eventPeriodList'")})
+    public ResponseEntity<String> evictEventPeriodCache() {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 }

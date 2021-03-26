@@ -1,0 +1,7 @@
+validator:
+  config-map:
+    DropsValidator: true
+    IPValidator: true
+    StageTimeValidator: true
+    UserValidator: true
+    MD5Validator: true

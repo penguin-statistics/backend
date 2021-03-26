@@ -1,18 +1,17 @@
 package io.penguinstats.util.validator;
 
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+@Order(3)
 @Component("IPValidator")
 public class IPValidator extends BaseValidator {
 
-	public IPValidator(ValidatorContext context) {
-		super(context);
-	}
 
-	@Override
-	public boolean validate() {
-		// TODO: check ip ban list
-		return true;
-	}
+    @Override
+    public boolean validate(ValidatorContext context) {
+        // TODO: check ip ban list
+        return true;
+    }
 
 }
