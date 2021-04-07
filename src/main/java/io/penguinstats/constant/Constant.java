@@ -74,6 +74,7 @@ public class Constant {
         public static final int RECOGNITION_BATCH_MAX = 50;
         public static final int OUTLIER_IMG_EXPIRATION = 30;
         public static final long SCREENSHOT_REPORT_TIMESTAMP_THRESHOLD = 1800000L;
+        public static final int USER_ID_COOKIE_EXPIRY = 60 * 60 * 24 * 365 * 10;
     }
 
     public static class OutlierUpYunSignature {
