@@ -28,34 +28,34 @@ import io.swagger.annotations.ApiOperation;
 @Deprecated
 public class UserController {
 
-	public static final String INTERNAL_USER_ID_PREFIX = "internal_";
+    public static final String INTERNAL_USER_ID_PREFIX = "internal_";
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private UserService userService;
 
-	@ApiOperation("Login")
-	@PostMapping(produces = "text/plain;charset=UTF-8")
-	public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
-			HttpServletResponse response) throws Exception {
-		boolean isInternal = false;
-		if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
-			isInternal = true;
-			userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
-		}
-		User user = userService.getUserByUserID(userID);
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
-		if (user == null) {
-			if (isInternal) {
-				userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
-				if (userID != null) {
-					userService.addTag(userID, "internal");
-				}
-			} else {
-				return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
-			}
-		}
-		CookieUtil.setUserIDCookie(response, userID);
-		return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
-	}
+    @ApiOperation("Login")
+    @PostMapping(produces = "text/plain;charset=UTF-8")
+    public ResponseEntity<String> login(@RequestBody String userID, HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        boolean isInternal = false;
+        if (userID.startsWith(INTERNAL_USER_ID_PREFIX)) {
+            isInternal = true;
+            userID = userID.substring(INTERNAL_USER_ID_PREFIX.length());
+        }
+        User user = userService.getUserByUserID(userID);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(CustomHeader.X_PENGUIN_UPGRAGE, Constant.API_V2);
+        if (user == null) {
+            if (isInternal) {
+                userID = userService.createNewUser(userID, IpUtil.getIpAddr(request));
+                if (userID != null) {
+                    userService.addTag(userID, "internal");
+                }
+            } else {
+                return new ResponseEntity<>(headers, HttpStatus.NOT_FOUND);
+            }
+        }
+        CookieUtil.setUserIDCookie(request, response, userID);
+        return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
+    }
 }
