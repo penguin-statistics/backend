@@ -103,7 +103,7 @@ public class ReportController {
             userID = userService.createNewUser(IpUtil.getIpAddr(request));
         }
         try {
-            CookieUtil.setUserIDCookie(response, userID);
+            CookieUtil.setUserIDCookie(request, response, userID);
         } catch (UnsupportedEncodingException e) {
             log.error("Error in handleUserIDFromCookie: uid={}", userID);
         }
@@ -176,7 +176,7 @@ public class ReportController {
             userID = userService.createNewUser(ipAddr);
         }
         try {
-            CookieUtil.setUserIDCookie(response, userID);
+            CookieUtil.setUserIDCookie(request, response, userID);
         } catch (UnsupportedEncodingException e) {
             log.error("Error in handleUserIDFromCookie: uid={}", userID);
         }

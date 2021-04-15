@@ -3,6 +3,9 @@ package io.penguinstats.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
@@ -32,12 +35,23 @@ public class CookieUtil {
         cookieUtil.userService = this.userService;
     }
 
-    public static void setUserIDCookie(HttpServletResponse response, String userID)
+    public static void setUserIDCookie(HttpServletRequest request, HttpServletResponse response, String userID)
             throws UnsupportedEncodingException {
-        Cookie cookie = new Cookie("userID", URLEncoder.encode(userID, "UTF-8"));
-        cookie.setPath("/");
-        cookie.setMaxAge(DefaultValue.USER_ID_COOKIE_EXPIRY);
-        response.addCookie(cookie);
+        String host = request.getHeader("Host");
+        if (host == null) {
+            host = "";
+        }
+
+        ZonedDateTime expireTime = ZonedDateTime.now(ZoneId.of("Z")).plusSeconds(DefaultValue.USER_ID_COOKIE_EXPIRY);
+        String expires = expireTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("userID=").append(URLEncoder.encode(userID, "UTF-8")).append("; Max-Age=")
+                .append(DefaultValue.USER_ID_COOKIE_EXPIRY).append("; Expires=").append(expires).append("; Path=")
+                .append("/").append("; Domain=").append(".").append(host).append("; SameSite=").append("None")
+                .append("; Secure");
+
+        response.addHeader("Set-Cookie", sb.toString());
     }
 
     /** 
