@@ -3,34 +3,34 @@ package io.penguinstats.service;
 import java.util.List;
 import java.util.Map;
 
-import org.javatuples.Pair;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
+import io.penguinstats.constant.Constant.CacheValue;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.TimeRange;
 
 public interface TimeRangeService {
 
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'timeRangeList'"),
-			@CacheEvict(value = "maps", key = "'timeRangeMap'")})
-	void saveTimeRange(TimeRange timeRange);
+    @Caching(evict = {@CacheEvict(value = CacheValue.LISTS, key = "'timeRangeList'"),
+            @CacheEvict(value = CacheValue.MAPS, key = "'timeRangeMap'")})
+    void saveTimeRange(TimeRange timeRange);
 
-	TimeRange getTimeRangeByRangeID(String rangeID);
+    TimeRange getTimeRangeByRangeID(String rangeID);
 
-	@Cacheable(value = "lists", key = "'timeRangeList'")
-	List<TimeRange> getAllTimeRanges();
+    @Cacheable(value = CacheValue.LISTS, key = "'timeRangeList'")
+    List<TimeRange> getAllTimeRanges();
 
-	@Cacheable(value = "maps", key = "'timeRangeMap'")
-	Map<String, TimeRange> getTimeRangeMap();
+    @Cacheable(value = CacheValue.MAPS, key = "'timeRangeMap'")
+    Map<String, TimeRange> getTimeRangeMap();
 
-	@Cacheable(value = "maps", key = "'latestMaxAccumulatableTimeRangesMap_' + #server")
-	Map<String, List<Pair<String, List<TimeRange>>>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
+    @Cacheable(value = CacheValue.LATEST_MAX_ACCUMULATABLE_TIME_RANGE_MAP, key = "#server")
+    Map<String, Map<String, List<String>>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server);
 
-	@Cacheable(value = "maps", key = "'latestTimeRangesMap_' + #server")
-	Map<String, TimeRange> getLatestTimeRangesMapByServer(Server server);
+    @Cacheable(value = CacheValue.LATEST_TIME_RANGE_MAP, key = "#server")
+    Map<String, TimeRange> getLatestTimeRangesMapByServer(Server server);
 
-	List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
+    List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
 
 }

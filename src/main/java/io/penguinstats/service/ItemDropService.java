@@ -9,6 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import io.penguinstats.constant.Constant.CacheValue;
 import io.penguinstats.enums.Server;
 import io.penguinstats.model.ItemDrop;
 
@@ -36,19 +37,19 @@ public interface ItemDropService {
 
     List<ItemDrop> getItemDropsByMD5(String md5);
 
-    @Cacheable(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+    @Cacheable(value = CacheValue.TOTAL_STAGE_TIMES_MAP, key = "#server + (#range == null ? '' : ('_' + #range))",
             condition = "#filter == null", sync = true)
     Map<String, Integer> getTotalStageTimesMap(Server server, Long range);
 
-    @CachePut(value = "no-expiry-map", key = "'total-stage-times_' + #server + (#range == null ? '' : ('_' + #range))",
+    @CachePut(value = CacheValue.TOTAL_STAGE_TIMES_MAP, key = "#server + (#range == null ? '' : ('_' + #range))",
             condition = "#filter == null")
     Map<String, Integer> refreshTotalStageTimesMap(Server server, Long range);
 
-    @Cacheable(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null",
+    @Cacheable(value = CacheValue.TOTAL_ITEM_QUANTITIES_MAP, key = "#server", condition = "#filter == null",
             sync = true)
     Map<String, Integer> getTotalItemQuantitiesMap(Server server);
 
-    @CachePut(value = "no-expiry-map", key = "'total-item-quantities_' + #server", condition = "#filter == null")
+    @CachePut(value = CacheValue.TOTAL_ITEM_QUANTITIES_MAP, key = "#server", condition = "#filter == null")
     Map<String, Integer> refreshTotalItemQuantitiesMap(Server server);
 
 }

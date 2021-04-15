@@ -23,69 +23,69 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "The model of a time range.")
 public class TimeRange implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@JsonIgnore
-	private ObjectId id;
-	@Indexed
-	private String rangeID;
-	private Long start;
-	private Long end;
-	private String comment;
+    @Id
+    @JsonIgnore
+    private ObjectId id;
+    @Indexed
+    private String rangeID;
+    private Long start;
+    private Long end;
+    private String comment;
 
-	public TimeRange(Long start, Long end) {
-		this.start = start;
-		this.end = end;
-	}
+    public TimeRange(Long start, Long end) {
+        this.start = start;
+        this.end = end;
+    }
 
-	@JsonIgnore
-	@Override
-	public String toString() {
-		return "[" + this.start + ", " + (this.end == null ? "null" : this.end) + ")";
-	}
+    @JsonIgnore
+    @Override
+    public String toString() {
+        return "[" + this.start + ", " + (this.end == null ? "null" : this.end) + ")";
+    }
 
-	@JsonIgnore
-	public boolean isInclude(TimeRange range) {
-		if (this.start != null && this.start.compareTo(range.getStart()) > 0)
-			return false;
-		if (this.end == null)
-			return true;
-		else {
-			if (range.getEnd() == null)
-				return false;
-			return this.getEnd().compareTo(range.getEnd()) >= 0;
-		}
-	}
+    @JsonIgnore
+    public boolean isInclude(TimeRange range) {
+        if (this.start != null && this.start.compareTo(range.getStart()) > 0)
+            return false;
+        if (this.end == null)
+            return true;
+        else {
+            if (range.getEnd() == null)
+                return false;
+            return this.getEnd().compareTo(range.getEnd()) >= 0;
+        }
+    }
 
-	@JsonIgnore
-	public boolean isIn(Long time) {
-		if (time == null)
-			return false;
-		return this.start.compareTo(time) <= 0 && (this.end == null || this.end.compareTo(time) > 0);
-	}
+    @JsonIgnore
+    public boolean isIn(Long time) {
+        if (time == null)
+            return false;
+        return this.start.compareTo(time) <= 0 && (this.end == null || this.end.compareTo(time) > 0);
+    }
 
-	@JsonIgnore
-	public TimeRange combine(TimeRange range) {
-		if (range.getStart().equals(this.end))
-			return new TimeRange(this.start, range.getEnd());
-		if (this.start.equals(range.getEnd()))
-			return new TimeRange(range.getStart(), this.end);
-		return null;
-	}
+    @JsonIgnore
+    public TimeRange combine(TimeRange range) {
+        if (range.getStart().equals(this.end))
+            return new TimeRange(this.start, range.getEnd());
+        if (this.start.equals(range.getEnd()))
+            return new TimeRange(range.getStart(), this.end);
+        return null;
+    }
 
-	@JsonIgnore
-	public TimeRange intersection(TimeRange range) {
-		Long start1 = this.start == null ? Long.MIN_VALUE : this.start;
-		Long end1 = this.end == null ? Long.MAX_VALUE : this.end;
-		Long start2 = range.getStart() == null ? Long.MIN_VALUE : range.getStart();
-		Long end2 = range.getEnd() == null ? Long.MAX_VALUE : range.getEnd();
-		Long newStart = start1.compareTo(start2) <= 0 ? start2 : start1;
-		Long newEnd = end1.compareTo(end2) >= 0 ? end2 : end1;
-		if (newStart.compareTo(newEnd) >= 0)
-			return null;
-		return new TimeRange(newStart.equals(Long.MIN_VALUE) ? null : newStart,
-				newEnd.equals(Long.MAX_VALUE) ? null : newEnd);
-	}
+    @JsonIgnore
+    public TimeRange intersection(TimeRange range) {
+        Long start1 = this.start == null ? Long.MIN_VALUE : this.start;
+        Long end1 = this.end == null ? Long.MAX_VALUE : this.end;
+        Long start2 = range.getStart() == null ? Long.MIN_VALUE : range.getStart();
+        Long end2 = range.getEnd() == null ? Long.MAX_VALUE : range.getEnd();
+        Long newStart = start1.compareTo(start2) <= 0 ? start2 : start1;
+        Long newEnd = end1.compareTo(end2) >= 0 ? end2 : end1;
+        if (newStart.compareTo(newEnd) >= 0)
+            return null;
+        return new TimeRange(newStart.equals(Long.MIN_VALUE) ? null : newStart,
+                newEnd.equals(Long.MAX_VALUE) ? null : newEnd);
+    }
 
 }
