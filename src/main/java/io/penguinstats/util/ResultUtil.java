@@ -62,7 +62,7 @@ public class ResultUtil {
     @Autowired
     private SystemPropertyService systemPropertyService;
     @Autowired
-    private CookieUtil cookieUtil;
+    private AuthUtil authUtil;
     @Autowired
     private QueryMapper queryMapper;
     @Autowired
@@ -75,7 +75,7 @@ public class ResultUtil {
         resultUtil.dropMatrixElementService = this.dropMatrixElementService;
         resultUtil.patternMatrixElementService = this.patternMatrixElementService;
         resultUtil.systemPropertyService = this.systemPropertyService;
-        resultUtil.cookieUtil = this.cookieUtil;
+        resultUtil.authUtil = this.authUtil;
         resultUtil.queryFactory = this.queryFactory;
     }
 
@@ -84,7 +84,7 @@ public class ResultUtil {
             boolean showClosedZones, String stageFilter, String itemFilter, boolean isPersonal) throws Exception {
         log.info("GET /matrix");
 
-        String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+        String userID = isPersonal ? authUtil.authUserFromRequest(request) : null;
         if (isPersonal && userID == null) {
             return new ResponseEntity<>(new MatrixQueryResponse(new ArrayList<>()), HttpStatus.OK);
         }
@@ -185,7 +185,7 @@ public class ResultUtil {
             boolean isPersonal) throws Exception {
         log.info("GET /pattern");
 
-        String userID = isPersonal ? cookieUtil.readUserIDFromCookie(request) : null;
+        String userID = isPersonal ? authUtil.authUserFromRequest(request) : null;
         if (isPersonal && userID == null) {
             return new ResponseEntity<PatternQueryResponse>(new PatternQueryResponse(new ArrayList<>()), HttpStatus.OK);
         }
@@ -245,12 +245,12 @@ public class ResultUtil {
                     new AdvancedQueryResponse("Too many quiries. Max num is " + maxQueryNum);
             return new ResponseEntity<>(advancedQueryResponse, HttpStatus.BAD_REQUEST);
         }
-        final String userIDFromCookie = cookieUtil.readUserIDFromCookie(request);
+        final String userIDFromRequest = authUtil.authUserFromRequest(request);
         List<BasicQueryResponse> results = new ArrayList<>();
         advancedQueryRequest.getQueries().forEach(singleQuery -> {
             try {
                 Boolean isPersonal = Optional.ofNullable(singleQuery.getIsPersonal()).orElse(false);
-                String userID = isPersonal ? userIDFromCookie : null;
+                String userID = isPersonal ? userIDFromRequest : null;
                 Integer timeout = systemPropertyService.getPropertyIntegerValue(
                         SystemPropertyKey.ADVANCED_QUERY_TIMEOUT, DefaultValue.ADVANCED_QUERY_TIMEOUT);
                 BasicQuery query = queryMapper.queryRequestToQueryModel(singleQuery, userID, timeout);

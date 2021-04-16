@@ -48,6 +48,7 @@ import io.penguinstats.service.ItemDropService;
 import io.penguinstats.service.StageService;
 import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.service.UserService;
+import io.penguinstats.util.AuthUtil;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.HashUtil;
 import io.penguinstats.util.IpUtil;
@@ -81,7 +82,7 @@ public class ReportController {
     private SystemPropertyService systemPropertyService;
 
     @Autowired
-    private CookieUtil cookieUtil;
+    private AuthUtil authUtil;
 
     @Autowired
     private ValidatorFacade validatorFacade;
@@ -98,12 +99,13 @@ public class ReportController {
     public ResponseEntity<SingleReportResponse> saveSingleReport(
             @Valid @RequestBody SingleReportRequest singleReportRequest, HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         if (userID == null) {
             userID = userService.createNewUser(IpUtil.getIpAddr(request));
         }
+        AuthUtil.setUserIDHeader(response, userID);
         try {
-            CookieUtil.setUserIDCookie(response, userID);
+            CookieUtil.setUserIDCookie(request, response, userID);
         } catch (UnsupportedEncodingException e) {
             log.error("Error in handleUserIDFromCookie: uid={}", userID);
         }
@@ -170,13 +172,14 @@ public class ReportController {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Failed to verify timestamp.");
         }
 
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         String ipAddr = IpUtil.getIpAddr(request);
         if (userID == null) {
             userID = userService.createNewUser(ipAddr);
         }
+        AuthUtil.setUserIDHeader(response, userID);
         try {
-            CookieUtil.setUserIDCookie(response, userID);
+            CookieUtil.setUserIDCookie(request, response, userID);
         } catch (UnsupportedEncodingException e) {
             log.error("Error in handleUserIDFromCookie: uid={}", userID);
         }
@@ -199,7 +202,7 @@ public class ReportController {
     public ResponseEntity<String> recallPersonalReport(
             @Valid @RequestBody RecallLastReportRequest recallLastReportRequest, HttpServletRequest request)
             throws Exception {
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         if (userID == null) {
             log.error("Error in recallPersonalReport: Cannot read user ID");
             throw new BusinessException(ErrorCode.BUSINESS_EXCEPTION, "Cannot read user ID");

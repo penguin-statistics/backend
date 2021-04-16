@@ -9,8 +9,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.penguinstats.constant.Constant.CacheKeyPrefix;
+import io.penguinstats.constant.Constant.CacheValue;
 import io.penguinstats.constant.Constant.LastUpdateMapKeyName;
 import io.penguinstats.controller.v2.response.ItemQuantity;
 import io.penguinstats.controller.v2.response.SiteStatsResponse;
@@ -39,71 +38,73 @@ import io.swagger.annotations.ApiParam;
 @Api(tags = {"Website Statistics"})
 public class SiteStatsController {
 
-	@Autowired
-	private ItemDropService itemDropService;
+    @Autowired
+    private ItemDropService itemDropService;
 
-	@Autowired
-	private StageService stageService;
+    @Autowired
+    private StageService stageService;
 
-	@Autowired
-	private CacheManager cacheManager;
+    // FIXME: should create a redis util class
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
-	@ApiOperation(value = "Get statistical data for the website.")
-	@GetMapping(produces = "application/json;charset=UTF-8")
-	public ResponseEntity<SiteStatsResponse>
-			getSiteStats(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
-					required = false) @RequestParam(name = "server", required = false,
-							defaultValue = "CN") Server server) {
-		Cache cache = cacheManager.getCache("no-expiry-map");
-		final long mills_24h = TimeUnit.DAYS.toMillis(1);
+    @ApiOperation(value = "Get statistical data for the website.")
+    @GetMapping(produces = "application/json;charset=UTF-8")
+    public ResponseEntity<SiteStatsResponse>
+            getSiteStats(@ApiParam(value = "Indicate which server you want to query. Default is CN.",
+                    required = false) @RequestParam(name = "server", required = false,
+                            defaultValue = "CN") Server server) {
+        final long mills_24h = TimeUnit.DAYS.toMillis(1);
 
-		List<StageTimes> totalStageTimes = null;
-		Map<String, Integer> totalStageTimesMap = null;
-		if (cache.get(CacheKeyPrefix.TOTAL_STAGE_TIMES + "_" + server) != null) {
-			totalStageTimesMap = itemDropService.getTotalStageTimesMap(server, null);
-			totalStageTimes = totalStageTimesMap.entrySet().stream().map(e -> new StageTimes(e.getKey(), e.getValue()))
-					.collect(Collectors.toList());
-		} else
-			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
+        List<StageTimes> totalStageTimes = null;
+        Map<String, Integer> totalStageTimesMap = null;
+        if (redisTemplate.hasKey(CacheValue.TOTAL_STAGE_TIMES_MAP + "::" + server)) {
+            totalStageTimesMap = itemDropService.getTotalStageTimesMap(server, null);
+            totalStageTimes = totalStageTimesMap.entrySet().stream().map(e -> new StageTimes(e.getKey(), e.getValue()))
+                    .collect(Collectors.toList());
+        } else {
+            return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
+        }
 
-		List<StageTimes> totalStageTimes_24h = null;
-		if (cache.get(CacheKeyPrefix.TOTAL_STAGE_TIMES + "_" + server + "_" + mills_24h) != null) {
-			Map<String, Integer> totalStageTimesMap_24h = itemDropService.getTotalStageTimesMap(server, mills_24h);
-			totalStageTimes_24h = totalStageTimesMap_24h.entrySet().stream()
-					.map(e -> new StageTimes(e.getKey(), e.getValue())).collect(Collectors.toList());
-		} else
-			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
+        List<StageTimes> totalStageTimes_24h = null;
+        if (redisTemplate.hasKey(CacheValue.TOTAL_STAGE_TIMES_MAP + "::" + server + "_" + mills_24h) != null) {
+            Map<String, Integer> totalStageTimesMap_24h = itemDropService.getTotalStageTimesMap(server, mills_24h);
+            totalStageTimes_24h = totalStageTimesMap_24h.entrySet().stream()
+                    .map(e -> new StageTimes(e.getKey(), e.getValue())).collect(Collectors.toList());
+        } else {
+            return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
+        }
 
-		List<ItemQuantity> totalItemQuantities = null;
-		if (cache.get(CacheKeyPrefix.TOTAL_ITEM_QUANTITIES + "_" + server) != null) {
-			Map<String, Integer> totalItemQuantitiesMap = itemDropService.getTotalItemQuantitiesMap(server);
-			totalItemQuantities = totalItemQuantitiesMap.entrySet().stream()
-					.map(e -> new ItemQuantity(e.getKey(), e.getValue())).collect(Collectors.toList());
-		} else
-			return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
+        List<ItemQuantity> totalItemQuantities = null;
+        if (redisTemplate.hasKey(CacheValue.TOTAL_ITEM_QUANTITIES_MAP + "::" + server) != null) {
+            Map<String, Integer> totalItemQuantitiesMap = itemDropService.getTotalItemQuantitiesMap(server);
+            totalItemQuantities = totalItemQuantitiesMap.entrySet().stream()
+                    .map(e -> new ItemQuantity(e.getKey(), e.getValue())).collect(Collectors.toList());
+        } else
+            return new ResponseEntity<SiteStatsResponse>(new SiteStatsResponse("GENERATING"), HttpStatus.OK);
 
-		Integer totalApCost = null;
-		if (totalStageTimesMap != null) {
-			Map<String, Stage> stageMap = stageService.getStageMap();
-			totalApCost = totalStageTimesMap.entrySet().stream().reduce(0,
-					(a, b) -> a + Optional.ofNullable(stageMap.get(b.getKey()))
-							.map(stage -> (Boolean.TRUE.equals(stage.getIsGacha()) ? 0 : stage.getApCost())).orElse(0)
-							* b.getValue(),
-					(a, b) -> a + b);
-		}
+        Integer totalApCost = null;
+        if (totalStageTimesMap != null) {
+            Map<String, Stage> stageMap = stageService.getStageMap();
+            totalApCost = totalStageTimesMap.entrySet().stream().reduce(0,
+                    (a, b) -> a + Optional.ofNullable(stageMap.get(b.getKey()))
+                            .map(stage -> (Boolean.TRUE.equals(stage.getIsGacha()) ? 0 : stage.getApCost())).orElse(0)
+                            * b.getValue(),
+                    (a, b) -> a + b);
+        }
 
-		List<String> keyNames = Arrays.asList(LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server,
-				LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server + "_" + mills_24h,
-				LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
-		Long lastUpdateTime = LastUpdateTimeUtil.findMaxLastUpdateTime(keyNames);
+        List<String> keyNames = Arrays.asList(LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server,
+                LastUpdateMapKeyName.TOTAL_STAGE_TIMES_MAP + "_" + server + "_" + mills_24h,
+                LastUpdateMapKeyName.TOTAL_ITEM_QUANTITIES_MAP + "_" + server);
+        Long lastUpdateTime = LastUpdateTimeUtil.findMaxLastUpdateTime(keyNames);
 
-		HttpHeaders headers = new HttpHeaders();
-		String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
-		headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
+        HttpHeaders headers = new HttpHeaders();
+        String lastModified = DateUtil.formatDate(new Date(lastUpdateTime));
+        headers.add(HttpHeaders.LAST_MODIFIED, lastModified);
 
-		SiteStatsResponse response =
-				new SiteStatsResponse(totalStageTimes, totalStageTimes_24h, totalItemQuantities, totalApCost, null);
-		return new ResponseEntity<SiteStatsResponse>(response, headers, HttpStatus.OK);
-	}
+        SiteStatsResponse response =
+                new SiteStatsResponse(totalStageTimes, totalStageTimes_24h, totalItemQuantities, totalApCost, null);
+        return new ResponseEntity<SiteStatsResponse>(response, headers, HttpStatus.OK);
+    }
 
 }

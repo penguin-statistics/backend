@@ -14,21 +14,21 @@ import lombok.extern.log4j.Log4j2;
 @Component("applicationReadyEventListener")
 public class ApplicationReadyEventListener {
 
-	@Autowired
-	private DropMatrixElementService dropMatrixElementService;
-	@Autowired
-	private PatternMatrixElementService patternMatrixElementService;
+    @Autowired
+    private DropMatrixElementService dropMatrixElementService;
+    @Autowired
+    private PatternMatrixElementService patternMatrixElementService;
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void doSomethingAfterStartup() {
-		log.info("start to load data into cache");
-		for (Server server : Server.values()) {
-			dropMatrixElementService.getGlobalDropMatrixElements(server, false);
-			dropMatrixElementService.getGlobalDropMatrixElements(server, true);
-			dropMatrixElementService.getGlobalTrendElements(server);
-			patternMatrixElementService.getGlobalPatternMatrixElements(server);
-		}
-		log.info("load cache done");
-	}
+    @EventListener(ApplicationReadyEvent.class)
+    public void doSomethingAfterStartup() {
+        log.info("start to load data into cache");
+        for (Server server : Server.values()) {
+            dropMatrixElementService.getGlobalDropMatrixElements(server, false);
+            dropMatrixElementService.getGlobalDropMatrixElements(server, true);
+            dropMatrixElementService.getGlobalTrendElements(server);
+            patternMatrixElementService.getGlobalPatternMatrixElements(server);
+        }
+        log.info("load cache done");
+    }
 
 }

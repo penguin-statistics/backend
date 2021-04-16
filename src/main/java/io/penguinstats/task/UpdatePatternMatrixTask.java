@@ -17,23 +17,23 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UpdatePatternMatrixTask implements Task {
 
-	@Autowired
-	private PatternMatrixElementService patternMatrixElementService;
+    @Autowired
+    private PatternMatrixElementService patternMatrixElementService;
 
-	@Scheduled(fixedRate = 900000, initialDelay = 1200000)
-	@Override
-	public void execute() {
-		log.info("execute UpdatePatternMatrixTask");
+    @Scheduled(fixedRate = 3600000, initialDelay = 2400000)
+    @Override
+    public void execute() {
+        log.info("execute UpdatePatternMatrixTask");
 
-		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> {
-				List<PatternMatrixElement> elements =
-						patternMatrixElementService.generateGlobalPatternMatrixElements(server, null);
-				patternMatrixElementService.batchDelete(server);
-				patternMatrixElementService.batchSave(elements);
-			});
-		}
-	}
+        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+        for (Server server : Server.values()) {
+            singleThreadExecutor.execute(() -> {
+                List<PatternMatrixElement> elements =
+                        patternMatrixElementService.generateGlobalPatternMatrixElements(server, null);
+                patternMatrixElementService.batchDelete(server);
+                patternMatrixElementService.batchSave(elements);
+            });
+        }
+    }
 
 }

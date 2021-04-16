@@ -13,11 +13,12 @@ import io.penguinstats.model.MatrixElement;
 
 public class QueryUtil {
 
-	public static List<? extends MatrixElement> runQuery(Callable<List<? extends MatrixElement>> func, Integer timeout)
-			throws InterruptedException, ExecutionException, TimeoutException {
-		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		Future<List<? extends MatrixElement>> future = singleThreadExecutor.submit(func);
-		return timeout != null ? future.get(timeout, TimeUnit.MINUTES) : future.get();
-	}
+    private static ExecutorService pool = Executors.newFixedThreadPool(5);
+
+    public static List<? extends MatrixElement> runQuery(Callable<List<? extends MatrixElement>> func, Integer timeout)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Future<List<? extends MatrixElement>> future = pool.submit(func);
+        return timeout != null ? future.get(timeout, TimeUnit.MINUTES) : future.get();
+    }
 
 }

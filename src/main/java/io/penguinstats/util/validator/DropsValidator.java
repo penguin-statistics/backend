@@ -34,7 +34,7 @@ public class DropsValidator extends BaseValidator {
             return false;
 
         Map<String, List<DropInfo>> openingDropInfosMap =
-                dropInfoService.getOpeningDropInfosMap(context.getServer(), context.getTimestamp());
+                dropInfoService.getOpeningDropInfosMap(context.getServer(), context.getTimestamp(), true);
 
         if (!openingDropInfosMap.containsKey(context.getStageId())) // the stage was not open at the given timestamp
             return false;
