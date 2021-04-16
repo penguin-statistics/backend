@@ -95,6 +95,7 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
 
         for (int i = 0; i < maxSize; i++) {
+            log.info("generateGlobalDropMatrixElements for server {}... ({}/{})", server, i, maxSize);
             Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
             for (String stageId : convertedMap.keySet()) {
                 List<Entry<String, List<String>>> entries = convertedMap.get(stageId);
@@ -157,7 +158,8 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         Long start = end - range;
         List<DropMatrixElement> result =
                 generateSegmentedDropMatrixElements(server, null, null, start, end, null, interval);
-        log.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
+        log.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms for server {}",
+                System.currentTimeMillis() - end, server);
         return result;
     }
 
