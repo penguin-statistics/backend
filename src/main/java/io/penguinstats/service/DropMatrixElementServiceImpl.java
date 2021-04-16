@@ -95,7 +95,9 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
 
         for (int i = 0; i < maxSize; i++) {
-            log.info("generateGlobalDropMatrixElements for server {}... ({}/{})", server, i, maxSize);
+            if (userID == null) {
+                log.info("generateGlobalDropMatrixElements for server {}... ({}/{})", server, i + 1, maxSize);
+            }
             Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
             for (String stageId : convertedMap.keySet()) {
                 List<Entry<String, List<String>>> entries = convertedMap.get(stageId);

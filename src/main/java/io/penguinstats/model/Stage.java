@@ -1,10 +1,8 @@
 package io.penguinstats.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -31,61 +29,48 @@ import lombok.NoArgsConstructor;
 @ApiModel(description = "The model of a stage.")
 public class Stage implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@JsonIgnore
-	private ObjectId id;
-	private String stageType;
-	@Indexed
-	private String stageId;
-	private String zoneId;
-	private String code;
-	@JsonProperty("code_i18n")
-	private Map<String, String> codeMap;
-	private Integer apCost;
-	private Boolean isGacha;
-	@Transient
-	private List<DropInfo> dropInfos;
-	private List<String> normalDrop;
-	private List<String> specialDrop;
-	private List<String> extraDrop;
-	private Map<Server, Existence> existence;
-	@ApiModelProperty(notes = "The shortest time that one stage can be finished. Time unit is millisecond.")
-	private Integer minClearTime;
-	@JsonProperty("alias")
-	private Map<String, List<String>> aliasMap;
-	@JsonProperty("pron")
-	private Map<String, List<String>> pronMap;
-	private List<String> recognitionOnly;
+    @Id
+    @JsonIgnore
+    private ObjectId id;
+    private String stageType;
+    @Indexed
+    private String stageId;
+    private String zoneId;
+    private String code;
+    @JsonProperty("code_i18n")
+    private Map<String, String> codeMap;
+    private Integer apCost;
+    private Boolean isGacha;
+    @Transient
+    private List<DropInfo> dropInfos;
+    private List<String> normalDrop;
+    private List<String> specialDrop;
+    private List<String> extraDrop;
+    private Map<Server, Existence> existence;
+    @ApiModelProperty(notes = "The shortest time that one stage can be finished. Time unit is millisecond.")
+    private Integer minClearTime;
+    @JsonProperty("alias")
+    private Map<String, List<String>> aliasMap;
+    @JsonProperty("pron")
+    private Map<String, List<String>> pronMap;
+    private List<String> recognitionOnly;
 
-	@JsonIgnore
-	public Set<String> getDropsSet() {
-		Set<String> set = new HashSet<>();
-		if (this.normalDrop != null)
-			set.addAll(this.normalDrop);
-		if (this.specialDrop != null)
-			set.addAll(this.specialDrop);
-		if (this.extraDrop != null)
-			set.addAll(this.extraDrop);
-		set.add("furni");
-		return set;
-	}
+    @JsonIgnore
+    public Stage toLegacyView() {
+        this.dropInfos = null;
+        this.aliasMap = null;
+        this.pronMap = null;
+        return this;
+    }
 
-	@JsonIgnore
-	public Stage toLegacyView() {
-		this.dropInfos = null;
-		this.aliasMap = null;
-		this.pronMap = null;
-		return this;
-	}
-
-	@JsonIgnore
-	public Stage toNewView() {
-		this.normalDrop = null;
-		this.specialDrop = null;
-		this.extraDrop = null;
-		return this;
-	}
+    @JsonIgnore
+    public Stage toNewView() {
+        this.normalDrop = null;
+        this.specialDrop = null;
+        this.extraDrop = null;
+        return this;
+    }
 
 }
