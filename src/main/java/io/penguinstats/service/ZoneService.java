@@ -7,21 +7,23 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 
+import io.penguinstats.constant.Constant.CacheValue;
 import io.penguinstats.model.Zone;
 
 public interface ZoneService {
 
-	@Caching(evict = {@CacheEvict(value = "lists", key = "'zoneList'"), @CacheEvict(value = "maps", key = "'zoneMap'")})
-	void saveZone(Zone zone);
+    @Caching(evict = {@CacheEvict(value = CacheValue.LISTS, key = "'zoneList'"),
+            @CacheEvict(value = CacheValue.MAPS, key = "'zoneMap'")})
+    void saveZone(Zone zone);
 
-	Zone getZoneByZoneId(String zoneId);
+    Zone getZoneByZoneId(String zoneId);
 
-	Zone getZoneByStageId(String stageId);
+    Zone getZoneByStageId(String stageId);
 
-	@Cacheable(value = "lists", key = "'zoneList'")
-	List<Zone> getAllZones();
+    @Cacheable(value = CacheValue.LISTS, key = "'zoneList'")
+    List<Zone> getAllZones();
 
-	@Cacheable(value = "maps", key = "'zoneMap'")
-	Map<String, Zone> getZoneMap();
+    @Cacheable(value = CacheValue.MAPS, key = "'zoneMap'")
+    Map<String, Zone> getZoneMap();
 
 }

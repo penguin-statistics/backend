@@ -19,6 +19,7 @@ public class Constant {
     public static class CustomHeader {
         public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
         public static final String X_PENGUIN_COMPATIBLE = "X-Penguin-Compatible";
+        public static final String X_PENGUIN_SET_PENGUIN_ID = "X-Penguin-Set-PenguinID";
     }
 
     public static class SystemPropertyKey {
@@ -40,10 +41,6 @@ public class Constant {
         public static final String OUTLIER_IMG_USERNAME = "outlier_img_username";
         public static final String OUTLIER_IMG_PASSWORD = "outlier_img_password";
         public static final String OUTLIER_IMG_EXPIRATION = "outlier_img_expiration";
-    }
-
-    public static class CacheName {
-        public static final String NO_EXPIRY_MAP = "no-expiry-map";
     }
 
     public static class CacheKeyPrefix {
@@ -84,6 +81,26 @@ public class Constant {
     public static class UserTag {
         public static final String TESTER = "tester";
         public static final String BANNED = "banned";
+    }
+
+    public static class CacheValue {
+        public static final String USERS = "users";
+        public static final String DROP_MATRIX = "drop_matrix";
+        public static final String SEGMENTED_DROP_MATRIX = "segmented_drop_matrix";
+        public static final String PATTERN_MATRIX = "pattern_matrix";
+        public static final String DROP_INFO_LIST = "drop_info_list";
+        public static final String DROP_SET = "drop_set";
+        public static final String LATEST_DROP_INFO_MAP = "latest_drop_info_map";
+        public static final String LATEST_MAX_ACCUMULATABLE_TIME_RANGE_MAP = "latest_max_accumulatable_time_range_map";
+        public static final String LATEST_TIME_RANGE_MAP = "latest_time_range_map";
+        public static final String TOTAL_STAGE_TIMES_MAP = "total_stage_times_map";
+        public static final String TOTAL_ITEM_QUANTITIES_MAP = "total_item_quantities_map";
+        public static final String LISTS = "lists";
+        public static final String MAPS = "maps";
+    }
+
+    public static class Auth {
+        public static final String AUTHORIZATION_REALM_PENGUIN_ID = "PenguinID";
     }
 
 }

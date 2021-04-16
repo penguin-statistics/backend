@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import io.penguinstats.controller.v2.response.ErrorResponseWrapper;
 import io.penguinstats.enums.ErrorCode;
-import io.penguinstats.util.CookieUtil;
+import io.penguinstats.util.AuthUtil;
 import io.penguinstats.util.ValidationUtil;
 import io.penguinstats.util.exception.BusinessException;
 import io.penguinstats.util.exception.ServiceException;
@@ -26,12 +26,12 @@ public class RestExceptionHandler {
     private static final String SERVICE_UNAVAILABLE = "Service unavailable, you can report to penguin-statistics.";
 
     @Autowired
-    private CookieUtil cookieUtil;
+    private AuthUtil authUtil;
 
     @ExceptionHandler({BusinessException.class})
     public ResponseEntity<ErrorResponseWrapper> handleBusinessException(BusinessException ex,
             HttpServletRequest request) {
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         log.info("business exception: uid={} msg={}", userID, ex.getMessage());
 
         ErrorResponseWrapper errorResponse = new ErrorResponseWrapper(
@@ -54,7 +54,7 @@ public class RestExceptionHandler {
                     .fieldErrorToString((((MethodArgumentNotValidException)ex).getBindingResult().getFieldErrors()));
             apiResponse.setMessage(validationErrorStr);
         }
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         log.info("validation error: uid={} validationInfo={}", userID, validationErrorStr);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(apiResponse);

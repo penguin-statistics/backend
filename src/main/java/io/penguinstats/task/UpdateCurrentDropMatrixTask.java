@@ -18,23 +18,23 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UpdateCurrentDropMatrixTask implements Task {
 
-	@Autowired
-	private DropMatrixElementService dropMatrixElementService;
+    @Autowired
+    private DropMatrixElementService dropMatrixElementService;
 
-	@Scheduled(fixedRate = 900000, initialDelay = 600000)
-	@Override
-	public void execute() {
-		log.info("execute UpdateCurrentDropMatrixTask");
+    @Scheduled(fixedRate = 3600000, initialDelay = 600000)
+    @Override
+    public void execute() {
+        log.info("execute UpdateCurrentDropMatrixTask");
 
-		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> {
-				List<DropMatrixElement> elements =
-						dropMatrixElementService.generateGlobalDropMatrixElements(server, null, false);
-				dropMatrixElementService.batchDelete(DropMatrixElementType.REGULAR, server, false);
-				dropMatrixElementService.batchSave(elements);
-			});
-		}
-	}
+        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+        for (Server server : Server.values()) {
+            singleThreadExecutor.execute(() -> {
+                List<DropMatrixElement> elements =
+                        dropMatrixElementService.generateGlobalDropMatrixElements(server, null, false);
+                dropMatrixElementService.batchDelete(DropMatrixElementType.REGULAR, server, false);
+                dropMatrixElementService.batchSave(elements);
+            });
+        }
+    }
 
 }

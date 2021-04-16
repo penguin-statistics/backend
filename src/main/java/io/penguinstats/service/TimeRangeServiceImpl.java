@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -85,11 +84,10 @@ public class TimeRangeServiceImpl implements TimeRangeService {
      *               D does not affect drop rates, so data from Range IV can be combined with II, III and V.
      *               So the longest, and accumulatable time ranges are: II, III, IV and V.
      * @param server
-     * @return Map<String, List<Pair<String, List<TimeRange>>>>
+     * @return Map<String, Map<String, List<String>>>
      */
     @Override
-    public Map<String, List<Pair<String, List<TimeRange>>>>
-            getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
+    public Map<String, Map<String, List<String>>> getLatestMaxAccumulatableTimeRangesMapByServer(Server server) {
         Map<String, TimeRange> timeRangeMap = getSpringProxy().getTimeRangeMap();
         List<DropInfo> infos = dropInfoService.getDropInfosByServer(server);
         infos.forEach(info -> {
@@ -101,9 +99,11 @@ public class TimeRangeServiceImpl implements TimeRangeService {
         Map<String, List<DropInfo>> infosMapStageId =
                 infos.stream().filter(info -> DropType.RECOGNITION_ONLY != info.getDropType())
                         .collect(groupingBy(DropInfo::getStageId));
-        Map<String, List<Pair<String, List<TimeRange>>>> result = new HashMap<>();
+
+        Map<String, Map<String, List<String>>> result = new HashMap<>();
+
         infosMapStageId.forEach((stageId, infosInOneStage) -> {
-            List<Pair<String, List<TimeRange>>> itemTimeRanges = result.getOrDefault(stageId, new ArrayList<>());
+            Map<String, List<String>> timeRangeIDsMapItemId = result.getOrDefault(stageId, new HashMap<>());
             infosInOneStage = infosInOneStage.stream().filter(info -> info.getItemId() != null).collect(toList());
             Map<String, List<DropInfo>> infosMapByItemId =
                     infosInOneStage.stream().collect(groupingBy(DropInfo::getItemId));
@@ -117,12 +117,11 @@ public class TimeRangeServiceImpl implements TimeRangeService {
 
                 List<DropInfo> accumulatableInfos = pointer >= infosForOneItem.size() ? new ArrayList<>()
                         : new ArrayList<>(infosForOneItem.subList(pointer + 1, infosForOneItem.size()));
-                List<TimeRange> rangesForOneItem =
-                        accumulatableInfos.stream().map(DropInfo::getTimeRange).distinct().collect(toList());
-                Pair<String, List<TimeRange>> itemWithRange = Pair.with(itemId, rangesForOneItem);
-                itemTimeRanges.add(itemWithRange);
+                List<String> timeRangeIDsForOneItem =
+                        accumulatableInfos.stream().map(DropInfo::getTimeRangeID).distinct().collect(toList());
+                timeRangeIDsMapItemId.put(itemId, timeRangeIDsForOneItem);
             });
-            result.put(stageId, itemTimeRanges);
+            result.put(stageId, timeRangeIDsMapItemId);
         });
         return result;
     }

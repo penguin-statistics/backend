@@ -8,15 +8,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.Document;
-import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,43 +74,51 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
     public List<DropMatrixElement> generateGlobalDropMatrixElements(Server server, String userID, boolean isPast) {
         Long startTime = System.currentTimeMillis();
 
-        Map<String, List<Pair<String, List<TimeRange>>>> latestMaxAccumulatableTimeRangesMap =
+        Map<String, Map<String, List<String>>> latestMaxAccumulatableTimeRangesMap =
                 timeRangeService.getLatestMaxAccumulatableTimeRangesMapByServer(server);
 
-        Integer maxSize = 0;
-        Map<String, List<Pair<TimeRange, List<String>>>> convertedMap = new HashMap<>();
+        Map<String, TimeRange> allTimeRangesMap = timeRangeService.getTimeRangeMap();
+
+        int maxSize = 0;
+        Map<String, List<Entry<String, List<String>>>> convertedMap = new HashMap<>();
         for (String stageId : latestMaxAccumulatableTimeRangesMap.keySet()) {
-            List<Pair<String, List<TimeRange>>> pairs = latestMaxAccumulatableTimeRangesMap.get(stageId);
-            List<Pair<TimeRange, List<String>>> subList =
-                    convertItemIdBasedTimeRangesToTimeRangeBasedItemIds(pairs, isPast);
-            convertedMap.put(stageId, subList);
-            if (maxSize < subList.size())
-                maxSize = subList.size();
+            Map<String, List<String>> timeRangeIDsMapItemId = latestMaxAccumulatableTimeRangesMap.get(stageId);
+            Map<String, List<String>> itemIdsMapTimeRangeID = convertItemIdBasedTimeRangesToTimeRangeBasedItemIds(
+                    timeRangeIDsMapItemId, allTimeRangesMap, isPast);
+            convertedMap.put(stageId, new ArrayList<>(itemIdsMapTimeRangeID.entrySet()));
+            int timeRangeNums = itemIdsMapTimeRangeID.keySet().size();
+            if (maxSize < timeRangeNums)
+                maxSize = timeRangeNums;
         }
 
         List<String> userIDs = userID != null ? Collections.singletonList(userID) : new ArrayList<>();
         Map<String, Map<String, List<DropMatrixElement>>> allElementsMap = new HashMap<>();
 
         for (int i = 0; i < maxSize; i++) {
+            if (userID == null) {
+                log.info("generateGlobalDropMatrixElements for server {}... ({}/{})", server, i + 1, maxSize);
+            }
             Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
             for (String stageId : convertedMap.keySet()) {
-                List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
-                if (i >= pairs.size())
+                List<Entry<String, List<String>>> entries = convertedMap.get(stageId);
+                if (i >= entries.size())
                     continue;
-                Pair<TimeRange, List<String>> pair = pairs.get(i);
-                TimeRange range = pair.getValue0();
-                timeRangeMap.put(stageId, Collections.singletonList(range));
+                Entry<String, List<String>> entry = entries.get(i);
+                TimeRange range = allTimeRangesMap.get(entry.getKey());
+                if (range != null) {
+                    timeRangeMap.put(stageId, Collections.singletonList(range));
+                }
             }
             List<DropMatrixElement> elements = generateDropMatrixElementsFromTimeRangeMapByStageId(server, timeRangeMap,
                     new ArrayList<>(), userIDs, isPast);
 
             for (String stageId : convertedMap.keySet()) {
                 Map<String, List<DropMatrixElement>> subMap = allElementsMap.getOrDefault(stageId, new HashMap<>());
-                List<Pair<TimeRange, List<String>>> pairs = convertedMap.get(stageId);
-                if (i >= pairs.size())
+                List<Entry<String, List<String>>> entries = convertedMap.get(stageId);
+                if (i >= entries.size())
                     continue;
-                Pair<TimeRange, List<String>> pair = pairs.get(i);
-                Set<String> itemIdSet = new HashSet<>(pair.getValue1());
+                Entry<String, List<String>> entry = entries.get(i);
+                Set<String> itemIdSet = new HashSet<>(entry.getValue());
                 List<DropMatrixElement> filteredElements = elements.stream()
                         .filter(el -> el.getStageId().equals(stageId) && itemIdSet.contains(el.getItemId()))
                         .collect(toList());
@@ -153,7 +160,8 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         Long start = end - range;
         List<DropMatrixElement> result =
                 generateSegmentedDropMatrixElements(server, null, null, start, end, null, interval);
-        log.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms", System.currentTimeMillis() - end);
+        log.info("generateSegmentedGlobalDropMatrixElementMap done in {} ms for server {}",
+                System.currentTimeMillis() - end, server);
         return result;
     }
 
@@ -169,26 +177,24 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
             return generateSegmentedDropMatrixElements(server, stageId, itemIds, start, end, userIDs, interval);
     }
 
-    private List<Pair<TimeRange, List<String>>> convertItemIdBasedTimeRangesToTimeRangeBasedItemIds(
-            List<Pair<String, List<TimeRange>>> pairs, boolean isPast) {
-        List<Pair<TimeRange, List<String>>> subList = new ArrayList<>();
-        Map<TimeRange, List<String>> subMap = new HashMap<>();
-        pairs.forEach(pair -> {
-            String itemId = pair.getValue0();
-            List<TimeRange> ranges = pair.getValue1();
-            Iterator<TimeRange> iter = ranges.iterator();
-            while (iter.hasNext()) {
-                TimeRange range = iter.next();
+    private Map<String, List<String>> convertItemIdBasedTimeRangesToTimeRangeBasedItemIds(
+            Map<String, List<String>> timeRangeIDsMapItemId, Map<String, TimeRange> timeRangeMap, boolean isPast) {
+        Map<String, List<String>> result = new HashMap<>();
+        timeRangeIDsMapItemId.forEach((itemId, timeRangeIDs) -> {
+            for (String timeRangeID : timeRangeIDs) {
+                TimeRange range = timeRangeMap.get(timeRangeID);
+                if (range == null) {
+                    continue;
+                }
                 boolean isCurrentTimeInRange = range.isIn(System.currentTimeMillis());
                 if (isPast && isCurrentTimeInRange || !isPast && !isCurrentTimeInRange)
                     continue;
-                List<String> itemIds = subMap.getOrDefault(range, new ArrayList<>());
+                List<String> itemIds = result.getOrDefault(timeRangeID, new ArrayList<>());
                 itemIds.add(itemId);
-                subMap.put(range, itemIds);
+                result.put(timeRangeID, itemIds);
             }
         });
-        subMap.forEach((range, itemIds) -> subList.add(Pair.with(range, itemIds)));
-        return subList;
+        return result;
     }
 
     private List<DropMatrixElement> generateDropMatrixElementsFromTimeRangeMapByStageId(Server server,
