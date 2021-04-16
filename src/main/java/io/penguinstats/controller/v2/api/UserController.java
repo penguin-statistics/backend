@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.penguinstats.enums.ErrorCode;
 import io.penguinstats.model.User;
 import io.penguinstats.service.UserService;
+import io.penguinstats.util.AuthUtil;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.exception.BusinessException;
@@ -55,6 +56,7 @@ public class UserController {
                 throw new BusinessException(ErrorCode.NOT_FOUND, String.format("user not found: uid=%s", userID));
             }
         }
+        AuthUtil.setUserIDHeader(response, userID);
         CookieUtil.setUserIDCookie(request, response, userID);
         return new ResponseEntity<>(new JSONObject().put("userID", userID).toString(), HttpStatus.OK);
     }

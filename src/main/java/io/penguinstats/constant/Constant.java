@@ -19,6 +19,7 @@ public class Constant {
     public static class CustomHeader {
         public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
         public static final String X_PENGUIN_COMPATIBLE = "X-Penguin-Compatible";
+        public static final String X_PENGUIN_SET_PENGUIN_ID = "X-Penguin-Set-PenguinID";
     }
 
     public static class SystemPropertyKey {
@@ -96,6 +97,10 @@ public class Constant {
         public static final String TOTAL_ITEM_QUANTITIES_MAP = "total_item_quantities_map";
         public static final String LISTS = "lists";
         public static final String MAPS = "maps";
+    }
+
+    public static class Auth {
+        public static final String AUTHORIZATION_REALM_PENGUIN_ID = "PenguinID";
     }
 
 }

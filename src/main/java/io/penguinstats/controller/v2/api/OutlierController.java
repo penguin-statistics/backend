@@ -31,6 +31,7 @@ import io.penguinstats.model.Outlier;
 import io.penguinstats.service.OutlierService;
 import io.penguinstats.service.SystemPropertyService;
 import io.penguinstats.service.UserService;
+import io.penguinstats.util.AuthUtil;
 import io.penguinstats.util.CookieUtil;
 import io.penguinstats.util.IpUtil;
 import io.penguinstats.util.JSONUtil;
@@ -57,7 +58,7 @@ public class OutlierController {
     private SystemPropertyService systemPropertyService;
 
     @Autowired
-    private CookieUtil cookieUtil;
+    private AuthUtil authUtil;
 
     @ApiOperation(value = "Submit an outlier")
     @PostMapping
@@ -67,10 +68,11 @@ public class OutlierController {
             throw new BusinessException(ErrorCode.INVALID_PARAMETER, "Invalid metadata.");
         }
 
-        String userID = cookieUtil.readUserIDFromCookie(request);
+        String userID = authUtil.authUserFromRequest(request);
         if (userID == null) {
             userID = userService.createNewUser(IpUtil.getIpAddr(request));
         }
+        AuthUtil.setUserIDHeader(response, userID);
         try {
             CookieUtil.setUserIDCookie(request, response, userID);
         } catch (UnsupportedEncodingException e) {
