@@ -17,6 +17,8 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UpdatePatternMatrixTask implements Task {
 
+    private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+
     @Autowired
     private PatternMatrixElementService patternMatrixElementService;
 
@@ -25,7 +27,6 @@ public class UpdatePatternMatrixTask implements Task {
     public void execute() {
         log.info("execute UpdatePatternMatrixTask");
 
-        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
         for (Server server : Server.values()) {
             singleThreadExecutor.execute(() -> {
                 List<PatternMatrixElement> elements =

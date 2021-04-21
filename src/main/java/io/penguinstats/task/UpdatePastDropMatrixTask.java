@@ -18,15 +18,16 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UpdatePastDropMatrixTask implements Task {
 
+    private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+
     @Autowired
     private DropMatrixElementService dropMatrixElementService;
 
-    @Scheduled(fixedRate = 43200000, initialDelay = 3300000)
+    @Scheduled(fixedRate = 64845000, initialDelay = 3456789)
     @Override
     public void execute() {
         log.info("execute UpdatePastDropMatrixTask");
 
-        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
         for (Server server : Server.values()) {
             singleThreadExecutor.execute(() -> {
                 List<DropMatrixElement> elements =

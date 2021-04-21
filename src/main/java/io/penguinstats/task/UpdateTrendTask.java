@@ -18,23 +18,24 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UpdateTrendTask implements Task {
 
-	@Autowired
-	private DropMatrixElementService dropMatrixElementService;
+    private static ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
 
-	@Scheduled(fixedRate = 86400000, initialDelay = 300000)
-	@Override
-	public void execute() {
-		log.info("execute UpdateTrendTask");
+    @Autowired
+    private DropMatrixElementService dropMatrixElementService;
 
-		ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
-		for (Server server : Server.values()) {
-			singleThreadExecutor.execute(() -> {
-				List<DropMatrixElement> elements =
-						dropMatrixElementService.generateDefaultSegmentedGlobalDropMatrixElements(server);
-				dropMatrixElementService.batchDelete(DropMatrixElementType.TREND, server, null);
-				dropMatrixElementService.batchSave(elements);
-			});
-		}
-	}
+    @Scheduled(fixedRate = 86400000, initialDelay = 300000)
+    @Override
+    public void execute() {
+        log.info("execute UpdateTrendTask");
+
+        for (Server server : Server.values()) {
+            singleThreadExecutor.execute(() -> {
+                List<DropMatrixElement> elements =
+                        dropMatrixElementService.generateDefaultSegmentedGlobalDropMatrixElements(server);
+                dropMatrixElementService.batchDelete(DropMatrixElementType.TREND, server, null);
+                dropMatrixElementService.batchSave(elements);
+            });
+        }
+    }
 
 }
