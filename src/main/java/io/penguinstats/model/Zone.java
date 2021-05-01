@@ -49,6 +49,7 @@ public class Zone implements Serializable {
     @JsonProperty("pron")
     private Map<String, List<String>> pronMap;
     private String background;
+    private Boolean isReplica;
 
     @JsonIgnore
     public boolean isInTimeRange(long timestamp) {
