@@ -19,59 +19,59 @@ import io.penguinstats.model.Zone;
 @SpringBootTest
 public class ZoneServiceTest {
 
-	private static final String TEST_ZONE_ID_1 = "test_zone_id_1";
-	private static final String TEST_ZONE_ID_2 = "test_zone_id_2";
+    private static final String TEST_ZONE_ID_1 = "test_zone_id_1";
+    private static final String TEST_ZONE_ID_2 = "test_zone_id_2";
 
-	@Autowired
-	private ZoneDao zoneDao;
-	@Autowired
-	private ZoneService zoneService;
+    @Autowired
+    private ZoneDao zoneDao;
+    @Autowired
+    private ZoneService zoneService;
 
-	private List<Zone> newZones = new ArrayList<>();
+    private List<Zone> newZones = new ArrayList<>();
 
-	@Before
-	public void setUp() {
-		this.newZones.add(zoneDao.save(new Zone(null, TEST_ZONE_ID_1, 0, "TEST", "test1", null, null, new ArrayList<>(),
-				null, null, null, null, null)));
-		this.newZones.add(zoneDao.save(new Zone(null, TEST_ZONE_ID_2, 0, "TEST", "test1", null, null, new ArrayList<>(),
-				null, null, null, null, null)));
-	}
+    @Before
+    public void setUp() {
+        this.newZones.add(zoneDao.save(new Zone(null, TEST_ZONE_ID_1, 0, "TEST", null, "test1", null, null,
+                new ArrayList<>(), null, null, null, null, null)));
+        this.newZones.add(zoneDao.save(new Zone(null, TEST_ZONE_ID_2, 0, "TEST", null, "test1", null, null,
+                new ArrayList<>(), null, null, null, null, null)));
+    }
 
-	@After
-	public void tearDown() {
-		for (Zone zone : this.newZones) {
-			zoneDao.delete(zone);
-		}
-		this.newZones.clear();
-	}
+    @After
+    public void tearDown() {
+        for (Zone zone : this.newZones) {
+            zoneDao.delete(zone);
+        }
+        this.newZones.clear();
+    }
 
-	@Test
-	public void testGetZoneByZoneId() {
-		Zone zone = zoneService.getZoneByZoneId(TEST_ZONE_ID_1);
-		assert (TEST_ZONE_ID_1.equals(zone.getZoneId()));
-	}
+    @Test
+    public void testGetZoneByZoneId() {
+        Zone zone = zoneService.getZoneByZoneId(TEST_ZONE_ID_1);
+        assert (TEST_ZONE_ID_1.equals(zone.getZoneId()));
+    }
 
-	@Test
-	public void testGetAllZones() {
-		List<Zone> zones = zoneService.getAllZones();
-		int token = 2;
-		for (Zone zone : zones) {
-			if (TEST_ZONE_ID_1.equals(zone.getZoneId()) || TEST_ZONE_ID_2.equals(zone.getZoneId()))
-				token--;
-		}
-		assert (token == 0);
-	}
+    @Test
+    public void testGetAllZones() {
+        List<Zone> zones = zoneService.getAllZones();
+        int token = 2;
+        for (Zone zone : zones) {
+            if (TEST_ZONE_ID_1.equals(zone.getZoneId()) || TEST_ZONE_ID_2.equals(zone.getZoneId()))
+                token--;
+        }
+        assert (token == 0);
+    }
 
-	@Test
-	public void testGetZoneMap() {
-		Map<String, Zone> zoneMap = zoneService.getZoneMap();
-		int token = this.newZones.size();
-		for (Zone zone : this.newZones) {
-			Zone zoneInMap = zoneMap.get(zone.getZoneId());
-			if (zoneInMap != null && zone.getId().equals(zoneInMap.getId()))
-				token--;
-		}
-		assert (token == 0);
-	}
+    @Test
+    public void testGetZoneMap() {
+        Map<String, Zone> zoneMap = zoneService.getZoneMap();
+        int token = this.newZones.size();
+        for (Zone zone : this.newZones) {
+            Zone zoneInMap = zoneMap.get(zone.getZoneId());
+            if (zoneInMap != null && zone.getId().equals(zoneInMap.getId()))
+                token--;
+        }
+        assert (token == 0);
+    }
 
 }
