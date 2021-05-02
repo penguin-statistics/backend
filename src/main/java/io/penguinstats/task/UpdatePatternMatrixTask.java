@@ -22,7 +22,7 @@ public class UpdatePatternMatrixTask implements Task {
     @Autowired
     private PatternMatrixElementService patternMatrixElementService;
 
-    @Scheduled(fixedRate = 3600000, initialDelay = 2400000)
+    @Scheduled(fixedRate = 3600000, initialDelay = 1200000)
     @Override
     public void execute() {
         log.info("execute UpdatePatternMatrixTask");

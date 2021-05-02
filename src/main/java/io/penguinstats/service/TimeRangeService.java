@@ -33,4 +33,6 @@ public interface TimeRangeService {
 
     List<TimeRange> getSplittedTimeRanges(Server server, String stageId, Long start, Long end);
 
+    List<TimeRange> getPassedTimeRanges(long time);
+
 }
