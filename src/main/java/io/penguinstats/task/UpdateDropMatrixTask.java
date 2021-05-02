@@ -41,9 +41,6 @@ public class UpdateDropMatrixTask implements Task {
         List<TimeRange> timeRanges = timeRangeService.getPassedTimeRanges(TimeUnit.HOURS.toMillis(1L));
 
         for (Server server : Server.values()) {
-            if (server != Server.CN) {
-                continue;
-            }
             for (TimeRange range : timeRanges) {
                 List<DropInfo> infos = dropInfoService.getDropInfosByServerAndTimeRangeID(server, range.getRangeID());
                 Set<String> dirtyStageIds = infos.stream().map(DropInfo::getStageId).collect(Collectors.toSet());
