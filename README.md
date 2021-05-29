@@ -34,12 +34,15 @@ Our contribute guideline can be found at [Penguin Developers](https://developer.
 ## Preparations
 1. Install Maven
 2. Install [Lombok](https://projectlombok.org/) plugin for your IDE
-3. (Optional) Install MongoDB
-4. (Optional) If you choose to run MongoDB locally, feel free to contact our team for the dumped testing file, execute the following command to import them:
+3. Install MongoDB
+4. If you choose to run MongoDB locally, feel free to contact our team for the dumped testing file, execute the following command to import them:
 ```
 mongorestore -h localhost:<your mongodb port> -d penguin_stats <path of penguin_stats directory>
 ```
 5. Edit `src/main/resources/application.yml`，change the value of `username` and `password` in `spring.data.mongodb.uri` according to your settings.
+6. Install Redis
+7. Set user and index for Redis
+8. Edit `src/main/resources/application.yml`, change the value of `host`, `port`, `password` and `database` in `spring.redis` according to your settings.
 
 ## Run
 1. Execute `mvn spring-boot:run` in the root directory of this project. Or run the main method in `PenguinStatisticsApplication` class.
