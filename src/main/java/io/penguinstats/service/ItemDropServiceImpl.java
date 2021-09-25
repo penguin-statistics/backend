@@ -54,7 +54,7 @@ public class ItemDropServiceImpl implements ItemDropService {
 
     @Override
     public void recallItemDrop(String userID, String itemDropHashId) throws Exception {
-        Pageable pageable = PageRequest.of(0, 1, new Sort(Sort.Direction.DESC, "timestamp"));
+        Pageable pageable = PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "timestamp"));
         List<ItemDrop> itemDropList = getVisibleItemDropsByUserID(userID, pageable).getContent();
         if (itemDropList.size() == 0) {
             throw new BusinessException(ErrorCode.NOT_FOUND,

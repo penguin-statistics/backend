@@ -25,7 +25,7 @@ public class EventPeriodServiceImpl implements EventPeriodService {
 
 	@Override
 	public List<EventPeriod> getAllSortedEventPeriod() {
-		List<EventPeriod> result = eventPeriodDao.findAll(new Sort(Direction.ASC, "start"));
+		List<EventPeriod> result = eventPeriodDao.findAll(Sort.by(Direction.ASC, "start"));
 		LastUpdateTimeUtil.setCurrentTimestamp(LastUpdateMapKeyName.EVENT_PERIOD_LIST);
 		return result;
 	}
