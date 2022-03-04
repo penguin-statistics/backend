@@ -20,6 +20,7 @@ public class Constant {
         public static final String X_PENGUIN_UPGRAGE = "X-Penguin-Upgrade";
         public static final String X_PENGUIN_COMPATIBLE = "X-Penguin-Compatible";
         public static final String X_PENGUIN_SET_PENGUIN_ID = "X-Penguin-Set-PenguinID";
+        public static final String X_PENGUIN_VARIANT = "X-Penguin-Variant";
     }
 
     public static class SystemPropertyKey {

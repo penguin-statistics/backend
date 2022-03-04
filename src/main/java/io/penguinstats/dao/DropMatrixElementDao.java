@@ -14,10 +14,14 @@ import io.penguinstats.model.DropMatrixElement;
 @Repository
 public interface DropMatrixElementDao extends MongoRepository<DropMatrixElement, String> {
 
-	@DeleteQuery("{'$and' : [{'type' : ?0}, {'isPast' : ?1}, {'server' : ?2}]}")
-	Long deleteAllByIsPastAndServer(DropMatrixElementType type, Boolean isPast, Server server);
+    @DeleteQuery("{'$and' : [{'type' : ?0}, {'isPast' : ?1}, {'server' : ?2}]}")
+    Long deleteAllByIsPastAndServer(DropMatrixElementType type, Boolean isPast, Server server);
 
-	@Query("{'$and' : [{'type' : ?0}, {'isPast' : ?1}, {'server' : ?2}]}")
-	List<DropMatrixElement> queryByTypeAndIsPastAndServer(DropMatrixElementType type, Boolean isPast, Server server);
+    @DeleteQuery("{'$and' : [{'type' : ?0}, {'isPast' : ?1}, {'server' : ?2}, {'stageId' : ?3}]}")
+    Long deleteAllByIsPastAndServerAndStageId(DropMatrixElementType type, Boolean isPast, Server server,
+            String stageId);
+
+    @Query("{'$and' : [{'type' : ?0}, {'isPast' : ?1}, {'server' : ?2}]}")
+    List<DropMatrixElement> queryByTypeAndIsPastAndServer(DropMatrixElementType type, Boolean isPast, Server server);
 
 }

@@ -29,6 +29,7 @@ import io.penguinstats.model.DropMatrixElement;
 import io.penguinstats.model.QueryConditions;
 import io.penguinstats.model.TimeRange;
 import io.penguinstats.util.DropMatrixElementUtil;
+import io.penguinstats.util.misc.DirtyStages;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -50,6 +51,9 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
     @Autowired
     private SystemPropertyService systemPropertyService;
 
+    @Autowired
+    private DirtyStages dirtyStages;
+
     @Override
     public void batchSave(Collection<DropMatrixElement> elements) {
         dropMatrixElementDao.saveAll(elements);
@@ -58,6 +62,11 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
     @Override
     public void batchDelete(DropMatrixElementType type, Server server, Boolean isPast) {
         dropMatrixElementDao.deleteAllByIsPastAndServer(type, isPast, server);
+    }
+
+    @Override
+    public void batchDeleteByStageId(DropMatrixElementType type, Server server, Boolean isPast, String stageId) {
+        dropMatrixElementDao.deleteAllByIsPastAndServerAndStageId(type, isPast, server, stageId);
     }
 
     @Override
@@ -82,6 +91,13 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         int maxSize = 0;
         Map<String, List<Entry<String, List<String>>>> convertedMap = new HashMap<>();
         for (String stageId : latestMaxAccumulatableTimeRangesMap.keySet()) {
+            if (userID == null && isPast) {
+                Set<String> dirtyStageIds = dirtyStages.getStageIds(server);
+                if (!dirtyStageIds.contains(stageId)) {
+                    continue;
+                }
+            }
+
             Map<String, List<String>> timeRangeIDsMapItemId = latestMaxAccumulatableTimeRangesMap.get(stageId);
             Map<String, List<String>> itemIdsMapTimeRangeID = convertItemIdBasedTimeRangesToTimeRangeBasedItemIds(
                     timeRangeIDsMapItemId, allTimeRangesMap, isPast);
@@ -96,7 +112,8 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
 
         for (int i = 0; i < maxSize; i++) {
             if (userID == null) {
-                log.info("generateGlobalDropMatrixElements for server {}... ({}/{})", server, i + 1, maxSize);
+                log.info("generateGlobalDropMatrixElements for server {}... ({}/{}), isPast = {}", server, i + 1,
+                        maxSize, isPast);
             }
             Map<String, List<TimeRange>> timeRangeMap = new HashMap<>();
             for (String stageId : convertedMap.keySet()) {
@@ -136,6 +153,14 @@ public class DropMatrixElementServiceImpl implements DropMatrixElementService {
         List<DropMatrixElement> result = allElementsMap.values().stream()
                 .flatMap(m -> m.values().stream().map(els -> DropMatrixElementUtil.combineElements(els)))
                 .collect(toList());
+
+        if (userID == null && isPast) {
+            List<DropMatrixElement> pastElements = getGlobalDropMatrixElements(server, isPast);
+            Map<String, DropMatrixElement> postElementsMap = pastElements.stream()
+                    .collect(Collectors.toMap(el -> el.getStageId() + "_" + el.getItemId(), el -> el));
+            result.forEach(el -> postElementsMap.put(el.getStageId() + "_" + el.getItemId(), el));
+            result = new ArrayList<>(postElementsMap.values());
+        }
 
         if (userID == null) {
             log.info("generateGlobalDropMatrixElements done in {} ms for server {}, isPast = {}",

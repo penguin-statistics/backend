@@ -175,6 +175,21 @@ public class TimeRangeServiceImpl implements TimeRangeService {
     }
 
     /** 
+     * @Title: getPassedTimeRanges 
+     * @Description: Return all time ranges whose end time is between (currentTime - time) and currentTime
+     * @param time Time unit is millisecond
+     * @return List<TimeRange>
+     */
+    @Override
+    public List<TimeRange> getPassedTimeRanges(long time) {
+        List<TimeRange> timeRanges = getSpringProxy().getAllTimeRanges();
+        return timeRanges.stream()
+                .filter(range -> range.getEnd() != null && Long.compare(range.getEnd(), System.currentTimeMillis()) < 0
+                        && Long.compare(range.getEnd(), System.currentTimeMillis() - time) > 0)
+                .collect(Collectors.toList());
+    }
+
+    /** 
      * @Title: getSpringProxy 
      * @Description: Use proxy to hit cache 
      * @return TimeRangeService

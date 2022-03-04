@@ -17,6 +17,8 @@ public interface DropMatrixElementService {
 
     void batchDelete(DropMatrixElementType type, Server server, Boolean isPast);
 
+    void batchDeleteByStageId(DropMatrixElementType type, Server server, Boolean isPast, String stageId);
+
     @Cacheable(value = CacheValue.DROP_MATRIX, key = "#server + '_' + (#isPast ? 'past' : 'current')", sync = true)
     List<DropMatrixElement> getGlobalDropMatrixElements(Server server, boolean isPast);
 
