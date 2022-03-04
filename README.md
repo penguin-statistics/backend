@@ -10,6 +10,8 @@
 
 This is the **backend** project repository for the [Penguin Statistics](https://penguin-stats.io/?utm_source=github) website.
 
+This repository will not be maintained any more. Please visit the repository of the latest version from [here](https://github.com/penguin-statistics/backend-next).
+
 ## Technologies
 - [Maven](https://maven.apache.org/)
 - [Spring Boot 2.1.6](https://spring.io/projects/spring-boot)
